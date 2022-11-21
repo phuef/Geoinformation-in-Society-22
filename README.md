@@ -13,9 +13,11 @@ I want to hang out with friends and want to find a nice spot near to water, in t
 I could go to the website and set distances to those features. Either with the slider or with the input field above the slider.
 
 ![slider](organization/slider.png)
+
 This slider says that I want to have water areas at max 500 meters away.
 
 ![slider](organization/slider2.png)
+
 This one says that the distance to parks should be nonexistent. 
 
 As a result you would get a raster overlay on münster that shows you areas that meets your criterias. A prototypical result can be seen below.
