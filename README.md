@@ -20,7 +20,7 @@ This slider says that I want to have water areas at max 500 meters away.
 
 This one says that the distance to parks should be nonexistent. 
 
-As a result you would get a raster overlay on münster that shows you areas that meets your criterias. A prototypical result can be seen below.
+As a result you would get a raster overlay on Münster that shows you areas that meets your criterias. A prototypical result can be seen below.
 
 ![slider](organization/result.png)
 
