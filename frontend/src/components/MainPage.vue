@@ -1,9 +1,6 @@
 <template>
 <div>
-  <v-card>
     <MapView/>
-  </v-card>
-      
 </div>
 </template>
 
