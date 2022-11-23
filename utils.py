@@ -43,14 +43,15 @@ class DistanceStack:
         
         filteredArrayInt = filteredArray.astype(int)
 
-        driver = gdal.GetDriverByName('GTiff')
+        driver = gdal.GetDriverByName('MEM')
         #output = driver.Create("./data/" + self.uuid + '.tiff', xsize=self.raster.RasterXSize, ysize=self.raster.RasterYSize, bands=1, eType=gdal.GDT_Byte)
-        output = driver.CreateCopy("./data/" + self.uuid + '.tiff', self.raster)
+        #output = driver.CreateCopy("./data/" + self.uuid + '.tiff', self.raster)
+        output = driver.CreateCopy(" ", self.raster)
 
         output.GetRasterBand(1).WriteArray(filteredArrayInt)  # write the array to the raster
         output.GetRasterBand(1).SetNoDataValue(-999)  # set the no data value
-        output = None 
-
+        #output = None 
+        return output
         
 
 stack = DistanceStack('./data/distanceTheater10x10.tif')
