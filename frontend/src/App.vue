@@ -1,35 +1,31 @@
 <template>
   <v-app>
-    <v-card
-      color="grey lighten-4"
-      flat
-      height="100%"
-      tile
-    >
-      <v-toolbar dense>
-        <v-app-bar-nav-icon></v-app-bar-nav-icon>
-
-        <v-toolbar-title>Find Your Spot</v-toolbar-title>
-
-        <v-spacer></v-spacer>
-      </v-toolbar>
-      <v-container width="50%">
-        <MainPage/>
-      </v-container>
-    </v-card>
-    
+    <div style="d-flex">
+      <v-app-bar elevation="4" color="grey darken-4" class="px-0" dark width>
+        <v-toolbar dense>
+          <v-toolbar-title>Find Your Spot</v-toolbar-title>
+          <v-spacer></v-spacer>
+          <div>
+            <v-btn to="/map" dark text class="ms-3"> Map </v-btn>
+            <v-btn to="/impressum" dark text class="ms-3"> Impressum </v-btn>
+          </div>
+        </v-toolbar>
+        <!--
+        <v-container width="50%">
+          <MainPage />
+        </v-container>-->
+      </v-app-bar>
+    </div>
   </v-app>
 </template>
 
 <script>
-import MainPage from './components/MainPage.vue'
+//import MainPage from "./components/MainPage.vue";
 
 export default {
-  name: 'App',
-  components: {
-    MainPage
-  }
-}
+  name: "App",
+  components: {},
+};
 </script>
 
 <style>
@@ -46,6 +42,4 @@ body {
   height: 100%;
   color: #2c3e50;
 }
-
 </style>
-
