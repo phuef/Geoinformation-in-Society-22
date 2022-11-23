@@ -39,17 +39,14 @@ class DistanceStack:
     def filterStack(self, filterValues):
         array = self.bands[filterValues[0][0]].ReadAsArray()
         
-        filteredArray = array <= filterValues[0][1]
+        filteredArray = array <= filterValues[0][1]/10
         
         filteredArrayInt = filteredArray.astype(int)
 
         driver = gdal.GetDriverByName('GTiff')
-        output = driver.Create("./data/" + self.uuid + '.tiff', xsize=self.raster.RasterXSize, ysize=self.raster.RasterYSize, bands=1, eType=gdal.GDT_Byte)
-        
+        #output = driver.Create("./data/" + self.uuid + '.tiff', xsize=self.raster.RasterXSize, ysize=self.raster.RasterYSize, bands=1, eType=gdal.GDT_Byte)
+        output = driver.CreateCopy("./data/" + self.uuid + '.tiff', self.raster)
 
-        crs = osr.SpatialReference()
-        crs.ImportFromEPSG(3857)
-        output.SetProjection(crs.ExportToWkt())
         output.GetRasterBand(1).WriteArray(filteredArrayInt)  # write the array to the raster
         output.GetRasterBand(1).SetNoDataValue(-999)  # set the no data value
         output = None 
