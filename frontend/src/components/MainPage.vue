@@ -1,11 +1,17 @@
 <template>
-  <div>
-    <MapView />
-  </div>
+  <v-container>
+    <v-row>
+      <v-col> Here the menu will take place </v-col>
+      <v-col>
+        <div id="mapContainer">
+          <MapView />
+        </div>
+      </v-col>
+    </v-row>
+  </v-container>
 </template>
 
 <script>
-//import MapView from "./MapView.vue";
 import MapView from "./MapView.vue";
 
 export default {
@@ -16,4 +22,8 @@ export default {
 };
 </script>
 
-<style scoped></style>
+<style scoped>
+#mapContainer {
+  height: 100%;
+}
+</style>
