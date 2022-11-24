@@ -6,7 +6,7 @@
           <v-toolbar-title>Find Your Spot</v-toolbar-title>
           <v-spacer></v-spacer>
           <div>
-            <v-btn to="/map" dark text class="ms-3"> Map </v-btn>
+            <v-btn to="/main" dark text class="ms-3"> Map </v-btn>
             <v-btn to="/impressum" dark text class="ms-3"> Impressum </v-btn>
           </div>
         </v-toolbar>

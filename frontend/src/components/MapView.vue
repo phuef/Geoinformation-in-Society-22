@@ -1,5 +1,5 @@
 <template>
-  <div class="d-flex align-stretch bg-light" style="flex: 1">
+  <div class="container d-flex align-stretch bg-light" style="flex: 1">
     <div id="mapContainer"></div>
   </div>
 </template>
@@ -32,14 +32,15 @@ export default {
 
       // To make sure, that the two basement options lie underneath the outputlayers which should be visualized,
       // a Pane with a z-Index gets created, which makes sure they will always lie underneath.
-      this.map.createPane("basemap");
-      this.map.getPane("basemap").style.zIndex = 10;
+      //this.map.createPane("basemap");
+      //this.map.getPane("basemap").style.zIndex = 10;
       // To keep sure the tiles are not able to grab this line gets added.
-      this.map.getPane("basemap").style.pointerEvents = "none";
+      //this.map.getPane("basemap").style.pointerEvents = "none";
 
       const osmUrl = "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png";
       const osmAttr =
         '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors';
+
       const colorblindUrl =
         "https://tile.jawg.io/e05fd39a-c48d-4fe7-865e-75b940afcb34/{z}/{x}/{y}{r}.png?access-token=f8JszPWTpbAxBEKElUVA7DJcC7Rrzg8hm36s98r2dV7SFWWvoP6v0E9BTxGttjZZ";
       const colorblindAttr =
@@ -47,12 +48,12 @@ export default {
 
       this.tileLayer = L.tileLayer(osmUrl, {
         attribution: osmAttr,
-        pane: "basemap", // Both layers are added to the basemap-pane.
+        //pane: "basemap", // Both layers are added to the basemap-pane.
       }).addTo(this.map);
 
       this.colorblindLayer = L.tileLayer(colorblindUrl, {
         attribution: colorblindAttr,
-        subdomains: "abcd",
+        //subdomains: "abcd",
       });
 
       const basemaps = {
@@ -70,7 +71,21 @@ export default {
 </script>
 
 <style scoped>
+/*#mapContainer {
+  height: 1000px;
+}*/
 #mapContainer {
-  height: 600px;
+  width: 100%;
+  height: 350px;
+}
+@media (min-width: 1264px) {
+  .wrapper {
+    flex: 1;
+    min-height: 0;
+  }
+  #mapContainer {
+    width: 100%;
+    height: 100%;
+  }
 }
 </style>
