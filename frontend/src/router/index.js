@@ -2,7 +2,8 @@ import Vue from "vue";
 import VueRouter from "vue-router";
 import ImpressumView from "../components/ImpressumView.vue";
 import MainPage from "../components/MainPage.vue";
-Vue.use(VueRouter)
+//import MapView from "../components/MapView.vue";
+Vue.use(VueRouter);
 const routes = [
   {
     path: "/impressum",

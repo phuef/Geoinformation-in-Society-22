@@ -1,16 +1,16 @@
 <template>
-<div>
-    <MapView/>
-</div>
+  <div>
+    <MapView />
+  </div>
 </template>
 
 <script>
-import MapView from './MapView.vue'
+import MapView from "./MapView.vue";
 
 export default {
-  name: 'MainPage',
+  name: "MainPage",
   components: {
-    MapView
-  }
-}
+    MapView,
+  },
+};
 </script>

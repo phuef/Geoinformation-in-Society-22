@@ -1,20 +1,19 @@
 <template>
   <div class="container pt-10">
-    <h1>Impressum</h1>
-    <v-row justify="center">
-      <h2 class="pt-4">Angaben gemäß §5 TMG</h2>
-      <p>
-        Digital Peaks<br />
-        Institut für Geoinformatik<br />
-        Heisenbergstraße 2<br />
-        48149 Münster<br />
-      </p>
-    </v-row>
+    <h1>Impressum (How in English?)</h1>
+    <h2 class="pt-4">Disclosures according to §5 TMG</h2>
+    <br />
+    <br />
+    <p>
+      Find Your Spot<br />
+      Institute for Geoinformatics<br />
+      Heisenbergstraße 2<br />
+      48149 Münster<br />
+    </p>
     <v-btn
-      class="pt-10"
       elevation="0"
       color="white"
-      href="https://github.com/digital-peaks"
+      href="https://github.com/phuef/Geoinformation-in-Society-22"
       target="_blank"
     >
       <v-icon>mdi-github</v-icon> Github
