@@ -9,11 +9,11 @@ import numpy as np
 import matplotlib.pyplot as plt
 import uuid
 
-from osgeo import osr
+from osgeo import osr, ogr
 
 class DistanceStack:
     def __init__(self, path):
-        raster = gdal.Open(path)
+        raster = gdal.Open(path, 0)
         self.uuid = str(uuid.uuid4())
         self.raster = raster
         self.bands = []
@@ -21,41 +21,68 @@ class DistanceStack:
             band = raster.GetRasterBand(i)
             self.bands.append(band)
             self.bands[i-1].ComputeStatistics(0)
+        
+        
+        self.transform = raster.GetGeoTransform()
+        self.projection = raster.GetProjection()
+        self.srs = osr.SpatialReference(wkt=self.projection)
         raster = band = None
         
-        raster = None
-    
     def distanceStackInfo(self):
         print("==> Projection: ", self.raster.GetProjection())  # get projection
         print("==> Columns:", self.raster.RasterXSize)  # number of columns
         print("==> Rows:", self.raster.RasterYSize)  # number of rows
         print("==> Band count:", self.raster.RasterCount)  # number of bands
         
-    def getBandValues(self, band):
+    def distanceBandInfo(self, band):
         print("==> Minimum:", self.bands[band].GetMinimum())
         print("==> Maximum:", self.bands[band].GetMaximum())
         print("==> NoData value:", self.bands[band].GetNoDataValue())
         
     def filterStack(self, filterValues):
-        array = self.bands[filterValues[0][0]].ReadAsArray()
+        filteredArrays = []
         
-        filteredArray = array <= filterValues[0][1]/10
         
-        filteredArrayInt = filteredArray.astype(int)
+        for i in range(0, len(filterValues)):
+            array = self.bands[filterValues[i][0]].ReadAsArray()
 
+            filteredArray = array <= filterValues[i][1]/10
+        
+            #filteredArrayInt = filteredArray.astype(int)
+            
+            filteredArrays.append(filteredArray)
+            
+        combinedArray = filteredArrays[0]
+        for i in filteredArrays:
+            combinedArray *= i
+            
+        #driver = gdal.GetDriverByName('GTiff')
+        #output = driver.Create("./data/results/" + self.uuid + '.tiff', xsize=self.raster.RasterXSize, ysize=self.raster.RasterYSize, bands=1, eType=gdal.GDT_Byte)
+        #output.SetGeoTransform(self.transform) #set geotransform of output image
+        #output.SetProjection(self.projection)
+        #output.GetRasterBand(1).WriteArray(combinedArray.astype(int))  # write the array to the raster
+        #output.GetRasterBand(1).SetNoDataValue(-999)  # set the no data value
+        
         driver = gdal.GetDriverByName('MEM')
-        #output = driver.Create("./data/" + self.uuid + '.tiff', xsize=self.raster.RasterXSize, ysize=self.raster.RasterYSize, bands=1, eType=gdal.GDT_Byte)
-        #output = driver.CreateCopy("./data/" + self.uuid + '.tiff', self.raster)
-        output = driver.CreateCopy(" ", self.raster)
-
-        output.GetRasterBand(1).WriteArray(filteredArrayInt)  # write the array to the raster
+        output = driver.Create('', xsize=self.raster.RasterXSize, ysize=self.raster.RasterYSize, bands=1, eType=gdal.GDT_Byte)
+        output.SetGeoTransform(self.transform) #set geotransform of output image
+        output.SetProjection(self.projection)
+        output.GetRasterBand(1).WriteArray(combinedArray.astype(int))  # write the array to the raster
         output.GetRasterBand(1).SetNoDataValue(-999)  # set the no data value
+        
+        drv = ogr.GetDriverByName('GEOJSON')
+        outfile = drv.CreateDataSource("./data/results/" + self.uuid + ".json") 
+        outlayer = outfile.CreateLayer('test', srs = self.srs)
+        newField = ogr.FieldDefn('DN', ogr.OFTReal)
+        outlayer.CreateField(newField)
+        
+        gdal.Polygonize(output.GetRasterBand(1), None, outlayer, 0, [])
+        outfile = None
         #output = None 
-        return output
+        return self.uuid
         
 
-stack = DistanceStack('./data/distanceTheater10x10.tif')
+stack = DistanceStack('./data/composit10x10.tif')
 #stack.distanceStackInfo()
-#stack.getBandValues(0)
-stack.filterStack([(0, 1000)])
+stack.filterStack([(0, 1000), (1, 500)])
 

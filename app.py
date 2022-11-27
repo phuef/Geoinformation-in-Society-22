@@ -6,7 +6,6 @@ Created on Wed Nov 23 15:33:03 2022
 """
 from flask import Flask
 
-
 from werkzeug.serving import WSGIRequestHandler
 from werkzeug.serving import BaseWSGIServer
 WSGIRequestHandler.protocol_version = "HTTP/1.1"
