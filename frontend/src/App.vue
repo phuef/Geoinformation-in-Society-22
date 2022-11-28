@@ -2,8 +2,10 @@
   <v-app>
     <div style="d-flex">
       <v-app-bar elevation="4" color="grey darken-4" class="px-0" dark width>
-        <!--<v-toolbar dense>-->
-        <v-toolbar-title>Find Your Spot</v-toolbar-title>
+        <v-toolbar-title style="cursor: pointer" @click="$router.push('/')"
+          >Find Your Spot</v-toolbar-title
+        >
+
         <v-spacer></v-spacer>
         <div class="d-none d-sm-flex align-items-center">
           <v-toolbar-items>
@@ -34,8 +36,6 @@
             </v-list>
           </v-menu>
         </div>
-
-        <!--</v-toolbar>-->
       </v-app-bar>
     </div>
     <router-view />
@@ -43,8 +43,6 @@
 </template>
 
 <script>
-//import MainPage from "./components/MainPage.vue";
-
 export default {
   name: "App",
   components: {},
