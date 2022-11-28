@@ -7,7 +7,8 @@ Created on Wed Nov 23 15:33:03 2022
 from flask import Flask, jsonify
 from ast import literal_eval
 import json
-from utils_cy import DistanceStack
+#from utils_cy import DistanceStack
+from utils import DistanceStack
 
 #configure flask to use HTTP 1.1 only
 from werkzeug.serving import WSGIRequestHandler
