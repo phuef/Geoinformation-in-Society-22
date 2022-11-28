@@ -1,7 +1,7 @@
 <template>
   <v-container fluid style="height: 100vh">
     <v-row style="height: 100%">
-      <v-col> Here the menu will take place </v-col>
+      <v-col> <MenuView />  </v-col>
       <v-col>
         <div id="mapContainer">
           <MapView />
@@ -13,11 +13,13 @@
 
 <script>
 import MapView from "./MapView.vue";
+import MenuView from "./MenuView.vue";
 
 export default {
   name: "MainPage",
   components: {
     MapView,
+    MenuView
   },
 };
 </script>
