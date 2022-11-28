@@ -24,10 +24,11 @@ class DistanceStack:
         self.uuid = str(uuid.uuid4())
         self.raster = raster
         self.bands = []
-        for i in range(1, raster.RasterCount + 1):
-            band = raster.GetRasterBand(i)
+        cdef int b
+        for b in range(1, raster.RasterCount + 1):
+            band = raster.GetRasterBand(b)
             self.bands.append(band)
-            self.bands[i-1].ComputeStatistics(0)
+            self.bands[b-1].ComputeStatistics(0)
         
         
         self.transform = raster.GetGeoTransform()
@@ -67,6 +68,7 @@ class DistanceStack:
     def filterStack(self, filterValues):
         filteredArrays = [] 
         
+        cdef int i
         for i in range(0, len(filterValues)):
             array = self.bands[filterValues[i][0]].ReadAsArray()
 
@@ -76,6 +78,7 @@ class DistanceStack:
             
         combinedArray = filteredArrays[0]
         
+        cdef int y
         for y in filteredArrays:
             combinedArray *= y
             
