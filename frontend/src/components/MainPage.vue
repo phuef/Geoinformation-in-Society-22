@@ -1,10 +1,7 @@
 <template>
-  <v-container>
-    <v-row>
-      <v-col> 
-        <MenuView /> 
-      </v-col>
-
+  <v-container fluid style="height: 100vh">
+    <v-row style="height: 100%">
+      <v-col> <MenuView />  </v-col>
       <v-col>
         <div id="mapContainer">
           <MapView />
