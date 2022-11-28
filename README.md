@@ -1,7 +1,7 @@
-# Geoinformation-in-Society-22
+# Find your Spot
 Repository for the course Geoinformation in Society at ifgi in the winter semester 2022.
 
-## Find your Spot
+## Idea
 The idea of our project is to help people find their spot in Münster, that meets certain needs. For that we want to build a web app that gives the users the possibility to set distances they want to have to certain features. 
 
 Below you can see a first mockup idea:
