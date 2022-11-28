@@ -10,6 +10,8 @@ import matplotlib.pyplot as plt
 import uuid
 
 from osgeo import osr, ogr
+from werkzeug.routing import BaseConverter
+
 
 class DistanceStack:
     def __init__(self, path):
@@ -77,11 +79,9 @@ class DistanceStack:
         outlayer.CreateField(newField)
         
         gdal.Polygonize(output.GetRasterBand(1), None, outlayer, 0, [])
-        outfile = None
-        #output = None 
+        output = outfile = outlayer =  None 
         return self.uuid
-        
-
+    
 stack = DistanceStack('./data/composit10x10.tif')
 #stack.distanceStackInfo()
 stack.filterStack([(0, 1000), (1, 500)])
