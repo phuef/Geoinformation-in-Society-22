@@ -5,10 +5,35 @@
         <v-toolbar dense>
           <v-toolbar-title>Find Your Spot</v-toolbar-title>
           <v-spacer></v-spacer>
-          <div>
+          <v-toolbar-items class="d-none d-md-flex align-items-center">
             <v-btn to="/" dark text class="ms-3"> Main </v-btn>
             <v-btn to="/impressum" dark text class="ms-3"> Legal Notice </v-btn>
-          </div>
+          </v-toolbar-items>
+          <v-menu
+            class="d-flex d-md-none align-items-center"
+            offset-y
+            z-index="1000"
+          >
+            <template v-slot:activator="{ on, attrs }">
+              <v-btn
+                icon
+                dark
+                class="ms-8 p-1 menu-button"
+                v-bind="attrs"
+                v-on="on"
+              >
+                <v-icon large>mdi-menu</v-icon>
+              </v-btn>
+            </template>
+            <v-list nav>
+              <v-list-item link to="/">
+                <v-list-tile-title> Main </v-list-tile-title>
+              </v-list-item>
+              <v-list-item link to="/impressum">
+                <v-list-tile-title> Legal Notice </v-list-tile-title>
+              </v-list-item>
+            </v-list>
+          </v-menu>
         </v-toolbar>
       </v-app-bar>
     </div>
