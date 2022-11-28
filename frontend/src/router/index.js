@@ -12,7 +12,7 @@ const routes = [
     component: ImpressumView,
   },
   {
-    path: "/main",
+    path: "/",
     name: "Main",
     component: MainPage,
   },

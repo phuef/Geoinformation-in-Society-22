@@ -1,8 +1,7 @@
 <template>
   <div class="container pt-10">
-    <h1>Impressum (How in English?)</h1>
+    <h1>Legal Notice</h1>
     <h2 class="pt-4">Disclosures according to §5 TMG</h2>
-    <br />
     <br />
     <p>
       Find Your Spot<br />

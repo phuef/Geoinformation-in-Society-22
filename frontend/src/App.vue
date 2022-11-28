@@ -6,14 +6,10 @@
           <v-toolbar-title>Find Your Spot</v-toolbar-title>
           <v-spacer></v-spacer>
           <div>
-            <v-btn to="/main" dark text class="ms-3"> Map </v-btn>
-            <v-btn to="/impressum" dark text class="ms-3"> Impressum </v-btn>
+            <v-btn to="/" dark text class="ms-3"> Main </v-btn>
+            <v-btn to="/impressum" dark text class="ms-3"> Legal Notice </v-btn>
           </div>
         </v-toolbar>
-        <!--
-        <v-container width="50%">
-          <MainPage />
-        </v-container>-->
       </v-app-bar>
     </div>
     <router-view />
