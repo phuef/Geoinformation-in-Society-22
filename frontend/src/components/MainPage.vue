@@ -1,6 +1,6 @@
 <template>
-  <v-container>
-    <v-row>
+  <v-container fluid style="height: 100vh">
+    <v-row style="height: 100%">
       <v-col> Here the menu will take place </v-col>
       <v-col>
         <div id="mapContainer">
