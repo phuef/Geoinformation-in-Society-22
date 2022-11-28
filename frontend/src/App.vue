@@ -2,18 +2,17 @@
   <v-app>
     <div style="d-flex">
       <v-app-bar elevation="4" color="grey darken-4" class="px-0" dark width>
-        <v-toolbar dense>
-          <v-toolbar-title>Find Your Spot</v-toolbar-title>
-          <v-spacer></v-spacer>
-          <v-toolbar-items class="d-none d-md-flex align-items-center">
+        <!--<v-toolbar dense>-->
+        <v-toolbar-title>Find Your Spot</v-toolbar-title>
+        <v-spacer></v-spacer>
+        <div class="d-none d-sm-flex align-items-center">
+          <v-toolbar-items>
             <v-btn to="/" dark text class="ms-3"> Main </v-btn>
             <v-btn to="/impressum" dark text class="ms-3"> Legal Notice </v-btn>
           </v-toolbar-items>
-          <v-menu
-            class="d-flex d-md-none align-items-center"
-            offset-y
-            z-index="1000"
-          >
+        </div>
+        <div class="d-flex d-sm-none align-items-center">
+          <v-menu offset-y z-index="1000">
             <template v-slot:activator="{ on, attrs }">
               <v-btn
                 icon
@@ -34,7 +33,9 @@
               </v-list-item>
             </v-list>
           </v-menu>
-        </v-toolbar>
+        </div>
+
+        <!--</v-toolbar>-->
       </v-app-bar>
     </div>
     <router-view />
