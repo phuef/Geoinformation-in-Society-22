@@ -1,34 +1,37 @@
 # -*- coding: utf-8 -*-
 """
-Created on Wed Nov 23 16:08:13 2022
+Created on Wed Nov 23 15:33:03 2022
 
 @author: Alexander Pilz
 """
+from flask import Flask, jsonify
+from ast import literal_eval
+import json
+
+#configure flask to use HTTP 1.1 only
+from werkzeug.serving import WSGIRequestHandler
+from werkzeug.serving import BaseWSGIServer
+WSGIRequestHandler.protocol_version = "HTTP/1.1"
+BaseWSGIServer.protocol_version = "HTTP/1.1"
+
 from osgeo import gdal
 import numpy as np
 import matplotlib.pyplot as plt
 import uuid
 
 from osgeo import osr, ogr
-from werkzeug.routing import BaseConverter
 
-'''
-*
-*
-*
-*
-'''
+
 class DistanceStack:
     def __init__(self, path):
         raster = gdal.Open(path, 0)
         self.uuid = str(uuid.uuid4())
         self.raster = raster
         self.bands = []
-        cdef int b
-        for b in range(1, raster.RasterCount + 1):
-            band = raster.GetRasterBand(b)
+        for i in range(1, raster.RasterCount + 1):
+            band = raster.GetRasterBand(i)
             self.bands.append(band)
-            self.bands[b-1].ComputeStatistics(0)
+            self.bands[i-1].ComputeStatistics(0)
         
         
         self.transform = raster.GetGeoTransform()
@@ -99,3 +102,34 @@ class DistanceStack:
         output = outfile = outlayer =  None 
         return self.uuid
 
+#define app
+app = Flask(__name__)
+
+'''
+*
+*
+*
+*
+'''
+@app.route("/", methods = ['GET'])
+def helloWorld():
+    return "Hello World!", 200
+
+'''
+*
+*
+*
+*
+'''
+@app.route('/request/<requestParams>', methods = ['GET'])
+def request(requestParams):
+    stack = DistanceStack('./data/composit10x10.tif') #create stack
+    params = literal_eval(requestParams) #parse parameters
+    fileID = stack.filterStack(params) #filter stack
+    
+    payload = json.load(open('./data/results/' + fileID + '.json')) #load results
+    return payload, 200 #return results
+
+#run application
+if __name__ == '__main__':
+    app.run(port=5000, debug=True, use_reloader=False) #start app

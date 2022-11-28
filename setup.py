@@ -7,4 +7,4 @@ Created on Mon Nov 28 14:22:56 2022
 from distutils.core import setup
 from Cython.Build import cythonize
 
-setup(ext_modules = cythonize('utils_cy.pyx', language_level=3))
+setup(ext_modules = cythonize('app_cy.pyx', language_level=3))
