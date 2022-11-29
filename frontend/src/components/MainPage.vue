@@ -1,10 +1,13 @@
 <template>
   <v-container id="mainContainer" fluid style="height: 100vh">
-    <v-row style="height: 100%">
+    <v-row
+      class="d-none d-sm-flex align-items-center"
+      style="height: 100%; flex-direction: row"
+    >
       <v-col v-if="showMenu"> <MenuView /> </v-col>
       <v-col>
         <div id="mapContainer">
-          <div>
+          <div id="iconContainer">
             <v-icon
               v-if="showMenu"
               @click="showMenu = !showMenu"
@@ -20,7 +23,17 @@
               mdi-menu-right</v-icon
             >
           </div>
-
+          <MapView />
+        </div>
+      </v-col>
+    </v-row>
+    <v-row
+      class="d-flex d-sm-none align-items-center"
+      style="height: 100%; flex-direction: column"
+    >
+      <v-col> <MenuView /> </v-col>
+      <v-col>
+        <div id="mapContainer">
           <MapView />
         </div>
       </v-col>
@@ -47,8 +60,10 @@ export default {
 </script>
 
 <style scoped>
-.container {
-  padding: 0px;
+#iconContainer {
+  margin: 0;
+  position: absolute;
+  top: 45%;
 }
 #mainContainer {
   padding: 0px;
