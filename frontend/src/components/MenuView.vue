@@ -29,9 +29,7 @@
         @click:append="(slider.active = false), removeLayer(slider.name)"
       ></v-slider>
     </div>
-    <!--</v-card-text>-->
     <v-divider></v-divider>
-    <!--<v-card-text>-->
     <div v-for="configuration in configurations" :key="configuration.name">
       <v-btn
         width="100%"
