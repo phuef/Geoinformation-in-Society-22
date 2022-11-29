@@ -1,5 +1,5 @@
 <template>
-  <div class="pt-6 pl-4 pr-1">
+  <div class="pt-8 pl-6 pr-1">
     <!--<v-card >
       <v-card-text>-->
     <v-select
