@@ -1492,6 +1492,7 @@ static const char __pyx_k_Minimum[] = "==> Minimum:";
 static const char __pyx_k_OFTReal[] = "OFTReal";
 static const char __pyx_k_outfile[] = "outfile";
 static const char __pyx_k_prepare[] = "__prepare__";
+static const char __pyx_k_results[] = "./results/";
 static const char __pyx_k_GDT_Byte[] = "GDT_Byte";
 static const char __pyx_k_newField[] = "newField";
 static const char __pyx_k_outlayer[] = "outlayer";
@@ -1515,7 +1516,6 @@ static const char __pyx_k_RasterYSize[] = "RasterYSize";
 static const char __pyx_k_ReadAsArray[] = "ReadAsArray";
 static const char __pyx_k_filterStack[] = "filterStack";
 static const char __pyx_k_NoData_value[] = "==> NoData value:";
-static const char __pyx_k_data_results[] = "./data/results/";
 static const char __pyx_k_filterValues[] = "filterValues";
 static const char __pyx_k_utils_cy_pyx[] = "utils_cy.pyx";
 static const char __pyx_k_BaseConverter[] = "BaseConverter";
@@ -1595,7 +1595,6 @@ static PyObject *__pyx_n_s_band;
 static PyObject *__pyx_n_s_bands;
 static PyObject *__pyx_n_s_cline_in_traceback;
 static PyObject *__pyx_n_s_combinedArray;
-static PyObject *__pyx_kp_u_data_results;
 static PyObject *__pyx_n_s_distanceBandInfo;
 static PyObject *__pyx_n_s_distanceStackInfo;
 static PyObject *__pyx_n_s_doc;
@@ -1633,6 +1632,7 @@ static PyObject *__pyx_n_s_projection;
 static PyObject *__pyx_n_s_qualname;
 static PyObject *__pyx_n_s_range;
 static PyObject *__pyx_n_s_raster;
+static PyObject *__pyx_kp_u_results;
 static PyObject *__pyx_n_s_self;
 static PyObject *__pyx_n_s_srs;
 static PyObject *__pyx_n_u_test;
@@ -2967,7 +2967,7 @@ static PyObject *__pyx_pf_8utils_cy_13DistanceStack_6filterStack(CYTHON_UNUSED P
  *         output.GetRasterBand(1).SetNoDataValue(-999)  # set the no data value
  * 
  *         drv = ogr.GetDriverByName('GEOJSON')             # <<<<<<<<<<<<<<
- *         outfile = drv.CreateDataSource("./data/results/" + self.uuid + ".json")
+ *         outfile = drv.CreateDataSource("./results/" + self.uuid + ".json")
  *         outlayer = outfile.CreateLayer('test', srs = self.srs)
  */
   __Pyx_GetModuleGlobalName(__pyx_t_6, __pyx_n_s_ogr); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 93, __pyx_L1_error)
@@ -2996,7 +2996,7 @@ static PyObject *__pyx_pf_8utils_cy_13DistanceStack_6filterStack(CYTHON_UNUSED P
   /* "utils_cy.pyx":94
  * 
  *         drv = ogr.GetDriverByName('GEOJSON')
- *         outfile = drv.CreateDataSource("./data/results/" + self.uuid + ".json")             # <<<<<<<<<<<<<<
+ *         outfile = drv.CreateDataSource("./results/" + self.uuid + ".json")             # <<<<<<<<<<<<<<
  *         outlayer = outfile.CreateLayer('test', srs = self.srs)
  *         newField = ogr.FieldDefn('DN', ogr.OFTReal)
  */
@@ -3004,7 +3004,7 @@ static PyObject *__pyx_pf_8utils_cy_13DistanceStack_6filterStack(CYTHON_UNUSED P
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_t_6 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_uuid); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 94, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_6);
-  __pyx_t_7 = PyNumber_Add(__pyx_kp_u_data_results, __pyx_t_6); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 94, __pyx_L1_error)
+  __pyx_t_7 = PyNumber_Add(__pyx_kp_u_results, __pyx_t_6); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 94, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_7);
   __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
   __pyx_t_6 = PyNumber_Add(__pyx_t_7, __pyx_kp_u_json); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 94, __pyx_L1_error)
@@ -3031,7 +3031,7 @@ static PyObject *__pyx_pf_8utils_cy_13DistanceStack_6filterStack(CYTHON_UNUSED P
 
   /* "utils_cy.pyx":95
  *         drv = ogr.GetDriverByName('GEOJSON')
- *         outfile = drv.CreateDataSource("./data/results/" + self.uuid + ".json")
+ *         outfile = drv.CreateDataSource("./results/" + self.uuid + ".json")
  *         outlayer = outfile.CreateLayer('test', srs = self.srs)             # <<<<<<<<<<<<<<
  *         newField = ogr.FieldDefn('DN', ogr.OFTReal)
  *         outlayer.CreateField(newField)
@@ -3052,7 +3052,7 @@ static PyObject *__pyx_pf_8utils_cy_13DistanceStack_6filterStack(CYTHON_UNUSED P
   __pyx_t_6 = 0;
 
   /* "utils_cy.pyx":96
- *         outfile = drv.CreateDataSource("./data/results/" + self.uuid + ".json")
+ *         outfile = drv.CreateDataSource("./results/" + self.uuid + ".json")
  *         outlayer = outfile.CreateLayer('test', srs = self.srs)
  *         newField = ogr.FieldDefn('DN', ogr.OFTReal)             # <<<<<<<<<<<<<<
  *         outlayer.CreateField(newField)
@@ -3393,7 +3393,6 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {&__pyx_n_s_bands, __pyx_k_bands, sizeof(__pyx_k_bands), 0, 0, 1, 1},
   {&__pyx_n_s_cline_in_traceback, __pyx_k_cline_in_traceback, sizeof(__pyx_k_cline_in_traceback), 0, 0, 1, 1},
   {&__pyx_n_s_combinedArray, __pyx_k_combinedArray, sizeof(__pyx_k_combinedArray), 0, 0, 1, 1},
-  {&__pyx_kp_u_data_results, __pyx_k_data_results, sizeof(__pyx_k_data_results), 0, 1, 0, 0},
   {&__pyx_n_s_distanceBandInfo, __pyx_k_distanceBandInfo, sizeof(__pyx_k_distanceBandInfo), 0, 0, 1, 1},
   {&__pyx_n_s_distanceStackInfo, __pyx_k_distanceStackInfo, sizeof(__pyx_k_distanceStackInfo), 0, 0, 1, 1},
   {&__pyx_n_s_doc, __pyx_k_doc, sizeof(__pyx_k_doc), 0, 0, 1, 1},
@@ -3431,6 +3430,7 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {&__pyx_n_s_qualname, __pyx_k_qualname, sizeof(__pyx_k_qualname), 0, 0, 1, 1},
   {&__pyx_n_s_range, __pyx_k_range, sizeof(__pyx_k_range), 0, 0, 1, 1},
   {&__pyx_n_s_raster, __pyx_k_raster, sizeof(__pyx_k_raster), 0, 0, 1, 1},
+  {&__pyx_kp_u_results, __pyx_k_results, sizeof(__pyx_k_results), 0, 1, 0, 0},
   {&__pyx_n_s_self, __pyx_k_self, sizeof(__pyx_k_self), 0, 0, 1, 1},
   {&__pyx_n_s_srs, __pyx_k_srs, sizeof(__pyx_k_srs), 0, 0, 1, 1},
   {&__pyx_n_u_test, __pyx_k_test, sizeof(__pyx_k_test), 0, 1, 0, 1},
@@ -3473,7 +3473,7 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
 
   /* "utils_cy.pyx":95
  *         drv = ogr.GetDriverByName('GEOJSON')
- *         outfile = drv.CreateDataSource("./data/results/" + self.uuid + ".json")
+ *         outfile = drv.CreateDataSource("./results/" + self.uuid + ".json")
  *         outlayer = outfile.CreateLayer('test', srs = self.srs)             # <<<<<<<<<<<<<<
  *         newField = ogr.FieldDefn('DN', ogr.OFTReal)
  *         outlayer.CreateField(newField)
