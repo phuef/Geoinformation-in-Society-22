@@ -1491,7 +1491,7 @@ static const char __pyx_k_Minimum[] = "==> Minimum:";
 static const char __pyx_k_OFTReal[] = "OFTReal";
 static const char __pyx_k_outfile[] = "outfile";
 static const char __pyx_k_prepare[] = "__prepare__";
-static const char __pyx_k_results[] = "./results/";
+static const char __pyx_k_results[] = "../results/";
 static const char __pyx_k_GDT_Byte[] = "GDT_Byte";
 static const char __pyx_k_newField[] = "newField";
 static const char __pyx_k_outlayer[] = "outlayer";
@@ -1539,7 +1539,7 @@ static const char __pyx_k_distanceStackInfo[] = "distanceStackInfo";
 static const char __pyx_k_matplotlib_pyplot[] = "matplotlib.pyplot";
 static const char __pyx_k_cline_in_traceback[] = "cline_in_traceback";
 static const char __pyx_k_DistanceStack___init[] = "DistanceStack.__init__";
-static const char __pyx_k_data_composit10x10_tif[] = "./data/composit10x10.tif";
+static const char __pyx_k_data_composit10x10_tif[] = "../data/composit10x10.tif";
 static const char __pyx_k_DistanceStack_filterStack[] = "DistanceStack.filterStack";
 static const char __pyx_k_Created_on_Wed_Nov_23_16_08_13[] = "\nCreated on Wed Nov 23 16:08:13 2022\n\n@author: Alexander Pilz\n";
 static const char __pyx_k_DistanceStack_distanceBandInfo[] = "DistanceStack.distanceBandInfo";
@@ -1673,7 +1673,7 @@ static PyObject *__pyx_codeobj__13;
  * '''
  * class DistanceStack:
  *     def __init__(self):             # <<<<<<<<<<<<<<
- *         raster = gdal.Open('./data/composit10x10.tif', 0)
+ *         raster = gdal.Open('../data/composit10x10.tif', 0)
  *         self.uuid = str(uuid.uuid4())
  */
 
@@ -1714,7 +1714,7 @@ static PyObject *__pyx_pf_8utils_cy_13DistanceStack___init__(CYTHON_UNUSED PyObj
   /* "utils_cy.pyx":23
  * class DistanceStack:
  *     def __init__(self):
- *         raster = gdal.Open('./data/composit10x10.tif', 0)             # <<<<<<<<<<<<<<
+ *         raster = gdal.Open('../data/composit10x10.tif', 0)             # <<<<<<<<<<<<<<
  *         self.uuid = str(uuid.uuid4())
  *         self.raster = raster
  */
@@ -1731,7 +1731,7 @@ static PyObject *__pyx_pf_8utils_cy_13DistanceStack___init__(CYTHON_UNUSED PyObj
 
   /* "utils_cy.pyx":24
  *     def __init__(self):
- *         raster = gdal.Open('./data/composit10x10.tif', 0)
+ *         raster = gdal.Open('../data/composit10x10.tif', 0)
  *         self.uuid = str(uuid.uuid4())             # <<<<<<<<<<<<<<
  *         self.raster = raster
  *         self.bands = []
@@ -1763,7 +1763,7 @@ static PyObject *__pyx_pf_8utils_cy_13DistanceStack___init__(CYTHON_UNUSED PyObj
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
 
   /* "utils_cy.pyx":25
- *         raster = gdal.Open('./data/composit10x10.tif', 0)
+ *         raster = gdal.Open('../data/composit10x10.tif', 0)
  *         self.uuid = str(uuid.uuid4())
  *         self.raster = raster             # <<<<<<<<<<<<<<
  *         self.bands = []
@@ -1972,7 +1972,7 @@ static PyObject *__pyx_pf_8utils_cy_13DistanceStack___init__(CYTHON_UNUSED PyObj
  * '''
  * class DistanceStack:
  *     def __init__(self):             # <<<<<<<<<<<<<<
- *         raster = gdal.Open('./data/composit10x10.tif', 0)
+ *         raster = gdal.Open('../data/composit10x10.tif', 0)
  *         self.uuid = str(uuid.uuid4())
  */
 
@@ -2875,7 +2875,7 @@ static PyObject *__pyx_pf_8utils_cy_13DistanceStack_6filterStack(CYTHON_UNUSED P
  *         output.GetRasterBand(1).SetNoDataValue(-999)  # set the no data value
  * 
  *         drv = ogr.GetDriverByName('GEOJSON')             # <<<<<<<<<<<<<<
- *         outfile = drv.CreateDataSource("./results/" + self.uuid + ".json")
+ *         outfile = drv.CreateDataSource("../results/" + self.uuid + ".json")
  *         outlayer = outfile.CreateLayer('test', srs = self.srs)
  */
   __Pyx_GetModuleGlobalName(__pyx_t_6, __pyx_n_s_ogr); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 93, __pyx_L1_error)
@@ -2904,7 +2904,7 @@ static PyObject *__pyx_pf_8utils_cy_13DistanceStack_6filterStack(CYTHON_UNUSED P
   /* "utils_cy.pyx":94
  * 
  *         drv = ogr.GetDriverByName('GEOJSON')
- *         outfile = drv.CreateDataSource("./results/" + self.uuid + ".json")             # <<<<<<<<<<<<<<
+ *         outfile = drv.CreateDataSource("../results/" + self.uuid + ".json")             # <<<<<<<<<<<<<<
  *         outlayer = outfile.CreateLayer('test', srs = self.srs)
  *         newField = ogr.FieldDefn('DN', ogr.OFTReal)
  */
@@ -2939,7 +2939,7 @@ static PyObject *__pyx_pf_8utils_cy_13DistanceStack_6filterStack(CYTHON_UNUSED P
 
   /* "utils_cy.pyx":95
  *         drv = ogr.GetDriverByName('GEOJSON')
- *         outfile = drv.CreateDataSource("./results/" + self.uuid + ".json")
+ *         outfile = drv.CreateDataSource("../results/" + self.uuid + ".json")
  *         outlayer = outfile.CreateLayer('test', srs = self.srs)             # <<<<<<<<<<<<<<
  *         newField = ogr.FieldDefn('DN', ogr.OFTReal)
  *         outlayer.CreateField(newField)
@@ -2960,7 +2960,7 @@ static PyObject *__pyx_pf_8utils_cy_13DistanceStack_6filterStack(CYTHON_UNUSED P
   __pyx_t_6 = 0;
 
   /* "utils_cy.pyx":96
- *         outfile = drv.CreateDataSource("./results/" + self.uuid + ".json")
+ *         outfile = drv.CreateDataSource("../results/" + self.uuid + ".json")
  *         outlayer = outfile.CreateLayer('test', srs = self.srs)
  *         newField = ogr.FieldDefn('DN', ogr.OFTReal)             # <<<<<<<<<<<<<<
  *         outlayer.CreateField(newField)
@@ -3371,7 +3371,7 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
   /* "utils_cy.pyx":23
  * class DistanceStack:
  *     def __init__(self):
- *         raster = gdal.Open('./data/composit10x10.tif', 0)             # <<<<<<<<<<<<<<
+ *         raster = gdal.Open('../data/composit10x10.tif', 0)             # <<<<<<<<<<<<<<
  *         self.uuid = str(uuid.uuid4())
  *         self.raster = raster
  */
@@ -3392,7 +3392,7 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
 
   /* "utils_cy.pyx":95
  *         drv = ogr.GetDriverByName('GEOJSON')
- *         outfile = drv.CreateDataSource("./results/" + self.uuid + ".json")
+ *         outfile = drv.CreateDataSource("../results/" + self.uuid + ".json")
  *         outlayer = outfile.CreateLayer('test', srs = self.srs)             # <<<<<<<<<<<<<<
  *         newField = ogr.FieldDefn('DN', ogr.OFTReal)
  *         outlayer.CreateField(newField)
@@ -3405,7 +3405,7 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
  * '''
  * class DistanceStack:
  *     def __init__(self):             # <<<<<<<<<<<<<<
- *         raster = gdal.Open('./data/composit10x10.tif', 0)
+ *         raster = gdal.Open('../data/composit10x10.tif', 0)
  *         self.uuid = str(uuid.uuid4())
  */
   __pyx_tuple__6 = PyTuple_Pack(4, __pyx_n_s_self, __pyx_n_s_raster, __pyx_n_s_i, __pyx_n_s_band); if (unlikely(!__pyx_tuple__6)) __PYX_ERR(0, 22, __pyx_L1_error)
@@ -3848,7 +3848,7 @@ if (!__Pyx_RefNanny) {
  * '''
  * class DistanceStack:             # <<<<<<<<<<<<<<
  *     def __init__(self):
- *         raster = gdal.Open('./data/composit10x10.tif', 0)
+ *         raster = gdal.Open('../data/composit10x10.tif', 0)
  */
   __pyx_t_1 = __Pyx_Py3MetaclassPrepare((PyObject *) NULL, __pyx_empty_tuple, __pyx_n_s_DistanceStack, __pyx_n_s_DistanceStack, (PyObject *) NULL, __pyx_n_s_utils_cy, (PyObject *) NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 21, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
@@ -3857,7 +3857,7 @@ if (!__Pyx_RefNanny) {
  * '''
  * class DistanceStack:
  *     def __init__(self):             # <<<<<<<<<<<<<<
- *         raster = gdal.Open('./data/composit10x10.tif', 0)
+ *         raster = gdal.Open('../data/composit10x10.tif', 0)
  *         self.uuid = str(uuid.uuid4())
  */
   __pyx_t_2 = __Pyx_CyFunction_New(&__pyx_mdef_8utils_cy_13DistanceStack_1__init__, 0, __pyx_n_s_DistanceStack___init, NULL, __pyx_n_s_utils_cy, __pyx_d, ((PyObject *)__pyx_codeobj__7)); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 22, __pyx_L1_error)
@@ -3906,7 +3906,7 @@ if (!__Pyx_RefNanny) {
  * '''
  * class DistanceStack:             # <<<<<<<<<<<<<<
  *     def __init__(self):
- *         raster = gdal.Open('./data/composit10x10.tif', 0)
+ *         raster = gdal.Open('../data/composit10x10.tif', 0)
  */
   __pyx_t_2 = __Pyx_Py3ClassCreate(((PyObject*)&__Pyx_DefaultClassType), __pyx_n_s_DistanceStack, __pyx_empty_tuple, __pyx_t_1, NULL, 0, 0); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 21, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);

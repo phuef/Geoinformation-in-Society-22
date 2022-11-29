@@ -20,7 +20,7 @@ from werkzeug.routing import BaseConverter
 '''
 class DistanceStack:
     def __init__(self):
-        raster = gdal.Open('./data/composit10x10.tif', 0)
+        raster = gdal.Open('../data/composit10x10.tif', 0)
         self.uuid = str(uuid.uuid4())
         self.raster = raster
         self.bands = []
@@ -87,7 +87,7 @@ class DistanceStack:
         output.GetRasterBand(1).SetNoDataValue(-999)  # set the no data value
         
         drv = ogr.GetDriverByName('GEOJSON')
-        outfile = drv.CreateDataSource("./results/" + self.uuid + ".json") 
+        outfile = drv.CreateDataSource("../results/" + self.uuid + ".json") 
         outlayer = outfile.CreateLayer('test', srs = self.srs)
         newField = ogr.FieldDefn('DN', ogr.OFTReal)
         outlayer.CreateField(newField)
