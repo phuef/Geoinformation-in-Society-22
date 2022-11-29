@@ -87,7 +87,7 @@ class DistanceStack:
         output.GetRasterBand(1).SetNoDataValue(-999)  # set the no data value
         
         drv = ogr.GetDriverByName('GEOJSON')
-        outfile = drv.CreateDataSource("./data/results/" + self.uuid + ".json") 
+        outfile = drv.CreateDataSource("/results/" + self.uuid + ".json") 
         outlayer = outfile.CreateLayer('test', srs = self.srs)
         newField = ogr.FieldDefn('DN', ogr.OFTReal)
         outlayer.CreateField(newField)
