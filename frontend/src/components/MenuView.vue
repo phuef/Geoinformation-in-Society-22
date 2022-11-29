@@ -1,7 +1,5 @@
 <template>
   <div class="pt-8 pl-6 pr-1">
-    <!--<v-card >
-      <v-card-text>-->
     <v-select
       v-model="activeSliders"
       :items="sliders"
@@ -44,8 +42,6 @@
         >{{ configuration.name }}</v-btn
       >
     </div>
-    <!--</v-card-text>
-    </v-card>-->
   </div>
 </template>
 
