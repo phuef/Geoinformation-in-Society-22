@@ -10,14 +10,14 @@
               @click="showMenu = !showMenu"
               id="collapseIcon"
             >
-              mdi-arrow-collapse-left</v-icon
+              mdi-menu-left</v-icon
             >
             <v-icon
               v-if="!showMenu"
               @click="showMenu = !showMenu"
               id="openIcon"
             >
-              mdi-arrow-collapse-right</v-icon
+              mdi-menu-right</v-icon
             >
           </v-container>
 
@@ -60,9 +60,11 @@ export default {
 #openIcon {
   padding: 0px;
   margin: left;
-  border-radius: 2px;
-  height: 100px;
+  border-radius: 4px;
+  width: 15px;
+  height: 80px;
   background-color: white;
+  opacity: 0.8;
   border: 1px solid grey;
   z-index: 9999;
 }
