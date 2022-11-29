@@ -19,7 +19,7 @@ from werkzeug.routing import BaseConverter
 *
 '''
 class DistanceStack:
-    def __init__(self, path):
+    def __init__(self):
         raster = gdal.Open(path, 0)
         self.uuid = str(uuid.uuid4())
         self.raster = raster
