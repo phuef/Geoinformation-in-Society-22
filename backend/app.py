@@ -7,8 +7,8 @@ Created on Wed Nov 23 15:33:03 2022
 from flask import Flask, jsonify
 from ast import literal_eval
 import json
-#from utils_cy import DistanceStack
-from utils import DistanceStack
+from utils_cy import DistanceStack
+#from utils import DistanceStack
 
 #configure flask to use HTTP 1.1 only
 from werkzeug.serving import WSGIRequestHandler
@@ -48,3 +48,5 @@ def request(requestParams):
 #run application
 if __name__ == '__main__':
     app.run(port=5050, debug=True, use_reloader=False, host='0.0.0.0') #start app
+
+#http://localhost:5050/request/[(0,500),(1,1000)]
