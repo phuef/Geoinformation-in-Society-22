@@ -25,10 +25,10 @@ export default {
   },
   methods: {
     initMap: function () {
-      this.map = L.map("mapContainer", { layers: this.tileLayer }).setView(
-        this.center,
-        this.zoom
-      );
+      this.map = L.map("mapContainer", {
+        layers: this.tileLayer,
+        zoomControl: false,
+      }).setView(this.center, this.zoom);
 
       // To make sure, that the two basement options lie underneath the outputlayers which should be visualized,
       // a Pane with a z-Index gets created, which makes sure they will always lie underneath.
@@ -60,6 +60,12 @@ export default {
         "Open Street Map": this.tileLayer,
         "Colorblind map": this.colorblindLayer,
       };
+
+      L.control
+        .zoom({
+          position: "topright",
+        })
+        .addTo(this.map);
 
       L.control.layers(basemaps).addTo(this.map);
     },
