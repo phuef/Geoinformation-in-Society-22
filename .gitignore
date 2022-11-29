@@ -2,3 +2,11 @@
 data/composit10x10.tif
 data/distanceMuseen10x10.tif
 *.json
+*.tif
+*.xml
+*.shp
+*.prj
+*.dbf
+*.shx
+*.cpg
+*.qmd
