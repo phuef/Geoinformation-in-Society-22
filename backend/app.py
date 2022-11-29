@@ -46,4 +46,4 @@ def request(requestParams):
 
 #run application
 if __name__ == '__main__':
-    app.run(port=5000, debug=True, use_reloader=False) #start app
+    app.run(port=5050, debug=True, use_reloader=False) #start app
