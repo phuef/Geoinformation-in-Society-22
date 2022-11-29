@@ -5,7 +5,6 @@ ENV DEBIAN_FRONTEND noninteractive
 USER root
 
 RUN mkdir -p /usr/src/backend
-RUN mkdir -p /usr/src/data
 
 COPY requirements.txt /usr/src/requirements.txt
 
@@ -20,7 +19,6 @@ RUN pip3 install --no-cache-dir -r /usr/src/requirements.txt
 
 #Add RDI
 COPY ./backend /usr/src/backend
-COPY ./data /usr/src/data
 
 CMD [ "python3", "usr/src/backend/app.py"]
 
