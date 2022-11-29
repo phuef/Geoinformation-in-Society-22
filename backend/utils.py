@@ -20,7 +20,7 @@ from werkzeug.routing import BaseConverter
 '''
 class DistanceStack:
     def __init__(self):
-        raster = gdal.Open(path, 0)
+        raster = gdal.Open('./data/composit10x10.tif', 0)
         self.uuid = str(uuid.uuid4())
         self.raster = raster
         self.bands = []

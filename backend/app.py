@@ -42,7 +42,7 @@ def request(requestParams):
     params = literal_eval(requestParams) #parse parameters
     fileID = stack.filterStack(params) #filter stack
     
-    payload = json.load(open('../results/' + fileID + '.json')) #load results
+    payload = json.load(open('./results/' + fileID + '.json')) #load results
     return payload, 200 #return results
 
 #run application
