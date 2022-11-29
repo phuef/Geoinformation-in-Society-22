@@ -37,12 +37,12 @@ def helloWorld():
 '''
 @app.route('/request/<requestParams>', methods = ['GET'])
 def request(requestParams):
-    stack = DistanceStack('/data/composit10x10.tif') #create stack
+    stack = DistanceStack('./data/composit10x10.tif') #create stack
     stack.distanceStackInfo()
     params = literal_eval(requestParams) #parse parameters
     fileID = stack.filterStack(params) #filter stack
     
-    payload = json.load(open('/results/' + fileID + '.json')) #load results
+    payload = json.load(open('./results/' + fileID + '.json')) #load results
     return payload, 200 #return results
 
 #run application
