@@ -1,10 +1,19 @@
 <template>
   <v-container fluid style="height: 100vh">
     <v-row style="height: 100%">
-      <v-col v-if="showMenu"> <MenuView />  </v-col>
+      <v-col v-if="showMenu"> <MenuView /> </v-col>
       <v-col>
         <div id="mapContainer">
-          <v-icon @click="showMenu=!showMenu" id="collapseIcon"> mdi-arrow-collapse-left</v-icon>
+          <v-icon
+            v-if="showMenu"
+            @click="showMenu = !showMenu"
+            id="collapseIcon"
+          >
+            mdi-arrow-collapse-left</v-icon
+          >
+          <v-icon v-if="!showMenu" @click="showMenu = !showMenu" id="openIcon">
+            mdi-arrow-collapse-right</v-icon
+          >
           <MapView />
         </div>
       </v-col>
@@ -20,13 +29,13 @@ export default {
   name: "MainPage",
   components: {
     MapView,
-    MenuView
+    MenuView,
   },
-  data(){
+  data() {
     return {
-      showMenu:true,
-    }
-  }
+      showMenu: true,
+    };
+  },
 };
 </script>
 
@@ -34,7 +43,8 @@ export default {
 #mapContainer {
   height: 100%;
 }
-#collapseIcon{
+#collapseIcon,
+#openIcon {
   background-color: white;
   z-index: 9999;
 }
