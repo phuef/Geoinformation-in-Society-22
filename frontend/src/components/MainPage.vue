@@ -4,7 +4,7 @@
       <v-col v-if="showMenu"> <MenuView /> </v-col>
       <v-col>
         <div id="mapContainer">
-          <v-container fill-height>
+          <div>
             <v-icon
               v-if="showMenu"
               @click="showMenu = !showMenu"
@@ -19,7 +19,7 @@
             >
               mdi-menu-right</v-icon
             >
-          </v-container>
+          </div>
 
           <MapView />
         </div>
@@ -52,6 +52,7 @@ export default {
 }
 #mainContainer {
   padding: 0px;
+  width: 100%;
 }
 #mapContainer {
   height: 100%;
