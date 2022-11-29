@@ -7,8 +7,8 @@ Created on Wed Nov 23 15:33:03 2022
 from flask import Flask, jsonify
 from ast import literal_eval
 import json
-from utils_cy import DistanceStack
-#from utils import DistanceStack
+#from utils_cy import DistanceStack
+from utils import DistanceStack
 
 #configure flask to use HTTP 1.1 only
 from werkzeug.serving import WSGIRequestHandler
@@ -42,7 +42,7 @@ def request(requestParams):
     params = literal_eval(requestParams) #parse parameters
     fileID = stack.filterStack(params) #filter stack
     
-    payload = json.load(open('./results/' + fileID + '.json')) #load results
+    payload = json.load(open('usr/src/backend/results/' + fileID + '.json')) #load results
     return payload, 200 #return results
 
 #run application
