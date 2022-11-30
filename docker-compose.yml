@@ -1,0 +1,5 @@
+services:
+    app:
+        image: lexal95/giis_backend
+        ports:
+            - "5050:5050" 

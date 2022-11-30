@@ -7,8 +7,8 @@ Created on Wed Nov 23 15:33:03 2022
 from flask import Flask, jsonify
 from ast import literal_eval
 import json
-#from utils_cy import DistanceStack
-from utils import DistanceStack
+from utils_cy import DistanceStack
+#from utils import DistanceStack
 
 #configure flask to use HTTP 1.1 only
 from werkzeug.serving import WSGIRequestHandler
@@ -37,13 +37,16 @@ def helloWorld():
 '''
 @app.route('/request/<requestParams>', methods = ['GET'])
 def request(requestParams):
-    stack = DistanceStack('../data/composit10x10.tif') #create stack
+    stack = DistanceStack() #create stack
+    stack.distanceStackInfo()
     params = literal_eval(requestParams) #parse parameters
     fileID = stack.filterStack(params) #filter stack
     
-    payload = json.load(open('../data/results/' + fileID + '.json')) #load results
+    payload = json.load(open('usr/src/backend/results/' + fileID + '.json')) #load results
     return payload, 200 #return results
 
 #run application
 if __name__ == '__main__':
-    app.run(port=5000, debug=True, use_reloader=False) #start app
+    app.run(port=5050, debug=True, use_reloader=False, host='0.0.0.0') #start app
+
+#http://localhost:5050/request/[(0,500),(1,1000)]
