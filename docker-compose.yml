@@ -1,4 +1,3 @@
-version: '0.1'
 services:
     app:
         image: lexal95/giis_backend
