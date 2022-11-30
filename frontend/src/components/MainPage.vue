@@ -5,7 +5,7 @@
       <v-col>
         <div id="mapContainer">
           <!--<div class="d-none d-sm-flex align-items-center" id="iconContainer">-->
-          <div id="iconContainer">
+          <div class="d-none d-sm-flex align-items-center" id="iconContainer">
             <v-icon
               v-if="showMenu"
               @click="showMenu = !showMenu"
