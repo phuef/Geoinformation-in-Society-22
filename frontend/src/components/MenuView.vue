@@ -13,22 +13,36 @@
       @input="changeActiveState()"
     >
     </v-select>
-    <div v-for="slider in sliders" :key="slider.label">
-      <!--<v-card-subtitle>{{slider.label}}</v-card-subtitle> -->
-      <v-slider
-        v-if="slider.active"
-        v-model="slider.value"
-        step="50"
-        thumb-label="always"
-        ticks
-        max="1000"
-        dense
-        :label="slider.label + ':'"
-        append-icon="mdi-close"
-        prepend-icon="mdi-information-outline"
-        @click:append="(slider.active = false), removeLayer(slider.name)"
-      ></v-slider>
-    </div>
+    <p class="text">Distance to ...</p>
+    <br />
+    <v-row v-for="slider in sliders" :key="slider.label">
+      <v-col cols="1" class="d-flex center-align justify-center">
+        <v-tooltip bottom>
+          <template v-slot:activator="{ on, attrs }">
+            <v-icon slot="prependIcon" v-bind="attrs" v-on="on"
+              >mdi-information-outline</v-icon
+            >
+          </template>
+          <span>Test</span>
+        </v-tooltip>
+      </v-col>
+      <v-col cols="11" class="d-flex center-align justify-center">
+        <v-slider
+          v-if="slider.active"
+          v-model="slider.value"
+          step="50"
+          thumb-label="always"
+          :thumb-size="30"
+          ticks
+          max="1000"
+          dense
+          :label="slider.label + ':'"
+          append-icon="mdi-close"
+          @click:append="(slider.active = false), removeLayer(slider.name)"
+        ></v-slider>
+      </v-col>
+    </v-row>
+    <!-- prepend-icon="mdi-information-outline"-->
     <v-divider></v-divider>
     <div v-for="configuration in configurations" :key="configuration.name">
       <v-btn
@@ -52,7 +66,7 @@ export default {
         //All availabe sliders
         {
           name: "Parks",
-          label: "Distance to parks",
+          label: "Parks",
           value: 0,
           active: true,
           infoLabel:
@@ -60,7 +74,7 @@ export default {
         },
         {
           name: "Water",
-          label: "Distance to areas of water",
+          label: "Water",
           value: 0,
           active: true,
           infoLabel:
@@ -68,7 +82,7 @@ export default {
         },
         {
           name: "Trashcans",
-          label: "Distance to trashcan",
+          label: "Trashcans",
           value: 0,
           active: true,
           infoLabel:
