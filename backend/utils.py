@@ -80,7 +80,7 @@ class DistanceStack:
         
         drv = ogr.GetDriverByName('GEOJSON') #initialize GEOJSON driver
         outfile = drv.CreateDataSource("usr/src/backend/results/" + self.uuid + ".json") #create GEOJSON
-        outlayer = outfile.CreateLayer('test', srs = self.srs) #add layer to GEOJSON
+        outlayer = outfile.CreateLayer('test', srs = self.srs, geom_type=ogr.wkbPolygon) #add layer to GEOJSON
         newField = ogr.FieldDefn('DN', ogr.OFTReal) #create field
         outlayer.CreateField(newField) #add field to GEOJSON
         

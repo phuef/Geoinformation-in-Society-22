@@ -9,6 +9,7 @@ from flask import Flask
 from flask_cors import CORS
 from ast import literal_eval
 import json
+from geojson_rewind import rewind
 from utils_cy import DistanceStack #import "cythonized" utils
 #from utils import DistanceStack
 
@@ -42,8 +43,9 @@ def request(requestParams):
     params = literal_eval(requestParams) #parse parameters
     fileID = stack.filterStack(params) #filter stack
     
-    payload = json.load(open('usr/src/backend/results/' + fileID + '.json')) #load results
-    return payload, 200 #return results
+    geojson = json.load(open('usr/src/backend/results/' + fileID + '.json')) #load results
+    geojsonRewound = rewind(geojson)
+    return geojsonRewound, 200 #return results
 
 #run application
 if __name__ == '__main__':
