@@ -5,8 +5,6 @@ Created on Wed Nov 23 16:08:13 2022
 @author: Alexander Pilz
 """
 from osgeo import gdal
-import numpy as np
-import matplotlib.pyplot as plt
 import uuid
 
 from osgeo import osr, ogr
