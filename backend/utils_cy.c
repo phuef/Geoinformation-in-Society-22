@@ -1493,6 +1493,7 @@ static const char __pyx_k_outlayer[] = "outlayer";
 static const char __pyx_k_qualname[] = "__qualname__";
 static const char __pyx_k_utils_cy[] = "utils_cy";
 static const char __pyx_k_FieldDefn[] = "FieldDefn";
+static const char __pyx_k_geom_type[] = "geom_type";
 static const char __pyx_k_metaclass[] = "__metaclass__";
 static const char __pyx_k_transform[] = "transform";
 static const char __pyx_k_Band_count[] = "==> Band count:";
@@ -1502,6 +1503,7 @@ static const char __pyx_k_Polygonize[] = "Polygonize";
 static const char __pyx_k_Projection[] = "==> Projection: ";
 static const char __pyx_k_WriteArray[] = "WriteArray";
 static const char __pyx_k_projection[] = "projection";
+static const char __pyx_k_wkbPolygon[] = "wkbPolygon";
 static const char __pyx_k_CreateField[] = "CreateField";
 static const char __pyx_k_CreateLayer[] = "CreateLayer";
 static const char __pyx_k_RasterCount[] = "RasterCount";
@@ -1600,6 +1602,7 @@ static PyObject *__pyx_n_s_filterValues;
 static PyObject *__pyx_n_s_filteredArray;
 static PyObject *__pyx_n_s_filteredArrays;
 static PyObject *__pyx_n_s_gdal;
+static PyObject *__pyx_n_s_geom_type;
 static PyObject *__pyx_n_s_i;
 static PyObject *__pyx_n_s_import;
 static PyObject *__pyx_n_s_init;
@@ -1633,6 +1636,7 @@ static PyObject *__pyx_kp_s_utils_cy_pyx;
 static PyObject *__pyx_n_s_uuid;
 static PyObject *__pyx_n_s_uuid4;
 static PyObject *__pyx_n_s_werkzeug_routing;
+static PyObject *__pyx_n_s_wkbPolygon;
 static PyObject *__pyx_n_s_wkt;
 static PyObject *__pyx_n_s_x;
 static PyObject *__pyx_n_s_xsize;
@@ -2866,7 +2870,7 @@ static PyObject *__pyx_pf_8utils_cy_13DistanceStack_6filterStack(CYTHON_UNUSED P
  * 
  *         drv = ogr.GetDriverByName('GEOJSON')             # <<<<<<<<<<<<<<
  *         outfile = drv.CreateDataSource("usr/src/backend/results/" + self.uuid + ".json")
- *         outlayer = outfile.CreateLayer('test', srs = self.srs)
+ *         outlayer = outfile.CreateLayer('test', srs = self.srs, geom_type=ogr.wkbPolygon)
  */
   __Pyx_GetModuleGlobalName(__pyx_t_6, __pyx_n_s_ogr); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 91, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_6);
@@ -2895,7 +2899,7 @@ static PyObject *__pyx_pf_8utils_cy_13DistanceStack_6filterStack(CYTHON_UNUSED P
  * 
  *         drv = ogr.GetDriverByName('GEOJSON')
  *         outfile = drv.CreateDataSource("usr/src/backend/results/" + self.uuid + ".json")             # <<<<<<<<<<<<<<
- *         outlayer = outfile.CreateLayer('test', srs = self.srs)
+ *         outlayer = outfile.CreateLayer('test', srs = self.srs, geom_type=ogr.wkbPolygon)
  *         newField = ogr.FieldDefn('DN', ogr.OFTReal)
  */
   __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_drv, __pyx_n_s_CreateDataSource); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 92, __pyx_L1_error)
@@ -2930,28 +2934,35 @@ static PyObject *__pyx_pf_8utils_cy_13DistanceStack_6filterStack(CYTHON_UNUSED P
   /* "utils_cy.pyx":93
  *         drv = ogr.GetDriverByName('GEOJSON')
  *         outfile = drv.CreateDataSource("usr/src/backend/results/" + self.uuid + ".json")
- *         outlayer = outfile.CreateLayer('test', srs = self.srs)             # <<<<<<<<<<<<<<
+ *         outlayer = outfile.CreateLayer('test', srs = self.srs, geom_type=ogr.wkbPolygon)             # <<<<<<<<<<<<<<
  *         newField = ogr.FieldDefn('DN', ogr.OFTReal)
  *         outlayer.CreateField(newField)
  */
   __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_v_outfile, __pyx_n_s_CreateLayer); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 93, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_5);
-  __pyx_t_1 = __Pyx_PyDict_NewPresized(1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 93, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyDict_NewPresized(2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 93, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_t_6 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_srs); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 93, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_6);
   if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_srs, __pyx_t_6) < 0) __PYX_ERR(0, 93, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
-  __pyx_t_6 = __Pyx_PyObject_Call(__pyx_t_5, __pyx_tuple__4, __pyx_t_1); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 93, __pyx_L1_error)
+  __Pyx_GetModuleGlobalName(__pyx_t_6, __pyx_n_s_ogr); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 93, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_6);
+  __pyx_t_7 = __Pyx_PyObject_GetAttrStr(__pyx_t_6, __pyx_n_s_wkbPolygon); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 93, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_7);
+  __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
+  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_geom_type, __pyx_t_7) < 0) __PYX_ERR(0, 93, __pyx_L1_error)
+  __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
+  __pyx_t_7 = __Pyx_PyObject_Call(__pyx_t_5, __pyx_tuple__4, __pyx_t_1); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 93, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_7);
   __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-  __pyx_v_outlayer = __pyx_t_6;
-  __pyx_t_6 = 0;
+  __pyx_v_outlayer = __pyx_t_7;
+  __pyx_t_7 = 0;
 
   /* "utils_cy.pyx":94
  *         outfile = drv.CreateDataSource("usr/src/backend/results/" + self.uuid + ".json")
- *         outlayer = outfile.CreateLayer('test', srs = self.srs)
+ *         outlayer = outfile.CreateLayer('test', srs = self.srs, geom_type=ogr.wkbPolygon)
  *         newField = ogr.FieldDefn('DN', ogr.OFTReal)             # <<<<<<<<<<<<<<
  *         outlayer.CreateField(newField)
  * 
@@ -2963,8 +2974,8 @@ static PyObject *__pyx_pf_8utils_cy_13DistanceStack_6filterStack(CYTHON_UNUSED P
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   __Pyx_GetModuleGlobalName(__pyx_t_1, __pyx_n_s_ogr); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 94, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_7 = __Pyx_PyObject_GetAttrStr(__pyx_t_1, __pyx_n_s_OFTReal); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 94, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_7);
+  __pyx_t_6 = __Pyx_PyObject_GetAttrStr(__pyx_t_1, __pyx_n_s_OFTReal); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 94, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_6);
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   __pyx_t_1 = NULL;
   __pyx_t_4 = 0;
@@ -2980,20 +2991,20 @@ static PyObject *__pyx_pf_8utils_cy_13DistanceStack_6filterStack(CYTHON_UNUSED P
   }
   #if CYTHON_FAST_PYCALL
   if (PyFunction_Check(__pyx_t_5)) {
-    PyObject *__pyx_temp[3] = {__pyx_t_1, __pyx_n_u_DN, __pyx_t_7};
-    __pyx_t_6 = __Pyx_PyFunction_FastCall(__pyx_t_5, __pyx_temp+1-__pyx_t_4, 2+__pyx_t_4); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 94, __pyx_L1_error)
+    PyObject *__pyx_temp[3] = {__pyx_t_1, __pyx_n_u_DN, __pyx_t_6};
+    __pyx_t_7 = __Pyx_PyFunction_FastCall(__pyx_t_5, __pyx_temp+1-__pyx_t_4, 2+__pyx_t_4); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 94, __pyx_L1_error)
     __Pyx_XDECREF(__pyx_t_1); __pyx_t_1 = 0;
-    __Pyx_GOTREF(__pyx_t_6);
-    __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
+    __Pyx_GOTREF(__pyx_t_7);
+    __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
   } else
   #endif
   #if CYTHON_FAST_PYCCALL
   if (__Pyx_PyFastCFunction_Check(__pyx_t_5)) {
-    PyObject *__pyx_temp[3] = {__pyx_t_1, __pyx_n_u_DN, __pyx_t_7};
-    __pyx_t_6 = __Pyx_PyCFunction_FastCall(__pyx_t_5, __pyx_temp+1-__pyx_t_4, 2+__pyx_t_4); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 94, __pyx_L1_error)
+    PyObject *__pyx_temp[3] = {__pyx_t_1, __pyx_n_u_DN, __pyx_t_6};
+    __pyx_t_7 = __Pyx_PyCFunction_FastCall(__pyx_t_5, __pyx_temp+1-__pyx_t_4, 2+__pyx_t_4); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 94, __pyx_L1_error)
     __Pyx_XDECREF(__pyx_t_1); __pyx_t_1 = 0;
-    __Pyx_GOTREF(__pyx_t_6);
-    __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
+    __Pyx_GOTREF(__pyx_t_7);
+    __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
   } else
   #endif
   {
@@ -3005,19 +3016,19 @@ static PyObject *__pyx_pf_8utils_cy_13DistanceStack_6filterStack(CYTHON_UNUSED P
     __Pyx_INCREF(__pyx_n_u_DN);
     __Pyx_GIVEREF(__pyx_n_u_DN);
     PyTuple_SET_ITEM(__pyx_t_9, 0+__pyx_t_4, __pyx_n_u_DN);
-    __Pyx_GIVEREF(__pyx_t_7);
-    PyTuple_SET_ITEM(__pyx_t_9, 1+__pyx_t_4, __pyx_t_7);
-    __pyx_t_7 = 0;
-    __pyx_t_6 = __Pyx_PyObject_Call(__pyx_t_5, __pyx_t_9, NULL); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 94, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_6);
+    __Pyx_GIVEREF(__pyx_t_6);
+    PyTuple_SET_ITEM(__pyx_t_9, 1+__pyx_t_4, __pyx_t_6);
+    __pyx_t_6 = 0;
+    __pyx_t_7 = __Pyx_PyObject_Call(__pyx_t_5, __pyx_t_9, NULL); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 94, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_7);
     __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
   }
   __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-  __pyx_v_newField = __pyx_t_6;
-  __pyx_t_6 = 0;
+  __pyx_v_newField = __pyx_t_7;
+  __pyx_t_7 = 0;
 
   /* "utils_cy.pyx":95
- *         outlayer = outfile.CreateLayer('test', srs = self.srs)
+ *         outlayer = outfile.CreateLayer('test', srs = self.srs, geom_type=ogr.wkbPolygon)
  *         newField = ogr.FieldDefn('DN', ogr.OFTReal)
  *         outlayer.CreateField(newField)             # <<<<<<<<<<<<<<
  * 
@@ -3035,12 +3046,12 @@ static PyObject *__pyx_pf_8utils_cy_13DistanceStack_6filterStack(CYTHON_UNUSED P
       __Pyx_DECREF_SET(__pyx_t_5, function);
     }
   }
-  __pyx_t_6 = (__pyx_t_9) ? __Pyx_PyObject_Call2Args(__pyx_t_5, __pyx_t_9, __pyx_v_newField) : __Pyx_PyObject_CallOneArg(__pyx_t_5, __pyx_v_newField);
+  __pyx_t_7 = (__pyx_t_9) ? __Pyx_PyObject_Call2Args(__pyx_t_5, __pyx_t_9, __pyx_v_newField) : __Pyx_PyObject_CallOneArg(__pyx_t_5, __pyx_v_newField);
   __Pyx_XDECREF(__pyx_t_9); __pyx_t_9 = 0;
-  if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 95, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_6);
+  if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 95, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_7);
   __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-  __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
+  __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
 
   /* "utils_cy.pyx":97
  *         outlayer.CreateField(newField)
@@ -3054,25 +3065,25 @@ static PyObject *__pyx_pf_8utils_cy_13DistanceStack_6filterStack(CYTHON_UNUSED P
   __pyx_t_9 = __Pyx_PyObject_GetAttrStr(__pyx_t_5, __pyx_n_s_Polygonize); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 97, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_9);
   __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-  __pyx_t_7 = __Pyx_PyObject_GetAttrStr(__pyx_v_output, __pyx_n_s_GetRasterBand); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 97, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_7);
+  __pyx_t_6 = __Pyx_PyObject_GetAttrStr(__pyx_v_output, __pyx_n_s_GetRasterBand); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 97, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_6);
   __pyx_t_1 = NULL;
-  if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_7))) {
-    __pyx_t_1 = PyMethod_GET_SELF(__pyx_t_7);
+  if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_6))) {
+    __pyx_t_1 = PyMethod_GET_SELF(__pyx_t_6);
     if (likely(__pyx_t_1)) {
-      PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_7);
+      PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_6);
       __Pyx_INCREF(__pyx_t_1);
       __Pyx_INCREF(function);
-      __Pyx_DECREF_SET(__pyx_t_7, function);
+      __Pyx_DECREF_SET(__pyx_t_6, function);
     }
   }
-  __pyx_t_5 = (__pyx_t_1) ? __Pyx_PyObject_Call2Args(__pyx_t_7, __pyx_t_1, __pyx_int_1) : __Pyx_PyObject_CallOneArg(__pyx_t_7, __pyx_int_1);
+  __pyx_t_5 = (__pyx_t_1) ? __Pyx_PyObject_Call2Args(__pyx_t_6, __pyx_t_1, __pyx_int_1) : __Pyx_PyObject_CallOneArg(__pyx_t_6, __pyx_int_1);
   __Pyx_XDECREF(__pyx_t_1); __pyx_t_1 = 0;
   if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 97, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_5);
-  __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
-  __pyx_t_7 = PyList_New(0); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 97, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_7);
+  __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
+  __pyx_t_6 = PyList_New(0); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 97, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_6);
   __pyx_t_1 = NULL;
   __pyx_t_4 = 0;
   if (CYTHON_UNPACK_METHODS && unlikely(PyMethod_Check(__pyx_t_9))) {
@@ -3087,22 +3098,22 @@ static PyObject *__pyx_pf_8utils_cy_13DistanceStack_6filterStack(CYTHON_UNUSED P
   }
   #if CYTHON_FAST_PYCALL
   if (PyFunction_Check(__pyx_t_9)) {
-    PyObject *__pyx_temp[6] = {__pyx_t_1, __pyx_t_5, Py_None, __pyx_v_outlayer, __pyx_int_0, __pyx_t_7};
-    __pyx_t_6 = __Pyx_PyFunction_FastCall(__pyx_t_9, __pyx_temp+1-__pyx_t_4, 5+__pyx_t_4); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 97, __pyx_L1_error)
+    PyObject *__pyx_temp[6] = {__pyx_t_1, __pyx_t_5, Py_None, __pyx_v_outlayer, __pyx_int_0, __pyx_t_6};
+    __pyx_t_7 = __Pyx_PyFunction_FastCall(__pyx_t_9, __pyx_temp+1-__pyx_t_4, 5+__pyx_t_4); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 97, __pyx_L1_error)
     __Pyx_XDECREF(__pyx_t_1); __pyx_t_1 = 0;
-    __Pyx_GOTREF(__pyx_t_6);
+    __Pyx_GOTREF(__pyx_t_7);
     __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-    __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
+    __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
   } else
   #endif
   #if CYTHON_FAST_PYCCALL
   if (__Pyx_PyFastCFunction_Check(__pyx_t_9)) {
-    PyObject *__pyx_temp[6] = {__pyx_t_1, __pyx_t_5, Py_None, __pyx_v_outlayer, __pyx_int_0, __pyx_t_7};
-    __pyx_t_6 = __Pyx_PyCFunction_FastCall(__pyx_t_9, __pyx_temp+1-__pyx_t_4, 5+__pyx_t_4); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 97, __pyx_L1_error)
+    PyObject *__pyx_temp[6] = {__pyx_t_1, __pyx_t_5, Py_None, __pyx_v_outlayer, __pyx_int_0, __pyx_t_6};
+    __pyx_t_7 = __Pyx_PyCFunction_FastCall(__pyx_t_9, __pyx_temp+1-__pyx_t_4, 5+__pyx_t_4); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 97, __pyx_L1_error)
     __Pyx_XDECREF(__pyx_t_1); __pyx_t_1 = 0;
-    __Pyx_GOTREF(__pyx_t_6);
+    __Pyx_GOTREF(__pyx_t_7);
     __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-    __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
+    __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
   } else
   #endif
   {
@@ -3122,16 +3133,16 @@ static PyObject *__pyx_pf_8utils_cy_13DistanceStack_6filterStack(CYTHON_UNUSED P
     __Pyx_INCREF(__pyx_int_0);
     __Pyx_GIVEREF(__pyx_int_0);
     PyTuple_SET_ITEM(__pyx_t_10, 3+__pyx_t_4, __pyx_int_0);
-    __Pyx_GIVEREF(__pyx_t_7);
-    PyTuple_SET_ITEM(__pyx_t_10, 4+__pyx_t_4, __pyx_t_7);
+    __Pyx_GIVEREF(__pyx_t_6);
+    PyTuple_SET_ITEM(__pyx_t_10, 4+__pyx_t_4, __pyx_t_6);
     __pyx_t_5 = 0;
-    __pyx_t_7 = 0;
-    __pyx_t_6 = __Pyx_PyObject_Call(__pyx_t_9, __pyx_t_10, NULL); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 97, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_6);
+    __pyx_t_6 = 0;
+    __pyx_t_7 = __Pyx_PyObject_Call(__pyx_t_9, __pyx_t_10, NULL); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 97, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_7);
     __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
   }
   __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
-  __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
+  __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
 
   /* "utils_cy.pyx":98
  * 
@@ -3154,10 +3165,10 @@ static PyObject *__pyx_pf_8utils_cy_13DistanceStack_6filterStack(CYTHON_UNUSED P
  * 
  */
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_6 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_uuid); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 99, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_6);
-  __pyx_r = __pyx_t_6;
-  __pyx_t_6 = 0;
+  __pyx_t_7 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_uuid); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 99, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_7);
+  __pyx_r = __pyx_t_7;
+  __pyx_t_7 = 0;
   goto __pyx_L0;
 
   /* "utils_cy.pyx":67
@@ -3301,6 +3312,7 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {&__pyx_n_s_filteredArray, __pyx_k_filteredArray, sizeof(__pyx_k_filteredArray), 0, 0, 1, 1},
   {&__pyx_n_s_filteredArrays, __pyx_k_filteredArrays, sizeof(__pyx_k_filteredArrays), 0, 0, 1, 1},
   {&__pyx_n_s_gdal, __pyx_k_gdal, sizeof(__pyx_k_gdal), 0, 0, 1, 1},
+  {&__pyx_n_s_geom_type, __pyx_k_geom_type, sizeof(__pyx_k_geom_type), 0, 0, 1, 1},
   {&__pyx_n_s_i, __pyx_k_i, sizeof(__pyx_k_i), 0, 0, 1, 1},
   {&__pyx_n_s_import, __pyx_k_import, sizeof(__pyx_k_import), 0, 0, 1, 1},
   {&__pyx_n_s_init, __pyx_k_init, sizeof(__pyx_k_init), 0, 0, 1, 1},
@@ -3334,6 +3346,7 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {&__pyx_n_s_uuid, __pyx_k_uuid, sizeof(__pyx_k_uuid), 0, 0, 1, 1},
   {&__pyx_n_s_uuid4, __pyx_k_uuid4, sizeof(__pyx_k_uuid4), 0, 0, 1, 1},
   {&__pyx_n_s_werkzeug_routing, __pyx_k_werkzeug_routing, sizeof(__pyx_k_werkzeug_routing), 0, 0, 1, 1},
+  {&__pyx_n_s_wkbPolygon, __pyx_k_wkbPolygon, sizeof(__pyx_k_wkbPolygon), 0, 0, 1, 1},
   {&__pyx_n_s_wkt, __pyx_k_wkt, sizeof(__pyx_k_wkt), 0, 0, 1, 1},
   {&__pyx_n_s_x, __pyx_k_x, sizeof(__pyx_k_x), 0, 0, 1, 1},
   {&__pyx_n_s_xsize, __pyx_k_xsize, sizeof(__pyx_k_xsize), 0, 0, 1, 1},
@@ -3378,7 +3391,7 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
   /* "utils_cy.pyx":93
  *         drv = ogr.GetDriverByName('GEOJSON')
  *         outfile = drv.CreateDataSource("usr/src/backend/results/" + self.uuid + ".json")
- *         outlayer = outfile.CreateLayer('test', srs = self.srs)             # <<<<<<<<<<<<<<
+ *         outlayer = outfile.CreateLayer('test', srs = self.srs, geom_type=ogr.wkbPolygon)             # <<<<<<<<<<<<<<
  *         newField = ogr.FieldDefn('DN', ogr.OFTReal)
  *         outlayer.CreateField(newField)
  */
