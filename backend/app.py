@@ -51,5 +51,3 @@ if __name__ == '__main__':
     * Port: 5050
     '''
     app.run(port=5050, debug=True, use_reloader=False, host='0.0.0.0') #start app
-
-#http://localhost:5050/request/[(0,500),(1,1000)]
