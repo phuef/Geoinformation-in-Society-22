@@ -1,8 +1,8 @@
 <template>
   <v-container id="mainContainer" fluid style="height: 100vh">
     <v-row style="height: 100%">
-      <v-col cols="12" xs="12" sm="6" v-if="showMenu"> <MenuView /> </v-col>
-      <v-col cols="12" xs="12" sm="6">
+      <v-col cols="12" xs="12" sm="6" v-if="showMenu"> <MenuView @newRequest="processNewRequest" /> </v-col>
+      <v-col cols="12" xs="12" :sm="mapViewSize">
         <div id="mapContainer">
           <div class="d-none d-sm-flex align-items-center" id="iconContainer">
             <v-icon
@@ -20,7 +20,7 @@
               mdi-menu-right</v-icon
             >
           </div>
-          <MapView />
+          <MapView :geojson="requestResponse"/>
         </div>
       </v-col>
     </v-row>
@@ -40,8 +40,20 @@ export default {
   data() {
     return {
       showMenu: true,
+      requestResponse: null,
     };
   },
+  computed:{
+    mapViewSize: function(){
+      // makes sure that the map is displayed on the full screen when the menu is not shown 
+      return this.showMenu ? '6':'12'
+    }
+  },
+  methods: {
+  processNewRequest(response) {
+    this.requestResponse = response
+  }
+}
 };
 </script>
 

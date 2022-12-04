@@ -70,9 +70,23 @@ export default {
       L.control.layers(basemaps).addTo(this.map);
     },
   },
+  props:{
+    geojson:Object
+  },
   mounted() {
     this.initMap();
   },
+  watch:{
+
+    geojson: function(){ // when the object changes it gets added to the map
+      // TOmaybeDO: delete the current geojson in the map if needed. Not sure if it is actually needed or can be done differently
+      var a=JSON.parse(JSON.stringify(this.geojson))
+      L.geoJSON(a).addTo(this.map); // adds the geojson object to the map
+      // TOmaybeDO: adjust the bounds to the size of the geojson
+      // this.map.fitBounds(geoLayer.getBounds())
+    }
+  }
+  
 };
 </script>
 
