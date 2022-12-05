@@ -17,17 +17,18 @@
     <br />
     <v-row v-for="slider in sliders" :key="slider.label">
       <v-col cols="1" class="d-flex center-align justify-center">
-        <v-tooltip bottom>
+        <v-tooltip right z-index="1000">
           <template v-slot:activator="{ on, attrs }">
             <v-icon slot="prependIcon" v-bind="attrs" v-on="on"
               >mdi-information-outline</v-icon
             >
           </template>
-          <span>Test</span>
+          <span v-html="slider.infoLabel"></span>
         </v-tooltip>
       </v-col>
       <v-col cols="11" class="d-flex center-align justify-center">
         <v-slider
+          hide-details
           v-if="slider.active"
           v-model="slider.value"
           step="50"
@@ -42,8 +43,9 @@
         ></v-slider>
       </v-col>
     </v-row>
-    <!-- prepend-icon="mdi-information-outline"-->
+    <br />
     <v-divider></v-divider>
+    <br />
     <div v-for="configuration in configurations" :key="configuration.name">
       <v-btn
         width="100%"
@@ -70,7 +72,7 @@ export default {
           value: 0,
           active: true,
           infoLabel:
-            "Move the slider to remove all areas that have a certain distance to parks",
+            "Move the slider to remove all areas,<br/>that have a certain <b>distance to parks</b>.",
         },
         {
           name: "Water",
@@ -78,7 +80,7 @@ export default {
           value: 0,
           active: true,
           infoLabel:
-            "Move the slider to remove all areas that have a certain distance to areas of water",
+            "Move the slider to remove all areas,<br/>that have a certain <b>distance to areas of water</b>.",
         },
         {
           name: "Trashcans",
@@ -86,7 +88,7 @@ export default {
           value: 0,
           active: true,
           infoLabel:
-            "Move the slider to remove all areas that have a certain distance to trashcans",
+            "Move the slider to remove all areas,<br/>that have a certain <b>distance to trashcans</b>.",
         },
       ],
       activeSliders: ["Parks", "Water", "Trashcans"], //The currently active Sliders
