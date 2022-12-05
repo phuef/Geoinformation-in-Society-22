@@ -60,28 +60,73 @@ export default {
         "Open Street Map": this.tileLayer,
         "Colorblind map": this.colorblindLayer,
       };
-
+      L.control.layers(basemaps).addTo(this.map);
+      
       L.control
         .zoom({
           position: "topright",
         })
         .addTo(this.map);
 
-      L.control.layers(basemaps).addTo(this.map);
+      
     },
   },
   props:{
-    geojson:Object
+    geojson:{type:Object,
+    default(){return{
+      "crs": {
+        "properties": {
+          "name": "urn:ogc:def:crs:EPSG::3857"
+        },
+        "type": "name"
+      },
+      "features": [
+        {
+          "geometry": {
+            "coordinates": [
+              [
+                [
+                  831978.0122,
+                  6810985.9256
+                ],
+                [
+                  831978.0122,
+                  6771275.9256
+                ],
+                [
+                  865438.0122,
+                  6771275.9256
+                ],
+                [
+                  865438.0122,
+                  6810985.9256
+                ],
+                [
+                  831978.0122,
+                  6810985.9256
+                ]
+              ]
+            ],
+            "type": "Polygon"
+          },
+          "properties": {
+            "DN": 0.0
+          },
+          "type": "Feature"
+        }
+      ],
+      "name": "test",
+      "type": "FeatureCollection"
+    }}}
   },
   mounted() {
     this.initMap();
   },
   watch:{
-
-    geojson: function(){ // when the object changes it gets added to the map
-      // TOmaybeDO: delete the current geojson in the map if needed. Not sure if it is actually needed or can be done differently
-      var a=JSON.parse(JSON.stringify(this.geojson))
-      L.geoJSON(a).addTo(this.map); // adds the geojson object to the map
+    geojson: function(newGeojson){ // TODO: when the object changes add it to the map
+      var a=JSON.parse(JSON.stringify(newGeojson))
+      console.log(a);
+      //L.geoJSON(a).addTo(this.map); // add the geojson object to the map
       // TOmaybeDO: adjust the bounds to the size of the geojson
       // this.map.fitBounds(geoLayer.getBounds())
     }
