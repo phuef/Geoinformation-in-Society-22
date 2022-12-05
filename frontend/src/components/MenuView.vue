@@ -7,7 +7,7 @@
       item-value="name"
       deletable-chips
       chips
-      label="selected layers"
+      label="Selected layers:"
       multiple
       dense
       @input="changeActiveState()"
