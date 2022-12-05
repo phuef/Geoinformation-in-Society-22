@@ -61,13 +61,13 @@ export default {
         "Colorblind map": this.colorblindLayer,
       };
 
+      L.control.layers(basemaps).addTo(this.map);
+
       L.control
         .zoom({
           position: "topright",
         })
         .addTo(this.map);
-
-      L.control.layers(basemaps).addTo(this.map);
     },
   },
   mounted() {
