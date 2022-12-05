@@ -4,42 +4,35 @@ Created on Wed Nov 23 16:08:13 2022
 
 @author: Alexander Pilz
 """
-from osgeo import gdal
-import numpy as np
-import matplotlib.pyplot as plt
+from osgeo import gdal, osr, ogr
 import uuid
 
-from osgeo import osr, ogr
-from werkzeug.routing import BaseConverter
-
 '''
-*
-*
-*
-*
+* Title: DistanceStack
+* Description: The class DistanceStack is the main class with which the distance 
+* raster is handled and computation on it are realized
 '''
 class DistanceStack:
+    #Constructor
     def __init__(self):
-        raster = gdal.Open('usr/src/backend/data/composit10x10.tif', 0)
-        self.uuid = str(uuid.uuid4())
-        self.raster = raster
-        self.bands = []
-        for i in range(1, raster.RasterCount + 1):
-            band = raster.GetRasterBand(i)
+        raster = gdal.Open('usr/src/backend/data/composit10x10.tif', 0) #open composit distance raster file
+        self.uuid = str(uuid.uuid4()) #generate unique identifier
+        self.raster = raster #store raster
+        self.bands = [] #initialize bands
+        for i in range(1, raster.RasterCount + 1): #iterate over bands in raster
+            band = raster.GetRasterBand(i) #extract band
             self.bands.append(band)
-            self.bands[i-1].ComputeStatistics(0)
+            self.bands[i-1].ComputeStatistics(0) #compute some key values for each band
         
         
-        self.transform = raster.GetGeoTransform()
-        self.projection = raster.GetProjection()
-        self.srs = osr.SpatialReference(wkt=self.projection)
-        raster = band = None
+        self.transform = raster.GetGeoTransform() #store transformation
+        self.projection = raster.GetProjection() #store projection
+        self.srs = osr.SpatialReference(wkt=self.projection) #store coordinate reference system
+        raster = band = None #free variables
         
     '''
-    *
-    *
-    *
-    *
+    * Title: distanceStackInfo
+    * Description: Outputs some key values of the raster
     '''
     def distanceStackInfo(self):
         print("==> Projection: ", self.raster.GetProjection())  # get projection
@@ -48,10 +41,9 @@ class DistanceStack:
         print("==> Band count:", self.raster.RasterCount)  # number of bands
         
     '''
-    *
-    *
-    *
-    *
+    * Title: distanceBandInfo
+    * Description: Outputs some key values of a band of the raster
+    * Parameters: A band number of the underlying raster 
     '''
     def distanceBandInfo(self, band):
         print("==> Minimum:", self.bands[band].GetMinimum())
@@ -59,40 +51,40 @@ class DistanceStack:
         print("==> NoData value:", self.bands[band].GetNoDataValue())
         
     '''
-    *
-    *
-    *
-    *
+    * Title: filterStack
+    * Description: Filters the composit distance raster based on given parameters
+    * Parameters: The function expects an array with tuples of the form (band, distance in meters)
+    * Example parameters: [(0,1000),(1,2000)]
+    * Output: The function outputs a GEOJSON containing polygons where the DN value denotes which ares correspond to the
+    * parameters and which do not
     '''
     def filterStack(self, filterValues):
-        filteredArrays = [] 
+        filteredArrays = [] #initialize list for filtered bands
         
-        for i in range(0, len(filterValues)):
-            array = self.bands[filterValues[i][0]].ReadAsArray()
-
-            filteredArray = array <= filterValues[i][1]/10
+        for i in range(0, len(filterValues)): #iterate over filter values
+            array = self.bands[filterValues[i][0]].ReadAsArray() #read corresponding band from raster
+            filteredArray = array <= filterValues[i][1]/10 #filter band
+            filteredArrays.append(filteredArray) #add filtered array to list
             
-            filteredArrays.append(filteredArray)
-            
-        combinedArray = filteredArrays[0]
+        combinedArray = filteredArrays[0] #initialize combined array
         
-        for y in filteredArrays:
-            combinedArray *= y
+        for y in filteredArrays: #iterate over filtered bands
+            combinedArray *= y #combine boolean values
             
-        driver = gdal.GetDriverByName('MEM')
-        output = driver.Create('', xsize=self.raster.RasterXSize, ysize=self.raster.RasterYSize, bands=1, eType=gdal.GDT_Byte)
+        driver = gdal.GetDriverByName('MEM') #initialize in memory driver
+        output = driver.Create('', xsize=self.raster.RasterXSize, ysize=self.raster.RasterYSize, bands=1, eType=gdal.GDT_Byte) #create rater
         output.SetGeoTransform(self.transform) #set geotransform of output image
-        output.SetProjection(self.projection)
-        output.GetRasterBand(1).WriteArray(combinedArray.astype(int))  # write the array to the raster
-        output.GetRasterBand(1).SetNoDataValue(-999)  # set the no data value
+        output.SetProjection(self.projection) #set projection of output image
+        output.GetRasterBand(1).WriteArray(combinedArray.astype(int))  #write the array to the raster
+        output.GetRasterBand(1).SetNoDataValue(-999)  #set the no data value
         
-        drv = ogr.GetDriverByName('GEOJSON')
-        outfile = drv.CreateDataSource("usr/src/backend/results/" + self.uuid + ".json") 
-        outlayer = outfile.CreateLayer('test', srs = self.srs)
-        newField = ogr.FieldDefn('DN', ogr.OFTReal)
-        outlayer.CreateField(newField)
+        drv = ogr.GetDriverByName('GEOJSON') #initialize GEOJSON driver
+        outfile = drv.CreateDataSource("usr/src/backend/results/" + self.uuid + ".json") #create GEOJSON
+        outlayer = outfile.CreateLayer('test', srs = self.srs, geom_type=ogr.wkbPolygon) #add layer to GEOJSON
+        newField = ogr.FieldDefn('DN', ogr.OFTReal) #create field
+        outlayer.CreateField(newField) #add field to GEOJSON
         
-        gdal.Polygonize(output.GetRasterBand(1), None, outlayer, 0, [])
-        output = outfile = outlayer =  None 
-        return self.uuid
+        gdal.Polygonize(output.GetRasterBand(1), None, outlayer, 0, []) #polygonize combined raster based on pixel values
+        output = outfile = outlayer =  None #free variables
+        return self.uuid #return uuid of DistanceStack
 

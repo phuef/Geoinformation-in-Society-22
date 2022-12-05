@@ -5,8 +5,6 @@ Created on Wed Nov 23 16:08:13 2022
 @author: Alexander Pilz
 """
 from osgeo import gdal
-import numpy as np
-import matplotlib.pyplot as plt
 import uuid
 
 from osgeo import osr, ogr
@@ -92,7 +90,7 @@ class DistanceStack:
         
         drv = ogr.GetDriverByName('GEOJSON')
         outfile = drv.CreateDataSource("usr/src/backend/results/" + self.uuid + ".json") 
-        outlayer = outfile.CreateLayer('test', srs = self.srs)
+        outlayer = outfile.CreateLayer('test', srs = self.srs, geom_type=ogr.wkbPolygon)
         newField = ogr.FieldDefn('DN', ogr.OFTReal)
         outlayer.CreateField(newField)
         
