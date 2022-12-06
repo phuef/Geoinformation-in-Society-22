@@ -37,7 +37,7 @@
           ticks
           max="1000"
           dense
-          :label="slider.label + ':'"
+          :label="slider.name + ':'"
         ></v-slider>
       </v-col>
       <v-col cols="1" class="d-flex center-align justify-center">
@@ -90,7 +90,7 @@ export default {
           active: true, // wether the layer is currently selected by the user
           // the text that shall be displayed when the user hovers over the info button
           infoLabel:
-            "Move the slider to remove all areas that have a certain distance to museums",
+            "Move the slider to remove all areas <br/>that have a certain <b>distance to museums</b>.",
         },
         {
           name: "Theaters",
@@ -99,7 +99,7 @@ export default {
           band: 1,
           active: true,
           infoLabel:
-            "Move the slider to remove all areas that have a certain distance to theaters",
+            "Move the slider to remove all areas <br/>that have a certain <b>distance to theaters</b>.",
         },
       ],
       activeSliders: ["Museums", "Theaters"], //The currently active Sliders
