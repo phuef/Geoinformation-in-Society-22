@@ -1,9 +1,11 @@
 <template>
   <v-container id="mainContainer" fluid style="height: 100vh">
     <v-row style="height: 100%">
-      <v-col cols="12" xs="12" sm="6" v-if="showMenu"> <MenuView @newRequest="processNewRequest" /> </v-col>
+      <v-col cols="12" xs="12" sm="6" v-if="showMenu">
+        <MenuView @newRequest="processNewRequest" />
+      </v-col>
       <v-col cols="12" xs="12" :sm="mapViewSize">
-        <div id="mapContainer">
+        <div id="mapContainer" :key="mapViewSize">
           <div class="d-none d-sm-flex align-items-center" id="iconContainer">
             <v-icon
               v-if="showMenu"
@@ -20,7 +22,7 @@
               mdi-menu-right</v-icon
             >
           </div>
-          <MapView :geojson="requestResponse"/>
+          <MapView :geojson="requestResponse" />
         </div>
       </v-col>
     </v-row>
@@ -43,17 +45,17 @@ export default {
       requestResponse: null,
     };
   },
-  computed:{
-    mapViewSize: function(){
-      // makes sure that the map is displayed on the full screen when the menu is not shown 
-      return this.showMenu ? '6':'12'
-    }
+  computed: {
+    mapViewSize: function () {
+      // makes sure that the map is displayed on the full screen when the menu is not shown
+      return this.showMenu ? "6" : "12";
+    },
   },
   methods: {
-  processNewRequest(response) {
-    this.requestResponse = response
-  }
-}
+    processNewRequest(response) {
+      this.requestResponse = response;
+    },
+  },
 };
 </script>
 
