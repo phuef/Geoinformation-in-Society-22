@@ -24,5 +24,26 @@ As a result you would get a raster overlay on Münster that shows you areas that
 
 ![slider](organization/result.png)
 
+## Backend
+The backend is developed with Python and employs the Flask WSGI. It is configured to use only HTTP 1.1 and should accept cross-origin requests.
+A Hello-World "Test" can be accessed via localhost:5050/ while the filtered rasters can be accessed via localhost:5050/request/<params>.
+The params-Parameter must conform to the following structure:
+```
+[(band, value),...]
+```
+
+There are two layers accessable:
+```
+0: Distance to Theaters in Münster
+1: Distance to Museums in Münster
+```
+
+The second value in each tuple represents the maximum allowed distance in meters
+
+The Backend is dockerized and can be started with the correct port mapping with the following command:
+```
+docker-compose up   
+```      
+
 ## About
 This is a project made by Alexander Pilz, Josefina Balzer, Igor Quaresma, Karl Felix Schewe and Phil Hüffer.

@@ -1,11 +1,10 @@
 <template>
   <v-container id="mainContainer" fluid style="height: 100vh">
     <v-row style="height: 100%">
-      <v-col v-if="showMenu"> <MenuView /> </v-col>
-      <v-col>
+      <v-col cols="12" xs="12" sm="6" v-if="showMenu"> <MenuView /> </v-col>
+      <v-col cols="12" xs="12" sm="6">
         <div id="mapContainer">
-          <!--<div class="d-none d-sm-flex align-items-center" id="iconContainer">-->
-          <div id="iconContainer">
+          <div class="d-none d-sm-flex align-items-center" id="iconContainer">
             <v-icon
               v-if="showMenu"
               @click="showMenu = !showMenu"
