@@ -25,7 +25,7 @@
         append-icon="mdi-close"
         prepend-icon="mdi-information-outline"
         @click:append="(slider.active = false), removeLayer(slider.name)"
-        @input="doRequest()"
+        @end="doRequest()"
       ></v-slider>
     </div>
     <v-divider></v-divider>
@@ -45,20 +45,21 @@
 <script>
 export default {
   name: "MenuView",
-  emits: ['newRequest'],
+  emits: ["newRequest"],
   data() {
     return {
       sliders: [
         // All availabe sliders
         // TODO: add new layers to this list, when new layers are added to the backend.
-        //       The layers need to have the structure shown and explained below 
+        //       The layers need to have the structure shown and explained below
         {
-          name: "Museums", // the layer name that gets displayed at the layer selection 
+          name: "Museums", // the layer name that gets displayed at the layer selection
           label: "Distance to museums", // the label that gets shown at the slider
-          value: 0, // the value the slider has 
-          band:0, // the corresponding band ID the layer has in the backend
-          active: true, // wether the layer is currently selected by the user  
-          infoLabel: // the text that shall be displayed when the user hovers over the info button
+          value: 0, // the value the slider has
+          band: 0, // the corresponding band ID the layer has in the backend
+          active: true, // wether the layer is currently selected by the user
+          // the text that shall be displayed when the user hovers over the info button
+          infoLabel:
             "Move the slider to remove all areas that have a certain distance to museums",
         },
         {
@@ -75,7 +76,7 @@ export default {
       configurations: [
         // The pre-configurations that can be set upfront in the following form:
         {
-          name: "Find your Museum", // name of the configuration - gets displayed 
+          name: "Find your Museum", // name of the configuration - gets displayed
           activeSliders: ["Museums"], // the name(s) of the slider(s) that should be shown
           values: [100], // the values that the slider(s) should have
         },
@@ -85,7 +86,7 @@ export default {
           values: [0],
         },
       ],
-      response:""
+      response: "",
     };
   },
   methods: {
@@ -115,36 +116,45 @@ export default {
       }
     },
     // returns a string in the following form:
-    // "(bandId, sliderValue)" 
+    // "(bandId, sliderValue)"
 
     /**
-     * @returns String in the following form:"[(bandId, sliderValue), (bandId, sliderValue)]" 
-     * this String can be put together with <serverUrl>/request/<this string> to make the request to the backend 
+     * @returns String in the following form:"[(bandId, sliderValue), (bandId, sliderValue)]"
+     * this String can be put together with <serverUrl>/request/<this string> to make the request to the backend
      */
-    requestString(){ // outcome should look like this: [(0, 1000),(1,1500)]
-      var a=[{band:0,value:50},{band:1,value:100}];
-      a=this.getBandValueArray() //returns an array with the bandIds and the corresponding values
-      var b="["
-      for (var i in a){
-        if (i>0){b+=","}
-        b+= "(" +a[i].band.toString() +"," +a[i].value.toString() +")"
-      } 
-      b+="]"
-      return b
+    requestString() {
+      // outcome should look like this: [(0, 1000),(1,1500)]
+      var a = [
+        { band: 0, value: 50 },
+        { band: 1, value: 100 },
+      ];
+      a = this.getBandValueArray(); //returns an array with the bandIds and the corresponding values
+      var b = "[";
+      for (var i in a) {
+        if (i > 0) {
+          b += ",";
+        }
+        b += "(" + a[i].band.toString() + "," + a[i].value.toString() + ")";
+      }
+      b += "]";
+      return b;
     },
     /**
      * Gathers the bandId and current value for each active layer
      * @returns Array in the following form: [{band:0,value:50},{band:1,value:100}]
      */
-    getBandValueArray(){
+    getBandValueArray() {
       // for each active layer add the bandId and its current value in an array
-      var helpArray=[]
-      for (var i in this.sliders){
-        if (this.sliders[i].active){
-          helpArray.push({"band":this.sliders[i].band, "value":this.sliders[i].value})
+      var helpArray = [];
+      for (var i in this.sliders) {
+        if (this.sliders[i].active) {
+          helpArray.push({
+            band: this.sliders[i].band,
+            value: this.sliders[i].value,
+          });
         }
       }
-      return helpArray
+      return helpArray;
     },
     /**
      * Adjusts the shown layers according to a given configuration
@@ -179,22 +189,23 @@ export default {
     },
     /**
      * sends a request to the backend with the current parameters (e.g. http://localhost:5050/request/[(0,0),(1,50)])
-     * @emits response of the server to the parent component (MainPage), so it can be added to the map component 
+     * @emits response of the server to the parent component (MainPage), so it can be added to the map component
      */
-    async doRequest(){
-
+    async doRequest() {
       // the request to the backend to retrieve the areas that meet the current conditions (configured by the user)
-      const response = await fetch('http://localhost:5050/request/' +this.requestString())
-      const geojson = await response.json()
-      this.response = geojson
-      
-    // sends an event, that the parent component (in this case Mainpage) can listen to
-    this.$emit('newRequest', this.response)
-    }
+      const response = await fetch(
+        "http://localhost:5050/request/" + this.requestString()
+      );
+      const geojson = await response.json();
+      this.response = geojson;
+
+      // sends an event, that the parent component (in this case Mainpage) can listen to
+      this.$emit("newRequest", this.response);
+    },
   },
-  mounted(){
+  mounted() {
     // do request at mount with the initial configuration
-    this.doRequest()
-  }
+    this.doRequest();
+  },
 };
 </script>
