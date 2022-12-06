@@ -16,7 +16,11 @@
     <p class="text">Distance to ...</p>
     <br />
     <v-row v-for="slider in sliders" :key="slider.label">
-      <v-col cols="1" class="d-flex center-align justify-center">
+      <v-col
+        v-if="slider.active"
+        cols="1"
+        class="d-flex center-align justify-center"
+      >
         <v-tooltip right z-index="1000">
           <template v-slot:activator="{ on, attrs }">
             <v-icon slot="prependIcon" v-bind="attrs" v-on="on"
@@ -26,10 +30,14 @@
           <span v-html="slider.infoLabel"></span>
         </v-tooltip>
       </v-col>
-      <v-col cols="10" class="d-flex center-align justify-center">
+      <v-col
+        v-if="slider.active"
+        cols="10"
+        class="d-flex center-align justify-center"
+        style="padding-top: 15px"
+      >
         <v-slider
           hide-details
-          v-if="slider.active"
           v-model="slider.value"
           step="50"
           thumb-label="always"
@@ -40,14 +48,20 @@
           :label="slider.name + ':'"
         ></v-slider>
       </v-col>
-      <v-col cols="1" class="d-flex center-align justify-center">
+      <v-col
+        v-if="slider.active"
+        cols="1"
+        class="d-flex center-align justify-center"
+      >
         <v-tooltip left z-index="1000">
           <template v-slot:activator="{ on, attrs }">
             <v-btn
+              id="deleteBtn"
+              rounded
               elevation="0"
               depressed
               plain
-              @click:append="(slider.active = false), removeLayer(slider.name)"
+              @click="(slider.active = false), removeLayer(slider.name)"
             >
               <v-icon v-bind="attrs" v-on="on">mdi-close</v-icon>
             </v-btn>
@@ -239,3 +253,4 @@ export default {
   },
 };
 </script>
+<style></style>
