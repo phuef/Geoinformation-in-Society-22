@@ -20,7 +20,8 @@ BaseWSGIServer.protocol_version = "HTTP/1.1"
 
 #define app
 app = Flask(__name__)
-CORS(app, supports_credentials=True, resources={r"/request/*": {"origins": "*"}}) #allow cross-origin-requests
+#allow cross-origin-requests from all origins
+CORS(app, supports_credentials=True, resources={r"/request/*": {"origins": "*"}}) 
 
 '''
 * Title: Hello-World Route 
@@ -37,26 +38,28 @@ def helloWorld():
 '''
 @app.route('/request/<requestParams>', methods = ['GET', 'OPTIONS'])
 def raster(requestParams):
-    if(request.method == 'GET'):
+    if(request.method == 'GET'): #actual request using GET
         stack = DistanceStack() #create stack
         #stack.distanceStackInfo()
         params = literal_eval(requestParams) #parse parameters
         fileID = stack.filterStack(params) #filter stack
         
         geojson = json.load(open('usr/src/backend/results/' + fileID + '.json')) #load results
-        response = make_response(geojson)
+        response = make_response(geojson) #generate response
+        #add headers
         response.headers.add("Access-Control-Allow-Origin", "*")
         response.headers.add("Access-Control-Allow-Headers", "*")
         response.headers.add("Access-Control-Allow-Methods", "*")
         response.headers.add("Referrer-Policy", 'no-referrer')
         return response, 200 #return results
-    elif(request.method == 'OPTIONS'):
-        response = make_response()
+    elif(request.method == 'OPTIONS'): #preflight request using OPTIONS
+        response = make_response() #generate response
+        #add headers
         response.headers.add("Access-Control-Allow-Origin", "*")
         response.headers.add("Access-Control-Allow-Headers", "*")
         response.headers.add("Access-Control-Allow-Methods", "*")
         response.headers.add("Referrer-Policy", 'no-referrer')
-        return response
+        return response, 204 #return preflight response
 
 #run application
 if __name__ == '__main__':
