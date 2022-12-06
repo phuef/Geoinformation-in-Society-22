@@ -26,7 +26,7 @@
           <span v-html="slider.infoLabel"></span>
         </v-tooltip>
       </v-col>
-      <v-col cols="11" class="d-flex center-align justify-center">
+      <v-col cols="10" class="d-flex center-align justify-center">
         <v-slider
           hide-details
           v-if="slider.active"
@@ -38,9 +38,22 @@
           max="1000"
           dense
           :label="slider.label + ':'"
-          append-icon="mdi-close"
-          @click:append="(slider.active = false), removeLayer(slider.name)"
         ></v-slider>
+      </v-col>
+      <v-col cols="1" class="d-flex center-align justify-center">
+        <v-tooltip left z-index="1000">
+          <template v-slot:activator="{ on, attrs }">
+            <v-btn
+              elevation="0"
+              depressed
+              plain
+              @click:append="(slider.active = false), removeLayer(slider.name)"
+            >
+              <v-icon v-bind="attrs" v-on="on">mdi-close</v-icon>
+            </v-btn>
+          </template>
+          <span>Delete layer</span>
+        </v-tooltip>
       </v-col>
     </v-row>
     <br />
