@@ -17,7 +17,7 @@ RUN apt install python3-pip -y
 #install python packages
 RUN pip3 install --no-cache-dir -r /usr/src/requirements.txt
 
-#Add RDI
+#add backend
 COPY ./backend /usr/src/backend
 
 CMD [ "python3", "usr/src/backend/app.py"]
