@@ -5,9 +5,17 @@
 </template>
 
 <script>
-import L from "leaflet";
+// eslint-disable-next-line
+import L, { featureGroup } from "leaflet";
 import "leaflet/dist/leaflet.css";
-//import 'leaflet';
+delete L.Icon.Default.prototype._getIconUrl;
+
+L.Icon.Default.mergeOptions({
+  iconRetinaUrl: require("leaflet/dist/images/marker-icon-2x.png"),
+  iconUrl: require("leaflet/dist/images/marker-icon.png"),
+  shadowUrl: require("leaflet/dist/images/marker-shadow.png"),
+});
+
 export default {
   name: "MapView",
   data() {
@@ -21,6 +29,20 @@ export default {
       map: null,
       tileLayer: null,
       colorblindLayer: null,
+      resultLayer: null,
+      resultPane: null,
+      geojsonFeature: {
+        type: "Feature",
+        properties: {
+          name: "Coors Field",
+          amenity: "Baseball Stadium",
+          popupContent: "This is where the Rockies play!",
+        },
+        geometry: {
+          type: "Point",
+          coordinates: [7.62451171875, 51.96288477548509],
+        },
+      },
     };
   },
   methods: {
@@ -32,10 +54,10 @@ export default {
 
       // To make sure, that the two basement options lie underneath the outputlayers which should be visualized,
       // a Pane with a z-Index gets created, which makes sure they will always lie underneath.
-      //this.map.createPane("basemap");
-      //this.map.getPane("basemap").style.zIndex = 10;
+      this.map.createPane("basemap");
+      this.map.getPane("basemap").style.zIndex = 10;
       // To keep sure the tiles are not able to grab this line gets added.
-      //this.map.getPane("basemap").style.pointerEvents = "none";
+      this.map.getPane("basemap").style.pointerEvents = "none";
 
       const osmUrl = "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png";
       const osmAttr =
@@ -48,7 +70,7 @@ export default {
 
       this.tileLayer = L.tileLayer(osmUrl, {
         attribution: osmAttr,
-        //pane: "basemap", // Both layers are added to the basemap-pane.
+        pane: "basemap", // Both layers are added to the basemap-pane.
       }).addTo(this.map);
 
       this.colorblindLayer = L.tileLayer(colorblindUrl, {
@@ -61,77 +83,68 @@ export default {
         "Colorblind map": this.colorblindLayer,
       };
       L.control.layers(basemaps).addTo(this.map);
-      
+
       L.control
         .zoom({
           position: "topright",
         })
         .addTo(this.map);
-
-      
     },
   },
-  props:{
-    geojson:{type:Object,
-    default(){return{
-      "crs": {
-        "properties": {
-          "name": "urn:ogc:def:crs:EPSG::3857"
-        },
-        "type": "name"
+  props: {
+    geojson: {
+      type: Object,
+      default() {
+        return {
+          crs: {
+            properties: {
+              name: "urn:ogc:def:crs:EPSG::3857",
+            },
+            type: "name",
+          },
+          features: [
+            {
+              geometry: {
+                coordinates: [
+                  [
+                    [7.62451171875, 51.96288477548509],
+                    [7.595750026234441, 51.96942882531462],
+                  ],
+                ],
+                type: "Polygon",
+              },
+              properties: {
+                DN: 0.0,
+              },
+              type: "Feature",
+            },
+          ],
+          name: "test",
+          type: "FeatureCollection",
+        };
       },
-      "features": [
-        {
-          "geometry": {
-            "coordinates": [
-              [
-                [
-                  831978.0122,
-                  6810985.9256
-                ],
-                [
-                  831978.0122,
-                  6771275.9256
-                ],
-                [
-                  865438.0122,
-                  6771275.9256
-                ],
-                [
-                  865438.0122,
-                  6810985.9256
-                ],
-                [
-                  831978.0122,
-                  6810985.9256
-                ]
-              ]
-            ],
-            "type": "Polygon"
-          },
-          "properties": {
-            "DN": 0.0
-          },
-          "type": "Feature"
-        }
-      ],
-      "name": "test",
-      "type": "FeatureCollection"
-    }}}
+    },
   },
   mounted() {
     this.initMap();
+    console.log(this.map);
   },
-  watch:{
-    geojson: function(newGeojson){ // TODO: when the object changes add it to the map
-      var a=JSON.parse(JSON.stringify(newGeojson))
-      console.log(a);
-      //L.geoJSON(a).addTo(this.map); // add the geojson object to the map
+  watch: {
+    geojson: function (newGeojson) {
+      // TODO: when the object changes add it to the map
+      var geojsonColl = JSON.parse(JSON.stringify(newGeojson));
+      //var geojsonColl = JSON.parse(JSON.stringify(this.geojsonFeature));
+      console.log(geojsonColl);
+      console.log(this.geojsonFeature);
+      //this.map.createPane("results");
+      //this.map.getPane("results").style.zIndex = 15;
+      this.resultLayer = L.geoJSON().addTo(this.map);
+      this.resultLayer.addData(geojsonColl);
+
       // TOmaybeDO: adjust the bounds to the size of the geojson
-      // this.map.fitBounds(geoLayer.getBounds())
-    }
-  }
-  
+      //this.map.fitBounds(geoLayer.getBounds());
+    },
+  },
 };
 </script>
 
