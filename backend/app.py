@@ -9,8 +9,8 @@ from flask import Flask, request, make_response
 from flask_cors import CORS
 from ast import literal_eval
 import json
-from utils_cy import DistanceStack #import "cythonized" utils
-#from utils import DistanceStack
+#from utils_cy import DistanceStack #import "cythonized" utils
+from utils import DistanceStack, filterResult
 
 #configure flask to use HTTP 1.1 only
 from werkzeug.serving import WSGIRequestHandler
@@ -44,13 +44,15 @@ def raster(requestParams):
         params = literal_eval(requestParams) #parse parameters
         fileID = stack.filterStack(params) #filter stack
         
-        geojson = json.load(open('usr/src/backend/results/' + fileID + '.json')) #load results
+        geojson = filterResult('usr/src/backend/results/' + fileID + '.json') #load and filter results
+        
         response = make_response(geojson) #generate response
         #add headers
         response.headers.add("Access-Control-Allow-Origin", "*")
         response.headers.add("Access-Control-Allow-Headers", "*")
         response.headers.add("Access-Control-Allow-Methods", "*")
         response.headers.add("Referrer-Policy", 'no-referrer')
+        
         return response, 200 #return results
     elif(request.method == 'OPTIONS'): #preflight request using OPTIONS
         response = make_response() #generate response

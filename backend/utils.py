@@ -5,6 +5,7 @@ Created on Wed Nov 23 16:08:13 2022
 @author: Alexander Pilz
 """
 from osgeo import gdal, osr, ogr
+import json
 import uuid
 
 '''
@@ -22,33 +23,33 @@ class DistanceStack:
         for i in range(1, raster.RasterCount + 1): #iterate over bands in raster
             band = raster.GetRasterBand(i) #extract band
             self.bands.append(band)
-            self.bands[i-1].ComputeStatistics(0) #compute some key values for each band
+            #self.bands[i-1].ComputeStatistics(0) #compute some key values for each band
         
         
         self.transform = raster.GetGeoTransform() #store transformation
-        self.projection = raster.GetProjection() #store projection
-        self.srs = osr.SpatialReference(wkt=self.projection) #store coordinate reference system
+        #self.projection = raster.GetProjection() #store projection
+        #self.srs = osr.SpatialReference(wkt=self.projection) #store coordinate reference system
         raster = band = None #free variables
-        
+       
     '''
     * Title: distanceStackInfo
     * Description: Outputs some key values of the raster
     '''
-    def distanceStackInfo(self):
-        print("==> Projection: ", self.raster.GetProjection())  # get projection
-        print("==> Columns:", self.raster.RasterXSize)  # number of columns
-        print("==> Rows:", self.raster.RasterYSize)  # number of rows
-        print("==> Band count:", self.raster.RasterCount)  # number of bands
+    #def distanceStackInfo(self):
+    #    print("==> Projection: ", self.raster.GetProjection())  # get projection
+    #    print("==> Columns:", self.raster.RasterXSize)  # number of columns
+    #    print("==> Rows:", self.raster.RasterYSize)  # number of rows
+    #    print("==> Band count:", self.raster.RasterCount)  # number of bands
         
     '''
     * Title: distanceBandInfo
     * Description: Outputs some key values of a band of the raster
     * Parameters: A band number of the underlying raster 
     '''
-    def distanceBandInfo(self, band):
-        print("==> Minimum:", self.bands[band].GetMinimum())
-        print("==> Maximum:", self.bands[band].GetMaximum())
-        print("==> NoData value:", self.bands[band].GetNoDataValue())
+    #def distanceBandInfo(self, band):
+    #    print("==> Minimum:", self.bands[band].GetMinimum())
+    #    print("==> Maximum:", self.bands[band].GetMaximum())
+    #    print("==> NoData value:", self.bands[band].GetNoDataValue())
         
     '''
     * Title: filterStack
@@ -59,6 +60,8 @@ class DistanceStack:
     * parameters and which do not
     '''
     def filterStack(self, filterValues):
+        srs = ogr.osr.SpatialReference()
+        srs.ImportFromEPSG(3857)   
         filteredArrays = [] #initialize list for filtered bands
         
         for i in range(0, len(filterValues)): #iterate over filter values
@@ -74,17 +77,29 @@ class DistanceStack:
         driver = gdal.GetDriverByName('MEM') #initialize in memory driver
         output = driver.Create('', xsize=self.raster.RasterXSize, ysize=self.raster.RasterYSize, bands=1, eType=gdal.GDT_Byte) #create rater
         output.SetGeoTransform(self.transform) #set geotransform of output image
-        output.SetProjection(self.projection) #set projection of output image
+        output.SetProjection(srs.ExportToWkt()) #set projection of output image
         output.GetRasterBand(1).WriteArray(combinedArray.astype(int))  #write the array to the raster
         output.GetRasterBand(1).SetNoDataValue(-999)  #set the no data value
         
         drv = ogr.GetDriverByName('GEOJSON') #initialize GEOJSON driver
         outfile = drv.CreateDataSource("usr/src/backend/results/" + self.uuid + ".json") #create GEOJSON
-        outlayer = outfile.CreateLayer('test', srs = self.srs, geom_type=ogr.wkbPolygon) #add layer to GEOJSON
+        outlayer = outfile.CreateLayer('test', srs=srs, geom_type=ogr.wkbPolygon) #add layer to GEOJSON
         newField = ogr.FieldDefn('DN', ogr.OFTReal) #create field
         outlayer.CreateField(newField) #add field to GEOJSON
         
         gdal.Polygonize(output.GetRasterBand(1), None, outlayer, 0, []) #polygonize combined raster based on pixel values
         output = outfile = outlayer =  None #free variables
         return self.uuid #return uuid of DistanceStack
+    
+def filterResult(geojson):
+    with open(geojson) as f:
+        data = json.load(f)
+    for feature in data['features']:
+        print(feature['properties'])
+        if(feature['properties']['DN'] == 0):
+            data['features'].remove(feature)
+        
+    return data
+                
+
 
