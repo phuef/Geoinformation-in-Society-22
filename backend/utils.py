@@ -61,7 +61,7 @@ class DistanceStack:
     '''
     def filterStack(self, filterValues):
         srs = ogr.osr.SpatialReference()
-        srs.ImportFromEPSG(3857)   
+        srs.ImportFromEPSG(4326)   
         filteredArrays = [] #initialize list for filtered bands
         
         for i in range(0, len(filterValues)): #iterate over filter values
@@ -98,6 +98,8 @@ def filterResult(geojson):
         print(feature['properties'])
         if(feature['properties']['DN'] == 0):
             data['features'].remove(feature)
+        feature['geometry']['coordinates'] = feature['geometry']['coordinates'][::-1]
+    data['crs'] = "WGS-84 - EPSG: 4326"
         
     return data
                 
