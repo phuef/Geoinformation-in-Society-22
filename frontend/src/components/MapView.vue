@@ -127,11 +127,11 @@ export default {
   },
   mounted() {
     this.initMap();
-    console.log(this.map);
   },
   watch: {
     geojson: function (newGeojson) {
       // TODO: when the object changes add it to the map
+      console.log(newGeojson);
       var geojsonColl = JSON.parse(JSON.stringify(newGeojson));
       //var geojsonColl = JSON.parse(JSON.stringify(this.geojsonFeature));
       console.log(geojsonColl);
