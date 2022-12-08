@@ -9,7 +9,7 @@
 import L, { featureGroup } from "leaflet";
 import "leaflet/dist/leaflet.css";
 delete L.Icon.Default.prototype._getIconUrl;
-
+// required, cause otherwise the marker icons (icon itself and shadow) are not available
 L.Icon.Default.mergeOptions({
   iconRetinaUrl: require("leaflet/dist/images/marker-icon-2x.png"),
   iconUrl: require("leaflet/dist/images/marker-icon.png"),
