@@ -1,6 +1,11 @@
 <template>
-  <v-container id="mainContainer" fluid style="height: 100vh">
-    <v-row style="height: 100%">
+  <v-container
+    id="mainContainer"
+    class="fill-height"
+    fluid
+    style="height: 100vh"
+  >
+    <v-row no-gutters class="fill-height" style="height: 100%">
       <v-col cols="12" xs="12" sm="6" v-if="showMenu">
         <MenuView @newRequest="processNewRequest" />
       </v-col>

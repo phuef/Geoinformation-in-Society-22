@@ -43,6 +43,7 @@ export default {
           coordinates: [7.62451171875, 51.96288477548509],
         },
       },
+      resultJson: null,
     };
   },
   methods: {
@@ -75,13 +76,19 @@ export default {
 
       this.colorblindLayer = L.tileLayer(colorblindUrl, {
         attribution: colorblindAttr,
-        //subdomains: "abcd",
       });
 
       const basemaps = {
         "Open Street Map": this.tileLayer,
         "Colorblind map": this.colorblindLayer,
       };
+      console.log(this.resultLayer);
+      console.log(this.resultJson);
+      this.resultLayer = L.geoJSON().addTo(this.map);
+      if (this.resultJson != null) {
+        this.resultLayer.addData(this.resultJson);
+      }
+
       L.control.layers(basemaps).addTo(this.map);
 
       L.control
@@ -89,6 +96,21 @@ export default {
           position: "topright",
         })
         .addTo(this.map);
+    },
+    changeGeojson: function (newGeojson) {
+      //this.resultJson = json;
+      this.resultJson = JSON.parse(JSON.stringify(newGeojson));
+      try {
+        this.map.removeLayer(this.resultLayer);
+      } catch (error) {
+        //pass
+      }
+
+      this.resultLayer = L.geoJSON().addTo(this.map);
+      this.resultLayer.addData(this.resultJson);
+
+      console.log("by change", this.resultJson);
+      console.log(this.resultLayer);
     },
   },
   props: {
@@ -131,15 +153,19 @@ export default {
   watch: {
     geojson: function (newGeojson) {
       // TODO: when the object changes add it to the map
-      console.log(newGeojson);
-      var geojsonColl = JSON.parse(JSON.stringify(newGeojson));
+      //var geojsonColl = JSON.parse(JSON.stringify(newGeojson));
       //var geojsonColl = JSON.parse(JSON.stringify(this.geojsonFeature));
-      console.log(geojsonColl);
-      console.log(this.geojsonFeature);
-      //this.map.createPane("results");
-      //this.map.getPane("results").style.zIndex = 15;
+      //console.log(geojsonColl);
+      this.changeGeojson(newGeojson);
+
+      /*try {
+        this.map.removeLayer(this.resultLayer);
+      } catch (error) {
+        //pass
+      }
+
       this.resultLayer = L.geoJSON().addTo(this.map);
-      this.resultLayer.addData(geojsonColl);
+      this.resultLayer.addData(geojsonColl);*/
 
       // TOmaybeDO: adjust the bounds to the size of the geojson
       //this.map.fitBounds(geoLayer.getBounds());
