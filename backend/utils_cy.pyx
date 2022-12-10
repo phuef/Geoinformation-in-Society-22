@@ -73,8 +73,8 @@ class DistanceStack:
         combinedArray = filteredArrays[0] #initialize combined array
         
         cdef int y
-        for y in filteredArrays: #iterate over filtered bands
-            combinedArray *= y #combine boolean values
+        for y in range(0, len(filteredArrays)): #iterate over filtered bands
+            combinedArray *= filteredArrays[y] #combine boolean values
             
         driver = gdal.GetDriverByName('MEM') #initialize in memory driver
         output = driver.Create('', xsize=self.raster.RasterXSize, ysize=self.raster.RasterYSize, bands=1, eType=gdal.GDT_Byte) #create rater
