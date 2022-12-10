@@ -95,7 +95,6 @@ def filterResult(geojson):
     with open(geojson) as f:
         data = json.load(f)
     for feature in data['features']:
-        print(feature['properties'])
         if(feature['properties']['DN'] == 0):
             data['features'].remove(feature)
         feature['geometry']['coordinates'] = feature['geometry']['coordinates'][::-1]

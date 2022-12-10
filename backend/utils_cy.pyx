@@ -4,11 +4,9 @@ Created on Wed Nov 23 16:08:13 2022
 
 @author: Alexander Pilz
 """
-from osgeo import gdal
+from osgeo import gdal, osr, ogr
+import json
 import uuid
-
-from osgeo import osr, ogr
-from werkzeug.routing import BaseConverter
 
 '''
 * Title: DistanceStack
@@ -16,43 +14,42 @@ from werkzeug.routing import BaseConverter
 * raster is handled and computation on it are realized
 '''
 cdef class DistanceStack:
-    cdef def __init__(self):
-        raster = gdal.Open('usr/src/backend/data/composit10x10.tif', 0)
-        self.uuid = str(uuid.uuid4())
-        self.raster = raster
-        self.bands = []
-
-        cdef int i
-        for i in range(1, raster.RasterCount + 1):
-            band = raster.GetRasterBand(i)
+    #Constructor
+    def  __init__(self):
+        raster = gdal.Open('usr/src/backend/data/composit10x10.tif', 0) #open composit distance raster file
+        self.uuid = str(uuid.uuid4()) #generate unique identifier
+        self.raster = raster #store raster
+        self.bands = [] #initialize bands
+        for i in range(1, raster.RasterCount + 1): #iterate over bands in raster
+            band = raster.GetRasterBand(i) #extract band
             self.bands.append(band)
-            self.bands[i-1].ComputeStatistics(0)
+            #self.bands[i-1].ComputeStatistics(0) #compute some key values for each band
         
         
-        self.transform = raster.GetGeoTransform()
-        self.projection = raster.GetProjection()
-        self.srs = osr.SpatialReference(wkt=self.projection)
-        raster = band = None
-        
+        self.transform = raster.GetGeoTransform() #store transformation
+        #self.projection = raster.GetProjection() #store projection
+        #self.srs = osr.SpatialReference(wkt=self.projection) #store coordinate reference system
+        raster = band = None #free variables
+       
     '''
     * Title: distanceStackInfo
     * Description: Outputs some key values of the raster
     '''
-    cdef def distanceStackInfo(self):
-        print("==> Projection: ", self.raster.GetProjection())  # get projection
-        print("==> Columns:", self.raster.RasterXSize)  # number of columns
-        print("==> Rows:", self.raster.RasterYSize)  # number of rows
-        print("==> Band count:", self.raster.RasterCount)  # number of bands
+    #def distanceStackInfo(self):
+    #    print("==> Projection: ", self.raster.GetProjection())  # get projection
+    #    print("==> Columns:", self.raster.RasterXSize)  # number of columns
+    #    print("==> Rows:", self.raster.RasterYSize)  # number of rows
+    #    print("==> Band count:", self.raster.RasterCount)  # number of bands
         
     '''
     * Title: distanceBandInfo
     * Description: Outputs some key values of a band of the raster
     * Parameters: A band number of the underlying raster 
     '''
-    cdef def distanceBandInfo(self, band):
-        print("==> Minimum:", self.bands[band].GetMinimum())
-        print("==> Maximum:", self.bands[band].GetMaximum())
-        print("==> NoData value:", self.bands[band].GetNoDataValue())
+    #def distanceBandInfo(self, band):
+    #    print("==> Minimum:", self.bands[band].GetMinimum())
+    #    print("==> Maximum:", self.bands[band].GetMaximum())
+    #    print("==> NoData value:", self.bands[band].GetNoDataValue())
         
     '''
     * Title: filterStack
@@ -62,34 +59,52 @@ cdef class DistanceStack:
     * Output: The function outputs a GEOJSON containing polygons where the DN value denotes which ares correspond to the
     * parameters and which do not
     '''
-    cdef def filterStack(self, filterValues):
-        filteredArrays = [] 
+    cdef filterStack(self, filterValues):
+        srs = ogr.osr.SpatialReference()
+        srs.ImportFromEPSG(4326)   
+        filteredArrays = [] #initialize list for filtered bands
+        
+        cdef int i
+        for i in range(0, len(filterValues)): #iterate over filter values
+            array = self.bands[filterValues[i][0]].ReadAsArray() #read corresponding band from raster
+            filteredArray = array <= filterValues[i][1]/10 #filter band
+            filteredArrays.append(filteredArray) #add filtered array to list
+            
+        combinedArray = filteredArrays[0] #initialize combined array
         
         cdef int y
-        for y in range(0, len(filterValues)):
-            array = self.bands[filterValues[y][0]].ReadAsArray()
-            filteredArray = array <= filterValues[y][1]/10
-            filteredArrays.append(filteredArray)
-        combinedArray = filteredArrays[0]
-        
-        cdef int x
-        for x in range(0, len(filteredArrays)):
-            combinedArray *= filteredArrays[x]
+        for y in filteredArrays: #iterate over filtered bands
+            combinedArray *= y #combine boolean values
             
-        driver = gdal.GetDriverByName('MEM')
-        output = driver.Create('', xsize=self.raster.RasterXSize, ysize=self.raster.RasterYSize, bands=1, eType=gdal.GDT_Byte)
+        driver = gdal.GetDriverByName('MEM') #initialize in memory driver
+        output = driver.Create('', xsize=self.raster.RasterXSize, ysize=self.raster.RasterYSize, bands=1, eType=gdal.GDT_Byte) #create rater
         output.SetGeoTransform(self.transform) #set geotransform of output image
-        output.SetProjection(self.projection)
-        output.GetRasterBand(1).WriteArray(combinedArray.astype(int))  # write the array to the raster
-        output.GetRasterBand(1).SetNoDataValue(-999)  # set the no data value
+        output.SetProjection(srs.ExportToWkt()) #set projection of output image
+        output.GetRasterBand(1).WriteArray(combinedArray.astype(int))  #write the array to the raster
+        output.GetRasterBand(1).SetNoDataValue(-999)  #set the no data value
         
-        drv = ogr.GetDriverByName('GEOJSON')
-        outfile = drv.CreateDataSource("usr/src/backend/results/" + self.uuid + ".json") 
-        outlayer = outfile.CreateLayer('valid', srs = self.srs, geom_type=ogr.wkbPolygon)
-        newField = ogr.FieldDefn('DN', ogr.OFTReal)
-        outlayer.CreateField(newField)
+        drv = ogr.GetDriverByName('GEOJSON') #initialize GEOJSON driver
+        outfile = drv.CreateDataSource("usr/src/backend/results/" + self.uuid + ".json") #create GEOJSON
+        outlayer = outfile.CreateLayer('test', srs=srs, geom_type=ogr.wkbPolygon) #add layer to GEOJSON
+        newField = ogr.FieldDefn('DN', ogr.OFTReal) #create field
+        outlayer.CreateField(newField) #add field to GEOJSON
         
-        gdal.Polygonize(output.GetRasterBand(1), None, outlayer, 0, [])
-        output = outfile = outlayer =  None 
-        return self.uuid
+        gdal.Polygonize(output.GetRasterBand(1), None, outlayer, 0, []) #polygonize combined raster based on pixel values
+        output = outfile = outlayer =  None #free variables
+        return self.uuid #return uuid of DistanceStack
+    
+cdef filterResult(geojson):
+    with open(geojson) as f:
+        data = json.load(f)
+        
+    for feature in data['features']:
+        print(feature['properties'])
+        if(feature['properties']['DN'] == 0):
+            data['features'].remove(feature)
+        feature['geometry']['coordinates'] = feature['geometry']['coordinates'][::-1]
+    data['crs'] = "WGS-84 - EPSG: 4326"
+        
+    return data
+                
+
 

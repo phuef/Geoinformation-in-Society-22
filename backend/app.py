@@ -9,8 +9,8 @@ from flask import Flask, request, make_response
 from flask_cors import CORS
 from ast import literal_eval
 import json
-#from utils_cy import DistanceStack #import "cythonized" utils
-from utils import DistanceStack, filterResult
+from utils_cy import DistanceStack #import "cythonized" utils
+#from utils import DistanceStack, filterResult
 
 #configure flask to use HTTP 1.1 only
 from werkzeug.serving import WSGIRequestHandler
