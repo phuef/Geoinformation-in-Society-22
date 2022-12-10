@@ -13,7 +13,7 @@ import uuid
 * Description: The class DistanceStack is the main class with which the distance 
 * raster is handled and computation on it are realized
 '''
-cdef class DistanceStack:
+class DistanceStack:
     #Constructor
     def  __init__(self):
         raster = gdal.Open('usr/src/backend/data/composit10x10.tif', 0) #open composit distance raster file
@@ -59,7 +59,7 @@ cdef class DistanceStack:
     * Output: The function outputs a GEOJSON containing polygons where the DN value denotes which ares correspond to the
     * parameters and which do not
     '''
-    cdef filterStack(self, filterValues):
+    def filterStack(self, filterValues):
         srs = ogr.osr.SpatialReference()
         srs.ImportFromEPSG(4326)   
         filteredArrays = [] #initialize list for filtered bands
