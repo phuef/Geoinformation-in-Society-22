@@ -93,8 +93,8 @@ class DistanceStack:
         output = outfile = outlayer =  None #free variables
         return self.uuid #return uuid of DistanceStack
     
-    def filterResult(geojson):
-        with open(geojson) as f:
+    def filterResult(self):
+        with open('usr/src/backend/results/' + self.uuid + '.json') as f:
             data = json.load(f)
             
         for feature in data['features']:

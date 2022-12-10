@@ -44,7 +44,7 @@ def raster(requestParams):
         params = literal_eval(requestParams) #parse parameters
         fileID = stack.filterStack(params) #filter stack
         
-        geojson = utils_cy.filterResult('usr/src/backend/results/' + fileID + '.json') #load and filter results
+        geojson = filterResult('usr/src/backend/results/' + fileID + '.json') #load and filter results
         
         response = make_response(geojson) #generate response
         #add headers

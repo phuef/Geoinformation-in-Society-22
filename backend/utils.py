@@ -91,16 +91,16 @@ class DistanceStack:
         output = outfile = outlayer =  None #free variables
         return self.uuid #return uuid of DistanceStack
     
-def filterResult(geojson):
-    with open(geojson) as f:
-        data = json.load(f)
-    for feature in data['features']:
-        if(feature['properties']['DN'] == 0):
-            data['features'].remove(feature)
-        feature['geometry']['coordinates'] = feature['geometry']['coordinates'][::-1]
-    data['crs'] = "WGS-84 - EPSG: 4326"
-        
-    return data
+    def filterResult(self):
+        with open('usr/src/backend/results/' + self.uuid + '.json') as f:
+            data = json.load(f)
+        for feature in data['features']:
+            if(feature['properties']['DN'] == 0):
+                data['features'].remove(feature)
+            feature['geometry']['coordinates'] = feature['geometry']['coordinates'][::-1]
+        data['crs'] = "WGS-84 - EPSG: 4326"
+            
+        return data
                 
 
 
