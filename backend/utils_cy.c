@@ -1507,6 +1507,7 @@ int __pyx_module_is_main_utils_cy = 0;
 static PyObject *__pyx_builtin_range;
 static PyObject *__pyx_builtin_open;
 static PyObject *__pyx_builtin_print;
+static const char __pyx_k_f[] = "f";
 static const char __pyx_k_i[] = "i";
 static const char __pyx_k_y[] = "y";
 static const char __pyx_k_DN[] = "DN";
@@ -1520,6 +1521,7 @@ static const char __pyx_k_osr[] = "osr";
 static const char __pyx_k_srs[] = "srs";
 static const char __pyx_k_Open[] = "Open";
 static const char __pyx_k_band[] = "band";
+static const char __pyx_k_data[] = "data";
 static const char __pyx_k_exit[] = "__exit__";
 static const char __pyx_k_gdal[] = "gdal";
 static const char __pyx_k_init[] = "__init__";
@@ -1554,6 +1556,8 @@ static const char __pyx_k_remove[] = "remove";
 static const char __pyx_k_test_2[] = "__test__";
 static const char __pyx_k_GEOJSON[] = "GEOJSON";
 static const char __pyx_k_OFTReal[] = "OFTReal";
+static const char __pyx_k_feature[] = "feature";
+static const char __pyx_k_geojson[] = "geojson";
 static const char __pyx_k_outfile[] = "outfile";
 static const char __pyx_k_prepare[] = "__prepare__";
 static const char __pyx_k_GDT_Byte[] = "GDT_Byte";
@@ -1580,6 +1584,7 @@ static const char __pyx_k_RasterYSize[] = "RasterYSize";
 static const char __pyx_k_ReadAsArray[] = "ReadAsArray";
 static const char __pyx_k_coordinates[] = "coordinates";
 static const char __pyx_k_filterStack[] = "filterStack";
+static const char __pyx_k_filterResult[] = "filterResult";
 static const char __pyx_k_filterValues[] = "filterValues";
 static const char __pyx_k_utils_cy_pyx[] = "utils_cy.pyx";
 static const char __pyx_k_DistanceStack[] = "DistanceStack";
@@ -1600,6 +1605,7 @@ static const char __pyx_k_cline_in_traceback[] = "cline_in_traceback";
 static const char __pyx_k_DistanceStack___init[] = "DistanceStack.__init__";
 static const char __pyx_k_usr_src_backend_results[] = "usr/src/backend/results/";
 static const char __pyx_k_DistanceStack_filterStack[] = "DistanceStack.filterStack";
+static const char __pyx_k_DistanceStack_filterResult[] = "DistanceStack.filterResult";
 static const char __pyx_k_Created_on_Wed_Nov_23_16_08_13[] = "\nCreated on Wed Nov 23 16:08:13 2022\n\n@author: Alexander Pilz\n";
 static const char __pyx_k_usr_src_backend_data_composit10x[] = "usr/src/backend/data/composit10x10.tif";
 static PyObject *__pyx_n_s_Create;
@@ -1609,6 +1615,7 @@ static PyObject *__pyx_n_s_CreateLayer;
 static PyObject *__pyx_n_u_DN;
 static PyObject *__pyx_n_s_DistanceStack;
 static PyObject *__pyx_n_s_DistanceStack___init;
+static PyObject *__pyx_n_s_DistanceStack_filterResult;
 static PyObject *__pyx_n_s_DistanceStack_filterStack;
 static PyObject *__pyx_n_s_ExportToWkt;
 static PyObject *__pyx_n_s_FieldDefn;
@@ -1642,18 +1649,23 @@ static PyObject *__pyx_n_s_cline_in_traceback;
 static PyObject *__pyx_n_s_combinedArray;
 static PyObject *__pyx_n_u_coordinates;
 static PyObject *__pyx_n_u_crs;
+static PyObject *__pyx_n_s_data;
 static PyObject *__pyx_n_s_doc;
 static PyObject *__pyx_n_s_driver;
 static PyObject *__pyx_n_s_drv;
 static PyObject *__pyx_n_s_eType;
 static PyObject *__pyx_n_s_enter;
 static PyObject *__pyx_n_s_exit;
+static PyObject *__pyx_n_s_f;
+static PyObject *__pyx_n_s_feature;
 static PyObject *__pyx_n_u_features;
+static PyObject *__pyx_n_s_filterResult;
 static PyObject *__pyx_n_s_filterStack;
 static PyObject *__pyx_n_s_filterValues;
 static PyObject *__pyx_n_s_filteredArray;
 static PyObject *__pyx_n_s_filteredArrays;
 static PyObject *__pyx_n_s_gdal;
+static PyObject *__pyx_n_s_geojson;
 static PyObject *__pyx_n_s_geom_type;
 static PyObject *__pyx_n_u_geometry;
 static PyObject *__pyx_n_s_i;
@@ -1698,6 +1710,7 @@ static PyObject *__pyx_n_s_y;
 static PyObject *__pyx_n_s_ysize;
 static PyObject *__pyx_pf_8utils_cy_13DistanceStack___init__(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_self); /* proto */
 static PyObject *__pyx_pf_8utils_cy_13DistanceStack_2filterStack(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_self, PyObject *__pyx_v_filterValues); /* proto */
+static PyObject *__pyx_pf_8utils_cy_13DistanceStack_4filterResult(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_geojson); /* proto */
 static PyObject *__pyx_int_0;
 static PyObject *__pyx_int_1;
 static PyObject *__pyx_int_10;
@@ -1711,8 +1724,10 @@ static PyObject *__pyx_tuple__4;
 static PyObject *__pyx_tuple__5;
 static PyObject *__pyx_tuple__7;
 static PyObject *__pyx_tuple__9;
+static PyObject *__pyx_tuple__11;
 static PyObject *__pyx_codeobj__8;
 static PyObject *__pyx_codeobj__10;
+static PyObject *__pyx_codeobj__12;
 /* Late includes */
 
 /* "utils_cy.pyx":18
@@ -2848,7 +2863,7 @@ static PyObject *__pyx_pf_8utils_cy_13DistanceStack_2filterStack(CYTHON_UNUSED P
  *         output = outfile = outlayer =  None #free variables
  *         return self.uuid #return uuid of DistanceStack             # <<<<<<<<<<<<<<
  * 
- * cdef filterResult(geojson):
+ *     def filterResult(geojson):
  */
   __Pyx_XDECREF(__pyx_r);
   __pyx_t_7 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_uuid); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 94, __pyx_L1_error)
@@ -2895,12 +2910,26 @@ static PyObject *__pyx_pf_8utils_cy_13DistanceStack_2filterStack(CYTHON_UNUSED P
 /* "utils_cy.pyx":96
  *         return self.uuid #return uuid of DistanceStack
  * 
- * cdef filterResult(geojson):             # <<<<<<<<<<<<<<
- *     with open(geojson) as f:
- *         data = json.load(f)
+ *     def filterResult(geojson):             # <<<<<<<<<<<<<<
+ *         with open(geojson) as f:
+ *             data = json.load(f)
  */
 
-static PyObject *__pyx_f_8utils_cy_filterResult(PyObject *__pyx_v_geojson) {
+/* Python wrapper */
+static PyObject *__pyx_pw_8utils_cy_13DistanceStack_5filterResult(PyObject *__pyx_self, PyObject *__pyx_v_geojson); /*proto*/
+static PyMethodDef __pyx_mdef_8utils_cy_13DistanceStack_5filterResult = {"filterResult", (PyCFunction)__pyx_pw_8utils_cy_13DistanceStack_5filterResult, METH_O, 0};
+static PyObject *__pyx_pw_8utils_cy_13DistanceStack_5filterResult(PyObject *__pyx_self, PyObject *__pyx_v_geojson) {
+  PyObject *__pyx_r = 0;
+  __Pyx_RefNannyDeclarations
+  __Pyx_RefNannySetupContext("filterResult (wrapper)", 0);
+  __pyx_r = __pyx_pf_8utils_cy_13DistanceStack_4filterResult(__pyx_self, ((PyObject *)__pyx_v_geojson));
+
+  /* function exit code */
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+static PyObject *__pyx_pf_8utils_cy_13DistanceStack_4filterResult(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_geojson) {
   PyObject *__pyx_v_f = NULL;
   PyObject *__pyx_v_data = NULL;
   PyObject *__pyx_v_feature = NULL;
@@ -2926,9 +2955,9 @@ static PyObject *__pyx_f_8utils_cy_filterResult(PyObject *__pyx_v_geojson) {
 
   /* "utils_cy.pyx":97
  * 
- * cdef filterResult(geojson):
- *     with open(geojson) as f:             # <<<<<<<<<<<<<<
- *         data = json.load(f)
+ *     def filterResult(geojson):
+ *         with open(geojson) as f:             # <<<<<<<<<<<<<<
+ *             data = json.load(f)
  * 
  */
   /*with:*/ {
@@ -2969,11 +2998,11 @@ static PyObject *__pyx_f_8utils_cy_filterResult(PyObject *__pyx_v_geojson) {
           __pyx_t_4 = 0;
 
           /* "utils_cy.pyx":98
- * cdef filterResult(geojson):
- *     with open(geojson) as f:
- *         data = json.load(f)             # <<<<<<<<<<<<<<
+ *     def filterResult(geojson):
+ *         with open(geojson) as f:
+ *             data = json.load(f)             # <<<<<<<<<<<<<<
  * 
- *     for feature in data['features']:
+ *         for feature in data['features']:
  */
           __Pyx_GetModuleGlobalName(__pyx_t_1, __pyx_n_s_json_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 98, __pyx_L7_error)
           __Pyx_GOTREF(__pyx_t_1);
@@ -3000,9 +3029,9 @@ static PyObject *__pyx_f_8utils_cy_filterResult(PyObject *__pyx_v_geojson) {
 
           /* "utils_cy.pyx":97
  * 
- * cdef filterResult(geojson):
- *     with open(geojson) as f:             # <<<<<<<<<<<<<<
- *         data = json.load(f)
+ *     def filterResult(geojson):
+ *         with open(geojson) as f:             # <<<<<<<<<<<<<<
+ *             data = json.load(f)
  * 
  */
         }
@@ -3016,7 +3045,7 @@ static PyObject *__pyx_f_8utils_cy_filterResult(PyObject *__pyx_v_geojson) {
         __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
         __Pyx_XDECREF(__pyx_t_5); __pyx_t_5 = 0;
         /*except:*/ {
-          __Pyx_AddTraceback("utils_cy.filterResult", __pyx_clineno, __pyx_lineno, __pyx_filename);
+          __Pyx_AddTraceback("utils_cy.DistanceStack.filterResult", __pyx_clineno, __pyx_lineno, __pyx_filename);
           if (__Pyx_GetException(&__pyx_t_4, &__pyx_t_3, &__pyx_t_1) < 0) __PYX_ERR(0, 97, __pyx_L9_except_error)
           __Pyx_GOTREF(__pyx_t_4);
           __Pyx_GOTREF(__pyx_t_3);
@@ -3080,11 +3109,11 @@ static PyObject *__pyx_f_8utils_cy_filterResult(PyObject *__pyx_v_geojson) {
   }
 
   /* "utils_cy.pyx":100
- *         data = json.load(f)
+ *             data = json.load(f)
  * 
- *     for feature in data['features']:             # <<<<<<<<<<<<<<
- *         print(feature['properties'])
- *         if(feature['properties']['DN'] == 0):
+ *         for feature in data['features']:             # <<<<<<<<<<<<<<
+ *             print(feature['properties'])
+ *             if(feature['properties']['DN'] == 0):
  */
   if (unlikely(!__pyx_v_data)) { __Pyx_RaiseUnboundLocalError("data"); __PYX_ERR(0, 100, __pyx_L1_error) }
   __pyx_t_1 = __Pyx_PyObject_Dict_GetItem(__pyx_v_data, __pyx_n_u_features); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 100, __pyx_L1_error)
@@ -3134,10 +3163,10 @@ static PyObject *__pyx_f_8utils_cy_filterResult(PyObject *__pyx_v_geojson) {
 
     /* "utils_cy.pyx":101
  * 
- *     for feature in data['features']:
- *         print(feature['properties'])             # <<<<<<<<<<<<<<
- *         if(feature['properties']['DN'] == 0):
- *             data['features'].remove(feature)
+ *         for feature in data['features']:
+ *             print(feature['properties'])             # <<<<<<<<<<<<<<
+ *             if(feature['properties']['DN'] == 0):
+ *                 data['features'].remove(feature)
  */
     __pyx_t_1 = __Pyx_PyObject_Dict_GetItem(__pyx_v_feature, __pyx_n_u_properties); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 101, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
@@ -3147,11 +3176,11 @@ static PyObject *__pyx_f_8utils_cy_filterResult(PyObject *__pyx_v_geojson) {
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
 
     /* "utils_cy.pyx":102
- *     for feature in data['features']:
- *         print(feature['properties'])
- *         if(feature['properties']['DN'] == 0):             # <<<<<<<<<<<<<<
- *             data['features'].remove(feature)
- *         feature['geometry']['coordinates'] = feature['geometry']['coordinates'][::-1]
+ *         for feature in data['features']:
+ *             print(feature['properties'])
+ *             if(feature['properties']['DN'] == 0):             # <<<<<<<<<<<<<<
+ *                 data['features'].remove(feature)
+ *             feature['geometry']['coordinates'] = feature['geometry']['coordinates'][::-1]
  */
     __pyx_t_4 = __Pyx_PyObject_Dict_GetItem(__pyx_v_feature, __pyx_n_u_properties); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 102, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
@@ -3166,11 +3195,11 @@ static PyObject *__pyx_f_8utils_cy_filterResult(PyObject *__pyx_v_geojson) {
     if (__pyx_t_11) {
 
       /* "utils_cy.pyx":103
- *         print(feature['properties'])
- *         if(feature['properties']['DN'] == 0):
- *             data['features'].remove(feature)             # <<<<<<<<<<<<<<
- *         feature['geometry']['coordinates'] = feature['geometry']['coordinates'][::-1]
- *     data['crs'] = "WGS-84 - EPSG: 4326"
+ *             print(feature['properties'])
+ *             if(feature['properties']['DN'] == 0):
+ *                 data['features'].remove(feature)             # <<<<<<<<<<<<<<
+ *             feature['geometry']['coordinates'] = feature['geometry']['coordinates'][::-1]
+ *         data['crs'] = "WGS-84 - EPSG: 4326"
  */
       if (unlikely(!__pyx_v_data)) { __Pyx_RaiseUnboundLocalError("data"); __PYX_ERR(0, 103, __pyx_L1_error) }
       __pyx_t_1 = __Pyx_PyObject_Dict_GetItem(__pyx_v_data, __pyx_n_u_features); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 103, __pyx_L1_error)
@@ -3196,19 +3225,19 @@ static PyObject *__pyx_f_8utils_cy_filterResult(PyObject *__pyx_v_geojson) {
       __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
 
       /* "utils_cy.pyx":102
- *     for feature in data['features']:
- *         print(feature['properties'])
- *         if(feature['properties']['DN'] == 0):             # <<<<<<<<<<<<<<
- *             data['features'].remove(feature)
- *         feature['geometry']['coordinates'] = feature['geometry']['coordinates'][::-1]
+ *         for feature in data['features']:
+ *             print(feature['properties'])
+ *             if(feature['properties']['DN'] == 0):             # <<<<<<<<<<<<<<
+ *                 data['features'].remove(feature)
+ *             feature['geometry']['coordinates'] = feature['geometry']['coordinates'][::-1]
  */
     }
 
     /* "utils_cy.pyx":104
- *         if(feature['properties']['DN'] == 0):
- *             data['features'].remove(feature)
- *         feature['geometry']['coordinates'] = feature['geometry']['coordinates'][::-1]             # <<<<<<<<<<<<<<
- *     data['crs'] = "WGS-84 - EPSG: 4326"
+ *             if(feature['properties']['DN'] == 0):
+ *                 data['features'].remove(feature)
+ *             feature['geometry']['coordinates'] = feature['geometry']['coordinates'][::-1]             # <<<<<<<<<<<<<<
+ *         data['crs'] = "WGS-84 - EPSG: 4326"
  * 
  */
     __pyx_t_4 = __Pyx_PyObject_Dict_GetItem(__pyx_v_feature, __pyx_n_u_geometry); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 104, __pyx_L1_error)
@@ -3226,29 +3255,29 @@ static PyObject *__pyx_f_8utils_cy_filterResult(PyObject *__pyx_v_geojson) {
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
 
     /* "utils_cy.pyx":100
- *         data = json.load(f)
+ *             data = json.load(f)
  * 
- *     for feature in data['features']:             # <<<<<<<<<<<<<<
- *         print(feature['properties'])
- *         if(feature['properties']['DN'] == 0):
+ *         for feature in data['features']:             # <<<<<<<<<<<<<<
+ *             print(feature['properties'])
+ *             if(feature['properties']['DN'] == 0):
  */
   }
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
 
   /* "utils_cy.pyx":105
- *             data['features'].remove(feature)
- *         feature['geometry']['coordinates'] = feature['geometry']['coordinates'][::-1]
- *     data['crs'] = "WGS-84 - EPSG: 4326"             # <<<<<<<<<<<<<<
+ *                 data['features'].remove(feature)
+ *             feature['geometry']['coordinates'] = feature['geometry']['coordinates'][::-1]
+ *         data['crs'] = "WGS-84 - EPSG: 4326"             # <<<<<<<<<<<<<<
  * 
- *     return data
+ *         return data
  */
   if (unlikely(!__pyx_v_data)) { __Pyx_RaiseUnboundLocalError("data"); __PYX_ERR(0, 105, __pyx_L1_error) }
   if (unlikely(PyObject_SetItem(__pyx_v_data, __pyx_n_u_crs, __pyx_kp_u_WGS_84_EPSG_4326) < 0)) __PYX_ERR(0, 105, __pyx_L1_error)
 
   /* "utils_cy.pyx":107
- *     data['crs'] = "WGS-84 - EPSG: 4326"
+ *         data['crs'] = "WGS-84 - EPSG: 4326"
  * 
- *     return data             # <<<<<<<<<<<<<<
+ *         return data             # <<<<<<<<<<<<<<
  * 
  * 
  */
@@ -3261,9 +3290,9 @@ static PyObject *__pyx_f_8utils_cy_filterResult(PyObject *__pyx_v_geojson) {
   /* "utils_cy.pyx":96
  *         return self.uuid #return uuid of DistanceStack
  * 
- * cdef filterResult(geojson):             # <<<<<<<<<<<<<<
- *     with open(geojson) as f:
- *         data = json.load(f)
+ *     def filterResult(geojson):             # <<<<<<<<<<<<<<
+ *         with open(geojson) as f:
+ *             data = json.load(f)
  */
 
   /* function exit code */
@@ -3272,8 +3301,8 @@ static PyObject *__pyx_f_8utils_cy_filterResult(PyObject *__pyx_v_geojson) {
   __Pyx_XDECREF(__pyx_t_3);
   __Pyx_XDECREF(__pyx_t_4);
   __Pyx_XDECREF(__pyx_t_5);
-  __Pyx_AddTraceback("utils_cy.filterResult", __pyx_clineno, __pyx_lineno, __pyx_filename);
-  __pyx_r = 0;
+  __Pyx_AddTraceback("utils_cy.DistanceStack.filterResult", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XDECREF(__pyx_v_f);
   __Pyx_XDECREF(__pyx_v_data);
@@ -3336,6 +3365,7 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {&__pyx_n_u_DN, __pyx_k_DN, sizeof(__pyx_k_DN), 0, 1, 0, 1},
   {&__pyx_n_s_DistanceStack, __pyx_k_DistanceStack, sizeof(__pyx_k_DistanceStack), 0, 0, 1, 1},
   {&__pyx_n_s_DistanceStack___init, __pyx_k_DistanceStack___init, sizeof(__pyx_k_DistanceStack___init), 0, 0, 1, 1},
+  {&__pyx_n_s_DistanceStack_filterResult, __pyx_k_DistanceStack_filterResult, sizeof(__pyx_k_DistanceStack_filterResult), 0, 0, 1, 1},
   {&__pyx_n_s_DistanceStack_filterStack, __pyx_k_DistanceStack_filterStack, sizeof(__pyx_k_DistanceStack_filterStack), 0, 0, 1, 1},
   {&__pyx_n_s_ExportToWkt, __pyx_k_ExportToWkt, sizeof(__pyx_k_ExportToWkt), 0, 0, 1, 1},
   {&__pyx_n_s_FieldDefn, __pyx_k_FieldDefn, sizeof(__pyx_k_FieldDefn), 0, 0, 1, 1},
@@ -3369,18 +3399,23 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {&__pyx_n_s_combinedArray, __pyx_k_combinedArray, sizeof(__pyx_k_combinedArray), 0, 0, 1, 1},
   {&__pyx_n_u_coordinates, __pyx_k_coordinates, sizeof(__pyx_k_coordinates), 0, 1, 0, 1},
   {&__pyx_n_u_crs, __pyx_k_crs, sizeof(__pyx_k_crs), 0, 1, 0, 1},
+  {&__pyx_n_s_data, __pyx_k_data, sizeof(__pyx_k_data), 0, 0, 1, 1},
   {&__pyx_n_s_doc, __pyx_k_doc, sizeof(__pyx_k_doc), 0, 0, 1, 1},
   {&__pyx_n_s_driver, __pyx_k_driver, sizeof(__pyx_k_driver), 0, 0, 1, 1},
   {&__pyx_n_s_drv, __pyx_k_drv, sizeof(__pyx_k_drv), 0, 0, 1, 1},
   {&__pyx_n_s_eType, __pyx_k_eType, sizeof(__pyx_k_eType), 0, 0, 1, 1},
   {&__pyx_n_s_enter, __pyx_k_enter, sizeof(__pyx_k_enter), 0, 0, 1, 1},
   {&__pyx_n_s_exit, __pyx_k_exit, sizeof(__pyx_k_exit), 0, 0, 1, 1},
+  {&__pyx_n_s_f, __pyx_k_f, sizeof(__pyx_k_f), 0, 0, 1, 1},
+  {&__pyx_n_s_feature, __pyx_k_feature, sizeof(__pyx_k_feature), 0, 0, 1, 1},
   {&__pyx_n_u_features, __pyx_k_features, sizeof(__pyx_k_features), 0, 1, 0, 1},
+  {&__pyx_n_s_filterResult, __pyx_k_filterResult, sizeof(__pyx_k_filterResult), 0, 0, 1, 1},
   {&__pyx_n_s_filterStack, __pyx_k_filterStack, sizeof(__pyx_k_filterStack), 0, 0, 1, 1},
   {&__pyx_n_s_filterValues, __pyx_k_filterValues, sizeof(__pyx_k_filterValues), 0, 0, 1, 1},
   {&__pyx_n_s_filteredArray, __pyx_k_filteredArray, sizeof(__pyx_k_filteredArray), 0, 0, 1, 1},
   {&__pyx_n_s_filteredArrays, __pyx_k_filteredArrays, sizeof(__pyx_k_filteredArrays), 0, 0, 1, 1},
   {&__pyx_n_s_gdal, __pyx_k_gdal, sizeof(__pyx_k_gdal), 0, 0, 1, 1},
+  {&__pyx_n_s_geojson, __pyx_k_geojson, sizeof(__pyx_k_geojson), 0, 0, 1, 1},
   {&__pyx_n_s_geom_type, __pyx_k_geom_type, sizeof(__pyx_k_geom_type), 0, 0, 1, 1},
   {&__pyx_n_u_geometry, __pyx_k_geometry, sizeof(__pyx_k_geometry), 0, 1, 0, 1},
   {&__pyx_n_s_i, __pyx_k_i, sizeof(__pyx_k_i), 0, 0, 1, 1},
@@ -3473,9 +3508,9 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
 
   /* "utils_cy.pyx":97
  * 
- * cdef filterResult(geojson):
- *     with open(geojson) as f:             # <<<<<<<<<<<<<<
- *         data = json.load(f)
+ *     def filterResult(geojson):
+ *         with open(geojson) as f:             # <<<<<<<<<<<<<<
+ *             data = json.load(f)
  * 
  */
   __pyx_tuple__5 = PyTuple_Pack(3, Py_None, Py_None, Py_None); if (unlikely(!__pyx_tuple__5)) __PYX_ERR(0, 97, __pyx_L1_error)
@@ -3483,10 +3518,10 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
   __Pyx_GIVEREF(__pyx_tuple__5);
 
   /* "utils_cy.pyx":104
- *         if(feature['properties']['DN'] == 0):
- *             data['features'].remove(feature)
- *         feature['geometry']['coordinates'] = feature['geometry']['coordinates'][::-1]             # <<<<<<<<<<<<<<
- *     data['crs'] = "WGS-84 - EPSG: 4326"
+ *             if(feature['properties']['DN'] == 0):
+ *                 data['features'].remove(feature)
+ *             feature['geometry']['coordinates'] = feature['geometry']['coordinates'][::-1]             # <<<<<<<<<<<<<<
+ *         data['crs'] = "WGS-84 - EPSG: 4326"
  * 
  */
   __pyx_slice__6 = PySlice_New(Py_None, Py_None, __pyx_int_neg_1); if (unlikely(!__pyx_slice__6)) __PYX_ERR(0, 104, __pyx_L1_error)
@@ -3516,6 +3551,18 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
   __Pyx_GOTREF(__pyx_tuple__9);
   __Pyx_GIVEREF(__pyx_tuple__9);
   __pyx_codeobj__10 = (PyObject*)__Pyx_PyCode_New(2, 0, 15, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__9, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_utils_cy_pyx, __pyx_n_s_filterStack, 62, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__10)) __PYX_ERR(0, 62, __pyx_L1_error)
+
+  /* "utils_cy.pyx":96
+ *         return self.uuid #return uuid of DistanceStack
+ * 
+ *     def filterResult(geojson):             # <<<<<<<<<<<<<<
+ *         with open(geojson) as f:
+ *             data = json.load(f)
+ */
+  __pyx_tuple__11 = PyTuple_Pack(4, __pyx_n_s_geojson, __pyx_n_s_f, __pyx_n_s_data, __pyx_n_s_feature); if (unlikely(!__pyx_tuple__11)) __PYX_ERR(0, 96, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__11);
+  __Pyx_GIVEREF(__pyx_tuple__11);
+  __pyx_codeobj__12 = (PyObject*)__Pyx_PyCode_New(1, 0, 4, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__11, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_utils_cy_pyx, __pyx_n_s_filterResult, 96, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__12)) __PYX_ERR(0, 96, __pyx_L1_error)
   __Pyx_RefNannyFinishContext();
   return 0;
   __pyx_L1_error:;
@@ -3892,6 +3939,18 @@ if (!__Pyx_RefNanny) {
   __pyx_t_1 = __Pyx_CyFunction_New(&__pyx_mdef_8utils_cy_13DistanceStack_3filterStack, 0, __pyx_n_s_DistanceStack_filterStack, NULL, __pyx_n_s_utils_cy, __pyx_d, ((PyObject *)__pyx_codeobj__10)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 62, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   if (__Pyx_SetNameInClass(__pyx_t_2, __pyx_n_s_filterStack, __pyx_t_1) < 0) __PYX_ERR(0, 62, __pyx_L1_error)
+  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+
+  /* "utils_cy.pyx":96
+ *         return self.uuid #return uuid of DistanceStack
+ * 
+ *     def filterResult(geojson):             # <<<<<<<<<<<<<<
+ *         with open(geojson) as f:
+ *             data = json.load(f)
+ */
+  __pyx_t_1 = __Pyx_CyFunction_New(&__pyx_mdef_8utils_cy_13DistanceStack_5filterResult, 0, __pyx_n_s_DistanceStack_filterResult, NULL, __pyx_n_s_utils_cy, __pyx_d, ((PyObject *)__pyx_codeobj__12)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 96, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
+  if (__Pyx_SetNameInClass(__pyx_t_2, __pyx_n_s_filterResult, __pyx_t_1) < 0) __PYX_ERR(0, 96, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
   /* "utils_cy.pyx":16
