@@ -39,13 +39,13 @@
         <v-slider
           hide-details
           v-model="slider.value"
-          step="50"
+          step="10"
           thumb-label="always"
           :thumb-size="30"
-          ticks
-          max="1000"
+          max="2000"
           dense
           :label="slider.name + ':'"
+          @end="doRequest"
         ></v-slider>
       </v-col>
       <v-col
