@@ -60,16 +60,6 @@ export default {
 </script>
 
 <style scoped>
-/*@media (max-width: 600px) {
-  .v-row {
-    flex-direction: column;
-  }
-}
-@media (min-width: 601px) {
-  .v-row {
-    flex-direction: row;
-  }
-}*/
 #iconContainer {
   margin: 0;
   position: absolute;
