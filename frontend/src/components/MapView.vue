@@ -82,8 +82,7 @@ export default {
         "Open Street Map": this.tileLayer,
         "Colorblind map": this.colorblindLayer,
       };
-      console.log(this.resultLayer);
-      console.log(this.resultJson);
+
       this.resultLayer = L.geoJSON().addTo(this.map);
       if (this.resultJson != null) {
         this.resultLayer.addData(this.resultJson);
@@ -97,9 +96,13 @@ export default {
         })
         .addTo(this.map);
     },
-    /*reloadMap: function () {
-      this.initMap();
-    },*/
+    reloadMap: function () {
+      //this.initMap();
+      //this.map.invalidateSize();
+      /*setTimeout(function () {
+        this.map.invalidateSize();
+      }, 400);*/
+    },
     changeGeojson: function (newGeojson) {
       //this.resultJson = json;
       this.resultJson = JSON.parse(JSON.stringify(newGeojson));

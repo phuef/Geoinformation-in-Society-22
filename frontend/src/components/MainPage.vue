@@ -11,20 +11,12 @@
       </v-col>
       <v-col cols="12" xs="12" :sm="mapViewSize">
         <div id="mapContainer">
-          :key="mapViewSize">
+          <!--:key="mapViewSize">-->
           <div class="d-none d-sm-flex align-items-center" id="iconContainer">
-            <v-icon
-              v-if="showMenu"
-              @click="showMenu = !showMenu"
-              id="collapseIcon"
-            >
+            <v-icon v-if="showMenu" @click="handleClick" id="collapseIcon">
               mdi-menu-left</v-icon
             >
-            <v-icon
-              v-if="!showMenu"
-              @click="showMenu = !showMenu"
-              id="openIcon"
-            >
+            <v-icon v-if="!showMenu" @click="handleClick" id="openIcon">
               mdi-menu-right</v-icon
             >
           </div>
@@ -64,6 +56,12 @@ export default {
     reloadMap: function () {
       this.$refs.mapComponent.reloadMap();
     },
+    handleClick: function () {
+      this.showMenu = !this.showMenu;
+      //event.currentTarget.classList.toggle("non-active");
+      //event.currentTarget.classList.toggle("active");
+      document.getElementById("#mapContainer").style.width = "100vw";
+    },
   },
 };
 </script>
@@ -90,6 +88,13 @@ export default {
 }
 #mapContainer {
   height: 100%;
+  /*width: 100vw;*/
+}
+.active {
+  width: 100vw;
+}
+.non-active {
+  width: 50vw;
 }
 #collapseIcon,
 #openIcon {
