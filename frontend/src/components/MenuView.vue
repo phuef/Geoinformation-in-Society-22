@@ -7,28 +7,72 @@
       item-value="name"
       deletable-chips
       chips
-      label="selected layers"
+      label="Selected layers:"
       multiple
       dense
       @input="changeActiveState()"
     >
     </v-select>
-    <div v-for="slider in sliders" :key="slider.label">
-      <v-slider
+    <p class="text">Distance to ...</p>
+    <br />
+    <v-row v-for="slider in sliders" :key="slider.label">
+      <v-col
         v-if="slider.active"
-        v-model="slider.value"
-        step="10"
-        thumb-label="always"
-        max="2000"
-        dense
-        :label="slider.label + ':'"
-        append-icon="mdi-close"
-        prepend-icon="mdi-information-outline"
-        @click:append="(slider.active = false), removeLayer(slider.name)"
-        @end="doRequest()"
-      ></v-slider>
-    </div>
+        cols="1"
+        class="d-flex center-align justify-center"
+      >
+        <v-tooltip right z-index="1000">
+          <template v-slot:activator="{ on, attrs }">
+            <v-icon slot="prependIcon" v-bind="attrs" v-on="on"
+              >mdi-information-outline</v-icon
+            >
+          </template>
+          <span v-html="slider.infoLabel"></span>
+        </v-tooltip>
+      </v-col>
+      <v-col
+        v-if="slider.active"
+        cols="10"
+        class="d-flex center-align justify-center"
+        style="padding-top: 15px"
+      >
+        <v-slider
+          hide-details
+          v-model="slider.value"
+          step="10"
+          thumb-label="always"
+          :thumb-size="30"
+          max="2000"
+          dense
+          :label="slider.name + ':'"
+          @end="doRequest"
+        ></v-slider>
+      </v-col>
+      <v-col
+        v-if="slider.active"
+        cols="1"
+        class="d-flex center-align justify-center"
+      >
+        <v-tooltip left z-index="1000">
+          <template v-slot:activator="{ on, attrs }">
+            <v-btn
+              id="deleteBtn"
+              rounded
+              elevation="0"
+              depressed
+              plain
+              @click="(slider.active = false), removeLayer(slider.name)"
+            >
+              <v-icon v-bind="attrs" v-on="on">mdi-close</v-icon>
+            </v-btn>
+          </template>
+          <span>Delete layer</span>
+        </v-tooltip>
+      </v-col>
+    </v-row>
+    <br />
     <v-divider></v-divider>
+    <br />
     <div v-for="configuration in configurations" :key="configuration.name">
       <v-btn
         width="100%"
@@ -60,7 +104,7 @@ export default {
           active: true, // wether the layer is currently selected by the user
           // the text that shall be displayed when the user hovers over the info button
           infoLabel:
-            "Move the slider to remove all areas that have a certain distance to museums",
+            "Move the slider to remove all areas <br/>that have a certain <b>distance to museums</b>.",
         },
         {
           name: "Theaters",
@@ -69,7 +113,7 @@ export default {
           band: 1,
           active: true,
           infoLabel:
-            "Move the slider to remove all areas that have a certain distance to theaters",
+            "Move the slider to remove all areas <br/>that have a certain <b>distance to theaters</b>.",
         },
       ],
       activeSliders: ["Museums", "Theaters"], //The currently active Sliders
@@ -209,3 +253,4 @@ export default {
   },
 };
 </script>
+<style></style>
