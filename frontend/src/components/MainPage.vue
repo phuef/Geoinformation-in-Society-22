@@ -6,7 +6,8 @@
     style="height: 100vh"
   >
     <v-row no-gutters class="fill-height" style="height: 100%">
-      <v-col cols="12" xs="12" sm="6" v-if="showMenu">
+      <v-col cols="12" xs="12" :sm="menuWidth"
+        ><!--v-if="showMenu">-->
         <MenuView @newRequest="processNewRequest" />
       </v-col>
       <v-col cols="12" xs="12" :sm="mapViewSize">
@@ -47,7 +48,10 @@ export default {
   computed: {
     mapViewSize: function () {
       // makes sure that the map is displayed on the full screen when the menu is not shown
-      return this.showMenu ? "6" : "12";
+      return this.showMenu ? "6" : "11";
+    },
+    menuWidth: function () {
+      return this.showMenu ? "6" : "1";
     },
     /*computedWidth: function () {
       return this.width;
