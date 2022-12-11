@@ -10,7 +10,8 @@
         <MenuView @newRequest="processNewRequest" />
       </v-col>
       <v-col cols="12" xs="12" :sm="mapViewSize">
-        <div id="mapContainer" :key="mapViewSize">
+        <div id="mapContainer">
+          :key="mapViewSize">
           <div class="d-none d-sm-flex align-items-center" id="iconContainer">
             <v-icon
               v-if="showMenu"
@@ -27,7 +28,7 @@
               mdi-menu-right</v-icon
             >
           </div>
-          <MapView :geojson="requestResponse" />
+          <MapView :geojson="requestResponse" ref="mapComponent" />
         </div>
       </v-col>
     </v-row>
@@ -57,8 +58,11 @@ export default {
     },
   },
   methods: {
-    processNewRequest(response) {
+    processNewRequest: function (response) {
       this.requestResponse = response;
+    },
+    reloadMap: function () {
+      this.$refs.mapComponent.reloadMap();
     },
   },
 };

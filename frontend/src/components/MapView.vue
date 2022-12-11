@@ -97,6 +97,9 @@ export default {
         })
         .addTo(this.map);
     },
+    /*reloadMap: function () {
+      this.initMap();
+    },*/
     changeGeojson: function (newGeojson) {
       //this.resultJson = json;
       this.resultJson = JSON.parse(JSON.stringify(newGeojson));
@@ -177,7 +180,6 @@ export default {
 <style scoped>
 #mapContainer {
   width: 100%;
-  height: 350px;
 }
 @media (min-width: 1264px) {
   .wrapper {
