@@ -9,8 +9,8 @@ from flask import Flask, request, make_response
 from flask_cors import CORS
 from ast import literal_eval
 import json
-#from utils_cy import DistanceStack #import "cythonized" utils
-from utils import DistanceStack, filterResult
+from utils_cy import DistanceStack #import "cythonized" utils
+#from utils import DistanceStack, filterResult
 
 #configure flask to use HTTP 1.1 only
 from werkzeug.serving import WSGIRequestHandler
@@ -44,7 +44,7 @@ def raster(requestParams):
         params = literal_eval(requestParams) #parse parameters
         fileID = stack.filterStack(params) #filter stack
         
-        geojson = filterResult('usr/src/backend/results/' + fileID + '.json') #load and filter results
+        geojson = stack.filterResult() #load and filter results
         
         response = make_response(geojson) #generate response
         #add headers
