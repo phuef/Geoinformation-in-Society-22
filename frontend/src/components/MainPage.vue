@@ -19,7 +19,10 @@
               mdi-menu-right</v-icon
             >
           </div>
-          <MapView :geojson="requestResponse" ref="mapComponent" />
+          <MapView
+            :geojson="requestResponse"
+            :style="{ width: !showMenu ? '100vw' : '50vw' }"
+          />
         </div>
       </v-col>
     </v-row>
@@ -72,9 +75,6 @@ export default {
     mapViewSize: function () {
       // makes sure that the map is displayed on the full screen when the menu is not shown
       return this.showMenu ? "6" : "11";
-    },
-    menuWidth: function () {
-      return this.showMenu ? "6" : "1";
     },
   },
   methods: {
