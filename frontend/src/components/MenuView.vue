@@ -92,30 +92,6 @@ export default {
   emits: ["newRequest"],
   data() {
     return {
-      sliders: [
-        // All availabe sliders
-        // TODO: add new layers to this list, when new layers are added to the backend.
-        //       The layers need to have the structure shown and explained below
-        {
-          name: "Museums", // the layer name that gets displayed at the layer selection
-          label: "Distance to museums", // the label that gets shown at the slider
-          value: 0, // the value the slider has
-          band: 0, // the corresponding band ID the layer has in the backend
-          active: true, // wether the layer is currently selected by the user
-          // the text that shall be displayed when the user hovers over the info button
-          infoLabel:
-            "Move the slider to remove all areas <br/>that have a certain <b>distance to museums</b>.",
-        },
-        {
-          name: "Theaters",
-          label: "Distance to theaters",
-          value: 0,
-          band: 1,
-          active: true,
-          infoLabel:
-            "Move the slider to remove all areas <br/>that have a certain <b>distance to theaters</b>.",
-        },
-      ],
       activeSliders: ["Museums", "Theaters"], //The currently active Sliders
       configurations: [
         // The pre-configurations that can be set upfront in the following form:
@@ -132,6 +108,12 @@ export default {
       ],
       response: "",
     };
+  },
+  props: {
+    /* eslint-disable */
+    sliders: {
+      type: Array,
+    },
   },
   methods: {
     /**

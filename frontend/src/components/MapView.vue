@@ -115,10 +115,9 @@ export default {
       }
 
       this.resultLayer = L.geoJSON().addTo(this.map);
+      //console.log("by change", this.resultJson);
+      //console.log(this.resultLayer);
       this.resultLayer.addData(this.resultJson);
-
-      console.log("by change", this.resultJson);
-      console.log(this.resultLayer);
     },
   },
   props: {
@@ -126,29 +125,8 @@ export default {
       type: Object,
       default() {
         return {
-          crs: {
-            properties: {
-              name: "urn:ogc:def:crs:EPSG::3857",
-            },
-            type: "name",
-          },
-          features: [
-            {
-              geometry: {
-                coordinates: [
-                  [
-                    [7.62451171875, 51.96288477548509],
-                    [7.595750026234441, 51.96942882531462],
-                  ],
-                ],
-                type: "Polygon",
-              },
-              properties: {
-                DN: 0.0,
-              },
-              type: "Feature",
-            },
-          ],
+          crs: "urn:ogc:def:crs:EPSG::3857",
+          features: [],
           name: "test",
           type: "FeatureCollection",
         };
