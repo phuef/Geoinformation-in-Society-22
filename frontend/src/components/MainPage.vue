@@ -19,10 +19,7 @@
               mdi-menu-right</v-icon
             >
           </div>
-          <MapView
-            :geojson="requestResponse"
-            :style="{ width: !showMenu ? '100vw' : '50vw' }"
-          />
+          <MapView :geojson="requestResponse" />
         </div>
       </v-col>
     </v-row>
@@ -74,15 +71,14 @@ export default {
   computed: {
     mapViewSize: function () {
       // makes sure that the map is displayed on the full screen when the menu is not shown
-      return this.showMenu ? "6" : "11";
+      return this.showMenu ? "6" : "12";
     },
   },
   methods: {
     processNewRequest: function (response) {
       this.requestResponse = response;
     },
-    // eslint-disable-next-line
-    handleClick: function (event) {
+    handleClick: function () {
       this.showMenu = !this.showMenu;
     },
   },
