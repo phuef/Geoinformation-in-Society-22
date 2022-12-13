@@ -49,7 +49,7 @@ export default {
         {
           name: "Museums", // the layer name that gets displayed at the layer selection
           label: "Distance to museums", // the label that gets shown at the slider
-          value: 0, // the value the slider has
+          value: 2000, // the value the slider has
           band: 0, // the corresponding band ID the layer has in the backend
           active: true, // wether the layer is currently selected by the user
           // the text that shall be displayed when the user hovers over the info button
@@ -59,7 +59,7 @@ export default {
         {
           name: "Theaters",
           label: "Distance to theaters",
-          value: 0,
+          value: 2000,
           band: 1,
           active: true,
           infoLabel:
