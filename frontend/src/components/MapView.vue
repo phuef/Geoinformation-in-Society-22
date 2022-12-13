@@ -24,7 +24,7 @@ export default {
       attribution:
         '&copy; <a target="_blank" href="http://osm.org/copyright">OpenStreetMap</a> contributors',
       zoom: 10,
-      center: [51.95999889150852, 7.893584412830762], //[51.966, 7.633], // changed from the cetner coords from münster to some coords in the eastside because of map width 100 vw
+      center: [51.96229626341511, 7.6256090207326395], // changed from the cetner coords from münster to some coords in the eastside because of map width 100 vw
       markerLatLng: [51.504, -0.159],
       map: null,
       tileLayer: null,
@@ -96,28 +96,15 @@ export default {
         })
         .addTo(this.map);
     },
-    setCenter: function ([lon, lat]) {
-      this.map.setCenter([lon, lat]);
-      //this.initMap();
-      //this.map.invalidateSize();
-      /*setTimeout(function () {
-        this.map.invalidateSize();
-      }, 400);*/
-    },
-
     changeGeojson: function (newGeojson) {
-      //this.resultJson = json;
       this.resultJson = JSON.parse(JSON.stringify(newGeojson));
       try {
         this.map.removeLayer(this.resultLayer);
+        this.resultLayer = L.geoJSON().addTo(this.map);
+        this.resultLayer.addData(this.resultJson);
       } catch (error) {
         //pass
       }
-
-      this.resultLayer = L.geoJSON().addTo(this.map);
-      //console.log("by change", this.resultJson);
-      //console.log(this.resultLayer);
-      this.resultLayer.addData(this.resultJson);
     },
   },
   props: {
