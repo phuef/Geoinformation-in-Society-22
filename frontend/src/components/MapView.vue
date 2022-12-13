@@ -157,6 +157,7 @@ export default {
   },
   mounted() {
     this.initMap();
+    this.changeGeojson(this.geojson);
   },
   watch: {
     geojson: function (newGeojson) {

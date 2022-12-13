@@ -7,12 +7,7 @@
   >
     <v-row no-gutters class="fill-height" style="height: 100%">
       <v-col cols="12" xs="12" sm="6" v-if="showMenu">
-        <MenuView
-          @newRequest="processNewRequest"
-          :style="{
-            'padding-left': !showMenu ? '200px!important' : '0px',
-          }"
-        />
+        <MenuView @newRequest="processNewRequest" />
       </v-col>
       <v-col cols="12" xs="12" :sm="mapViewSize">
         <div id="mapContainer" :key="mapViewSize">
