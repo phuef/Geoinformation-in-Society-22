@@ -1,24 +1,21 @@
 <template>
-  <v-container id="mainContainer" fluid style="height: 100vh">
-    <v-row style="height: 100%">
+  <v-container
+    id="mainContainer"
+    class="fill-height"
+    fluid
+    style="height: 100vh"
+  >
+    <v-row no-gutters class="fill-height" style="height: 100%">
       <v-col cols="12" xs="12" sm="6" v-if="showMenu">
-        <MenuView @newRequest="processNewRequest" />
+        <MenuView @newRequest="processNewRequest" :sliders="sliders" />
       </v-col>
       <v-col cols="12" xs="12" :sm="mapViewSize">
         <div id="mapContainer" :key="mapViewSize">
           <div class="d-none d-sm-flex align-items-center" id="iconContainer">
-            <v-icon
-              v-if="showMenu"
-              @click="showMenu = !showMenu"
-              id="collapseIcon"
-            >
+            <v-icon v-if="showMenu" @click="handleClick" id="collapseIcon">
               mdi-menu-left</v-icon
             >
-            <v-icon
-              v-if="!showMenu"
-              @click="showMenu = !showMenu"
-              id="openIcon"
-            >
+            <v-icon v-if="!showMenu" @click="handleClick" id="openIcon">
               mdi-menu-right</v-icon
             >
           </div>
@@ -31,18 +28,44 @@
 
 <script>
 import MapView from "./MapView.vue";
+// eslint-disable-next-line
 import MenuView from "./MenuView.vue";
 
 export default {
   name: "MainPage",
   components: {
     MapView,
+    // eslint-disable-next-line
     MenuView,
   },
   data() {
     return {
       showMenu: true,
       requestResponse: null,
+      sliders: [
+        // All availabe sliders
+        // TODO: add new layers to this list, when new layers are added to the backend.
+        //       The layers need to have the structure shown and explained below
+        {
+          name: "Museums", // the layer name that gets displayed at the layer selection
+          label: "Distance to museums", // the label that gets shown at the slider
+          value: 2000, // the value the slider has
+          band: 0, // the corresponding band ID the layer has in the backend
+          active: true, // wether the layer is currently selected by the user
+          // the text that shall be displayed when the user hovers over the info button
+          infoLabel:
+            "Move the slider to remove all areas <br/>that have a certain <b>distance to museums</b>.",
+        },
+        {
+          name: "Theaters",
+          label: "Distance to theaters",
+          value: 2000,
+          band: 1,
+          active: true,
+          infoLabel:
+            "Move the slider to remove all areas <br/>that have a certain <b>distance to theaters</b>.",
+        },
+      ],
     };
   },
   computed: {
@@ -52,8 +75,11 @@ export default {
     },
   },
   methods: {
-    processNewRequest(response) {
+    processNewRequest: function (response) {
       this.requestResponse = response;
+    },
+    handleClick: function () {
+      this.showMenu = !this.showMenu;
     },
   },
 };
