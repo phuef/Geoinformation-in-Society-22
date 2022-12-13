@@ -6,47 +6,16 @@
     style="height: 100vh"
   >
     <v-row no-gutters class="fill-height" style="height: 100%">
-      <v-col cols="12" xs="12" :sm="menuWidth"
-        ><!--v-if="showMenu"> replaced sm="6" by the binded attribute on top-->
-
+      <v-col cols="12" xs="12" sm="6" v-if="showMenu">
         <MenuView
           @newRequest="processNewRequest"
           :style="{
             'padding-left': !showMenu ? '200px!important' : '0px',
           }"
         />
-        <!--<v-navigation-drawer v-model="drawer" absolute temporary hide-overlay>
-          <v-list-item>
-            <v-list-item-avatar>
-              <v-img
-                src="https://randomuser.me/api/portraits/men/78.jpg"
-              ></v-img>
-            </v-list-item-avatar>
-
-            <v-list-item-content>
-              <v-list-item-title>John Leider</v-list-item-title>
-            </v-list-item-content>
-          </v-list-item>
-
-          <v-divider></v-divider>
-
-          <v-list dense>
-            <v-list-item v-for="item in items" :key="item.title" link>
-              <v-list-item-icon>
-                <v-icon>{{ item.icon }}</v-icon>
-              </v-list-item-icon>
-
-              <v-list-item-content>
-                <v-list-item-title>{{ item.title }}</v-list-item-title>
-              </v-list-item-content>
-            </v-list-item>
-          </v-list>
-        </v-navigation-drawer>-->
       </v-col>
       <v-col cols="12" xs="12" :sm="mapViewSize">
-        <div id="mapContainer">
-          <!--:style="{ width: width }">-->
-          <!--:key="mapViewSize">-->
+        <div id="mapContainer" :key="mapViewSize">
           <div class="d-none d-sm-flex align-items-center" id="iconContainer">
             <v-icon v-if="showMenu" @click="handleClick" id="collapseIcon">
               mdi-menu-left</v-icon
@@ -76,11 +45,6 @@ export default {
   },
   data() {
     return {
-      drawer: null, // this and the following 4 lines could be removed by deciding against nav drawer
-      items: [
-        { title: "Home", icon: "mdi-view-dashboard" },
-        { title: "About", icon: "mdi-forum" },
-      ],
       showMenu: true,
       requestResponse: null,
     };
