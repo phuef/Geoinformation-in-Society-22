@@ -76,32 +76,14 @@ export default {
     menuWidth: function () {
       return this.showMenu ? "6" : "1";
     },
-    /*computedWidth: function () {
-      return this.width;
-    },*/
   },
   methods: {
     processNewRequest: function (response) {
       this.requestResponse = response;
     },
-    reloadMap: function () {
-      //this.$refs.mapComponent.reloadMap();
-    },
     // eslint-disable-next-line
     handleClick: function (event) {
       this.showMenu = !this.showMenu;
-      /*if (this.showMenu) {
-        this.$refs.mapComponent.setCenter([
-          7.686768985374442, 51.84331355040922,
-        ]);
-      } else {
-        this.$refs.mapComponent.setCenter([7.62451171875, 51.96288477548509]);
-      }*/
-      /*if (this.width == "50vw") {
-        this.width = "100vw";
-      } else {
-        this.width = "50vw";
-      }*/
     },
   },
 };
@@ -119,7 +101,6 @@ export default {
 }
 #mapContainer {
   height: 100%;
-  width: 100vw;
 }
 #collapseIcon,
 #openIcon {
