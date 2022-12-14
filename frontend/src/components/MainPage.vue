@@ -7,7 +7,11 @@
   >
     <v-row no-gutters class="fill-height" style="height: 100%">
       <v-col cols="12" xs="12" sm="6" v-if="showMenu">
-        <MenuView @newRequest="processNewRequest" :sliders="sliders" />
+        <MenuView
+          @newRequest="processNewRequest"
+          @isMinOfSliderHasChanged="changeSlidersIsMinState"
+          :sliders="sliders"
+        />
       </v-col>
       <v-col cols="12" xs="12" :sm="mapViewSize">
         <div id="mapContainer" :key="mapViewSize">
@@ -55,6 +59,8 @@ export default {
           // the text that shall be displayed when the user hovers over the info button
           infoLabel:
             "Move the slider to remove all areas <br/>that have a certain <b>distance to museums</b>.",
+          icon: "mdi-bank",
+          isMin: true,
         },
         {
           name: "Theaters",
@@ -64,6 +70,8 @@ export default {
           active: true,
           infoLabel:
             "Move the slider to remove all areas <br/>that have a certain <b>distance to theaters</b>.",
+          icon: "mdi-drama-masks",
+          isMin: true,
         },
       ],
     };
@@ -77,6 +85,13 @@ export default {
   methods: {
     processNewRequest: function (response) {
       this.requestResponse = response;
+    },
+    changeSlidersIsMinState: function (sliderName) {
+      for (var i in this.sliders) {
+        if (this.sliders[i].name == sliderName) {
+          this.sliders[i].isMin = !this.sliders[i].isMin;
+        }
+      }
     },
     handleClick: function () {
       this.showMenu = !this.showMenu;
