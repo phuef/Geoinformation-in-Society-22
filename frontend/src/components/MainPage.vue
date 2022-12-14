@@ -10,7 +10,7 @@
         <MenuView @newRequest="processNewRequest" :sliders="sliders" />
       </v-col>
       <v-col cols="12" xs="12" :sm="mapViewSize">
-        <div id="mapContainer" :key="mapViewSize">
+        <div data-v-step="2" id="mapContainer" :key="mapViewSize">
           <div class="d-none d-sm-flex align-items-center" id="iconContainer">
             <v-icon v-if="showMenu" @click="handleClick" id="collapseIcon">
               mdi-menu-left</v-icon

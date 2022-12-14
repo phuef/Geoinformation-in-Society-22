@@ -11,6 +11,7 @@
       multiple
       dense
       @input="changeActiveState()"
+      data-v-step="0"
     >
     </v-select>
     <p class="text">Distance to ...</p>
@@ -73,7 +74,11 @@
     <br />
     <v-divider></v-divider>
     <br />
-    <div v-for="configuration in configurations" :key="configuration.name">
+    <div
+      data-v-step="1"
+      v-for="configuration in configurations"
+      :key="configuration.name"
+    >
       <v-btn
         width="100%"
         @click="
