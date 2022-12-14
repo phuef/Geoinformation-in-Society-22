@@ -1,5 +1,13 @@
 <template>
   <div class="pt-8 pl-6 pr-1">
+    <div class="body-1 text-xs-body-2">
+    <p>Do you have the desire to <span class="highlight-gray">Find your Spot</span>?
+    With this application you can search for a specific location that meets your interests. 
+    <mark>Define the layers</mark> that you want, <mark>specify the distance</mark>, 
+    and that`s it, congrats, you just found your Spot.<br /></p>
+    <p><mark>Need help?</mark> For detailed information of the functionalities, <span class="highlight-yellow">use the information</span> buttons below.</p>
+    </div>
+    <v-divider></v-divider>
     <v-select
       v-model="activeSliders"
       :items="sliders"
@@ -151,3 +159,45 @@ export default {
   },
 };
 </script>
+
+
+<style scoped>
+  div {
+    text-align: justify;
+  }
+  .highlight-gray {
+  background-image: linear-gradient(to right, #e9e9e9, #e9e9e9);
+  border-radius: 6px;
+  padding: 3px 6px;
+}
+.highlight-yellow {
+  border-radius: 1em 0 1em 0;
+  background-image: linear-gradient(
+    -100deg,
+    rgba(255, 224, 0, 0.2),
+    rgba(255, 224, 0, 0.7) 95%,
+    rgba(255, 224, 0, 0.1)
+  );
+}
+
+mark {
+  -webkit-animation: 1.5s highlight 1.5s 1 normal forwards;
+          animation: 1.5s highlight 1.5s 1 normal forwards;
+  background-color: none;
+  background: linear-gradient(90deg, #e9e9e9 50%, rgba(255, 255, 255, 0) 50%);
+  background-size: 200% 100%;
+  background-position: 100% 0;
+}
+
+@-webkit-keyframes highlight {
+  to {
+    background-position: 0 0;
+  }
+}
+
+@keyframes highlight {
+  to {
+    background-position: 0 0;
+  }
+}
+</style>
