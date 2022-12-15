@@ -204,6 +204,7 @@ export default {
         }
       }
       this.removeNotActiveLayers();
+      this.doRequest();
     },
     /**
      * Removes all layers that are currently not active
