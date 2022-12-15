@@ -9,8 +9,10 @@
         <v-spacer></v-spacer>
         <div class="d-none d-sm-flex align-items-center">
           <v-toolbar-items>
-            <v-btn @click="startTour()">Start Demo</v-btn>
             <v-btn to="/" dark text class="ms-3"> Main </v-btn>
+            <v-btn class="ms-3" dark text @click="startTour()">
+              Start Demo
+            </v-btn>
             <v-btn to="/impressum" dark text class="ms-3"> Legal Notice </v-btn>
           </v-toolbar-items>
         </div>
