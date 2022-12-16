@@ -23,7 +23,7 @@
               mdi-menu-right</v-icon
             >
           </div>
-          <MapView :geojson="requestResponse" />
+          <MapView :geojson="requestResponse" ref="map" />
         </div>
       </v-col>
     </v-row>
@@ -70,6 +70,8 @@ export default {
             "Move the slider to remove all areas <br/>that have a certain <b>distance to theaters</b>.",
         },
       ],
+      mapBounds: null,
+      mapCenterPoint: [51.96229626341511, 7.6256090207326395],
     };
   },
   computed: {
@@ -84,8 +86,40 @@ export default {
     },
 
     handleClick: function () {
+      this.calculateCenterPoint();
       this.showMenu = !this.showMenu;
     },
+    calculateCenterPoint: function () {
+      this.mapBounds = this.$refs.map.getMapBounds();
+      console.log(this.mapBounds);
+      console.log(this.mapBounds.getSouth());
+      console.log(this.mapBounds.getNorth());
+      console.log(this.mapBounds.getEast());
+      console.log(this.mapBounds.getWest());
+      if (this.showMenu) {
+        this.mapCenterPoint = [
+          this.mapBounds.getSouth() +
+            (this.mapBounds.getNorth() - this.mapBounds.getSouth()) / 2,
+          this.mapBounds.getWest(),
+        ];
+        console.log("with menu ");
+      } else {
+        this.mapCenterPoint = [
+          this.mapBounds.getSouth() +
+            (this.mapBounds.getNorth() - this.mapBounds.getSouth()) / 2,
+          this.mapBounds.getWest() +
+            (3 * (this.mapBounds.getEast() - this.mapBounds.getWest())) / 4,
+        ];
+        console.log("without menu ");
+      }
+
+      // should be the middle height of left border or middle hight of right halfs middle. depending on mapviewsize
+
+      console.log(this.mapCenterPoint);
+    },
+  },
+  mounted() {
+    this.calculateCenterPoint();
   },
 };
 </script>

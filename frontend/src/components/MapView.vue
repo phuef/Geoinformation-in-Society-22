@@ -106,6 +106,17 @@ export default {
         //pass
       }
     },
+    getMapBounds: function () {
+      /*console.log(this.map.getBounds());
+      var bounds = this.map.getBounds();
+      console.log(bounds.getWest());
+      console.log(bounds.getEast());
+
+      console.log(bounds.getSouth());
+      console.log(bounds.getNorth());
+      var new_center = [bounds.getNorth() - bounds.getSouth(), bounds.getEast() - bounds.getWest()]*/
+      return this.map.getBounds();
+    },
   },
   props: {
     geojson: {
