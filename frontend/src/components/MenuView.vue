@@ -13,7 +13,7 @@
       @input="changeActiveState()"
     >
     </v-select>
-    <p class="text-capitalize pt-2" style="color: #000000de" dense>
+    <p class="text-capitalize pt-2 mb-0" style="color: #000000de" dense>
       Distance to ...
     </p>
     <br />
@@ -30,7 +30,7 @@
           <div tile class="d-flex paddingTop">
             <v-row>
               <v-col cols="4">
-                <p color="black" class="text-capitalize" dense>
+                <p color="black" class="text-capitalize mb-0" dense>
                   {{ slider.name }}
 
                   <v-tooltip right z-index="1000">
