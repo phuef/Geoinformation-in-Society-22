@@ -21,7 +21,7 @@ export default {
   data() {
     return {
       zoom: 10,
-      center: [51.96229626341511, 7.6256090207326395], // changed from the cetner coords from münster to some coords in the eastside because of map width 100 vw
+      //center: [51.96229626341511, 7.6256090207326395], // changed from the cetner coords from münster to some coords in the eastside because of map width 100 vw
       map: null,
       tileLayer: null,
       colorblindLayer: null,
@@ -44,6 +44,10 @@ export default {
   },
   methods: {
     initMap: function () {
+      if (this.center == 0) {
+        // eslint-disable-next-line
+        this.center = [51.96229626341511, 7.6256090207326395];
+      }
       this.map = L.map("mapContainer", {
         layers: this.tileLayer,
         zoomControl: false,
@@ -117,6 +121,10 @@ export default {
           type: "FeatureCollection",
         };
       },
+    },
+    center: {
+      required: true,
+      type: Array,
     },
   },
   mounted() {

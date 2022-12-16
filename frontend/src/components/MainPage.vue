@@ -23,7 +23,11 @@
               mdi-menu-right</v-icon
             >
           </div>
-          <MapView :geojson="requestResponse" ref="map" />
+          <MapView
+            :geojson="requestResponse"
+            :center="mapCenterPoint"
+            ref="map"
+          />
         </div>
       </v-col>
     </v-row>
@@ -87,6 +91,7 @@ export default {
 
     handleClick: function () {
       this.calculateCenterPoint();
+
       this.showMenu = !this.showMenu;
     },
     calculateCenterPoint: function () {
@@ -105,7 +110,6 @@ export default {
             (3 * (this.mapBounds.getEast() - this.mapBounds.getWest())) / 4,
         ];
       }
-      //console.log(this.mapCenterPoint);
     },
   },
   mounted() {
