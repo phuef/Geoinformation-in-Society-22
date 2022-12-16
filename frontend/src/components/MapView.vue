@@ -20,12 +20,8 @@ export default {
   name: "MapView",
   data() {
     return {
-      url: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
-      attribution:
-        '&copy; <a target="_blank" href="http://osm.org/copyright">OpenStreetMap</a> contributors',
       zoom: 10,
       center: [51.96229626341511, 7.6256090207326395], // changed from the cetner coords from münster to some coords in the eastside because of map width 100 vw
-      markerLatLng: [51.504, -0.159],
       map: null,
       tileLayer: null,
       colorblindLayer: null,
@@ -107,14 +103,6 @@ export default {
       }
     },
     getMapBounds: function () {
-      /*console.log(this.map.getBounds());
-      var bounds = this.map.getBounds();
-      console.log(bounds.getWest());
-      console.log(bounds.getEast());
-
-      console.log(bounds.getSouth());
-      console.log(bounds.getNorth());
-      var new_center = [bounds.getNorth() - bounds.getSouth(), bounds.getEast() - bounds.getWest()]*/
       return this.map.getBounds();
     },
   },
@@ -132,28 +120,19 @@ export default {
     },
   },
   mounted() {
-    this.initMap();
+    // Some error occurred by re-saving this file. The error said that the map was already initialized but this try-catch block solves it.
+    try {
+      this.initMap();
+    } catch {
+      // pass
+    }
+
     this.changeGeojson(this.geojson);
   },
   watch: {
     geojson: function (newGeojson) {
       // TODO: when the object changes add it to the map
-      //var geojsonColl = JSON.parse(JSON.stringify(newGeojson));
-      //var geojsonColl = JSON.parse(JSON.stringify(this.geojsonFeature));
-      //console.log(geojsonColl);
       this.changeGeojson(newGeojson);
-
-      /*try {
-        this.map.removeLayer(this.resultLayer);
-      } catch (error) {
-        //pass
-      }
-
-      this.resultLayer = L.geoJSON().addTo(this.map);
-      this.resultLayer.addData(geojsonColl);*/
-
-      // TOmaybeDO: adjust the bounds to the size of the geojson
-      //this.map.fitBounds(geoLayer.getBounds());
     },
   },
 };

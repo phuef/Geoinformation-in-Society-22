@@ -91,18 +91,12 @@ export default {
     },
     calculateCenterPoint: function () {
       this.mapBounds = this.$refs.map.getMapBounds();
-      console.log(this.mapBounds);
-      console.log(this.mapBounds.getSouth());
-      console.log(this.mapBounds.getNorth());
-      console.log(this.mapBounds.getEast());
-      console.log(this.mapBounds.getWest());
       if (this.showMenu) {
         this.mapCenterPoint = [
           this.mapBounds.getSouth() +
             (this.mapBounds.getNorth() - this.mapBounds.getSouth()) / 2,
           this.mapBounds.getWest(),
         ];
-        console.log("with menu ");
       } else {
         this.mapCenterPoint = [
           this.mapBounds.getSouth() +
@@ -110,12 +104,8 @@ export default {
           this.mapBounds.getWest() +
             (3 * (this.mapBounds.getEast() - this.mapBounds.getWest())) / 4,
         ];
-        console.log("without menu ");
       }
-
-      // should be the middle height of left border or middle hight of right halfs middle. depending on mapviewsize
-
-      console.log(this.mapCenterPoint);
+      //console.log(this.mapCenterPoint);
     },
   },
   mounted() {
