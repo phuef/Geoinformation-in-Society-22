@@ -7,7 +7,11 @@
   >
     <v-row no-gutters class="fill-height" style="height: 100%">
       <v-col cols="12" xs="12" sm="6" v-if="showMenu">
-        <MenuView @newRequest="processNewRequest" :sliders="sliders" />
+        <MenuView
+          @newRequest="processNewRequest"
+          @clearMap="processNewRequest"
+          :sliders="sliders"
+        />
       </v-col>
       <v-col cols="12" xs="12" :sm="mapViewSize">
         <div id="mapContainer" :key="mapViewSize">
@@ -78,6 +82,7 @@ export default {
     processNewRequest: function (response) {
       this.requestResponse = response;
     },
+
     handleClick: function () {
       this.showMenu = !this.showMenu;
     },
