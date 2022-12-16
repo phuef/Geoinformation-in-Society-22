@@ -20,7 +20,7 @@ export default {
   name: "MapView",
   data() {
     return {
-      zoom: 10,
+      //zoom: 10,
       //center: [51.96229626341511, 7.6256090207326395], // changed from the cetner coords from münster to some coords in the eastside because of map width 100 vw
       map: null,
       tileLayer: null,
@@ -44,10 +44,6 @@ export default {
   },
   methods: {
     initMap: function () {
-      if (this.center == 0) {
-        // eslint-disable-next-line
-        this.center = [51.96229626341511, 7.6256090207326395];
-      }
       this.map = L.map("mapContainer", {
         layers: this.tileLayer,
         zoomControl: false,
@@ -109,6 +105,9 @@ export default {
     getMapBounds: function () {
       return this.map.getBounds();
     },
+    getMapZoom: function () {
+      return this.map.getZoom();
+    },
   },
   props: {
     geojson: {
@@ -126,6 +125,10 @@ export default {
       required: true,
       type: Array,
     },
+    zoom: {
+      required: true,
+      type: Number,
+    },
   },
   mounted() {
     // Some error occurred by re-saving this file. The error said that the map was already initialized but this try-catch block solves it.
@@ -139,7 +142,6 @@ export default {
   },
   watch: {
     geojson: function (newGeojson) {
-      // TODO: when the object changes add it to the map
       this.changeGeojson(newGeojson);
     },
   },

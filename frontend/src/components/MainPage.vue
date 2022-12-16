@@ -26,6 +26,7 @@
           <MapView
             :geojson="requestResponse"
             :center="mapCenterPoint"
+            :zoom="mapZoom"
             ref="map"
           />
         </div>
@@ -76,6 +77,7 @@ export default {
       ],
       mapBounds: null,
       mapCenterPoint: [51.96229626341511, 7.6256090207326395],
+      mapZoom: 10,
     };
   },
   computed: {
@@ -91,7 +93,7 @@ export default {
 
     handleClick: function () {
       this.calculateCenterPoint();
-
+      this.getMapZoom();
       this.showMenu = !this.showMenu;
     },
     calculateCenterPoint: function () {
@@ -111,9 +113,13 @@ export default {
         ];
       }
     },
+    getMapZoom: function () {
+      this.mapZoom = this.$refs.map.getMapZoom();
+    },
   },
   mounted() {
     this.calculateCenterPoint();
+    this.getMapZoom();
   },
 };
 </script>
