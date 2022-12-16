@@ -13,7 +13,7 @@
       @input="changeActiveState()"
     >
     </v-select>
-    <p class="text-none noMarginBottom">Distance to ...</p>
+    <p class="text-none noMarginBottom px-2">Distance to ...</p>
     <br />
     <v-row v-for="slider in sliders" :key="slider.label">
       <v-col class="lessPadding"
@@ -21,7 +21,6 @@
           v-if="slider.active"
           width="100%"
           elevation="0"
-          outlined
           tile
           dense
           cols="12"
@@ -46,7 +45,7 @@
                       v-on="on"
                       class="bNoPadding"
                     >
-                      <div color="black" class="text-capitalize" dense>
+                      <div class="text-capitalize" dense>
                         {{ slider.name
                         }}<v-icon small color="black"
                           >mdi-information-outline</v-icon
