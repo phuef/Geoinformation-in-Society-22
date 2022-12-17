@@ -23,7 +23,12 @@
               mdi-menu-right</v-icon
             >
           </div>
-          <MapView :geojson="requestResponse" />
+          <MapView
+            :geojson="requestResponse"
+            :center="mapCenterPoint"
+            :zoom="mapZoom"
+            ref="map"
+          />
         </div>
       </v-col>
     </v-row>
@@ -70,6 +75,9 @@ export default {
             "Move the slider to remove all areas <br/>that have a certain <b>distance to theaters</b>.",
         },
       ],
+      mapBounds: null,
+      mapCenterPoint: [51.96229626341511, 7.6256090207326395],
+      mapZoom: 10,
     };
   },
   computed: {
@@ -84,8 +92,34 @@ export default {
     },
 
     handleClick: function () {
+      this.calculateCenterPoint();
+      this.getMapZoom();
       this.showMenu = !this.showMenu;
     },
+    calculateCenterPoint: function () {
+      this.mapBounds = this.$refs.map.getMapBounds();
+      if (this.showMenu) {
+        this.mapCenterPoint = [
+          this.mapBounds.getSouth() +
+            (this.mapBounds.getNorth() - this.mapBounds.getSouth()) / 2,
+          this.mapBounds.getWest(),
+        ];
+      } else {
+        this.mapCenterPoint = [
+          this.mapBounds.getSouth() +
+            (this.mapBounds.getNorth() - this.mapBounds.getSouth()) / 2,
+          this.mapBounds.getWest() +
+            (3 * (this.mapBounds.getEast() - this.mapBounds.getWest())) / 4,
+        ];
+      }
+    },
+    getMapZoom: function () {
+      this.mapZoom = this.$refs.map.getMapZoom();
+    },
+  },
+  mounted() {
+    this.calculateCenterPoint();
+    this.getMapZoom();
   },
 };
 </script>
