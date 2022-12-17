@@ -74,9 +74,9 @@ class DistanceStack:
                 filteredArrays.append(filteredArray) #add filtered array to list                           
             else:
                 array = self.bands[filterValues[i][0]].ReadAsArray() #read corresponding band from raster
-                filteredArray = array >= filterValues[i][1]/10 #filter band
-                filteredArray = filteredArray <= filterValues[i][2]/10
-                filteredArrays.append(filteredArray) #add filtered array to list
+                filteredArrayA = array <= filterValues[i][2]/10
+                filteredArrayB = array >= filterValues[i][1]/10 #filter band
+                filteredArrays.append(filteredArrayA*filteredArrayB) #add filtered array to list
             
         combinedArray = filteredArrays[0] #initialize combined array
         
@@ -104,7 +104,7 @@ class DistanceStack:
         with open('usr/src/backend/results/' + self.uuid + '.json') as f:
             data = json.load(f)
         for feature in data['features']:
-            if(feature['properties']['DN'] == 0):
+            if(feature['properties']['DN'] != 1):
                 data['features'].remove(feature)
             feature['geometry']['coordinates'] = feature['geometry']['coordinates'][::-1]
         data['crs'] = "WGS-84 - EPSG: 4326"
