@@ -219,6 +219,7 @@ export default {
           }
         }
       }
+      this.doRequest();
     },
     /**
      * Removes a layer with a given name
@@ -228,6 +229,11 @@ export default {
         if (this.activeSliders[j] == name) {
           this.activeSliders.splice(j, 1);
         }
+      }
+      if (this.activeSliders.length != 0) {
+        this.doRequest();
+      } else {
+        this.clearMap();
       }
     },
     // returns a string in the following form:
@@ -287,6 +293,7 @@ export default {
         }
       }
       this.removeNotActiveLayers();
+      this.doRequest();
     },
     /**
      * Removes all layers that are currently not active
@@ -316,6 +323,9 @@ export default {
 
       // sends an event, that the parent component (in this case Mainpage) can listen to
       this.$emit("newRequest", this.response);
+    },
+    async clearMap() {
+      this.$emit("clearMap", null);
     },
   },
   mounted() {

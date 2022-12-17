@@ -10,6 +10,7 @@
         <MenuView
           @newRequest="processNewRequest"
           @isMinOfSliderHasChanged="changeSlidersIsMinState"
+          @clearMap="processNewRequest"
           :sliders="sliders"
         />
       </v-col>
