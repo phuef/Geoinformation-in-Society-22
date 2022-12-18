@@ -9,6 +9,7 @@
       <v-col cols="12" xs="12" sm="6" v-if="showMenu">
         <MenuView
           @newRequest="processNewRequest"
+          @isMinOfSliderHasChanged="changeSlidersIsMinState"
           @clearMap="processNewRequest"
           :sliders="sliders"
         />
@@ -64,6 +65,8 @@ export default {
           // the text that shall be displayed when the user hovers over the info button
           infoLabel:
             "Move the slider to remove all areas <br/>that have a certain <b>distance to museums</b>.",
+          icon: "mdi-bank",
+          isMin: true,
         },
         {
           name: "Theaters",
@@ -73,6 +76,8 @@ export default {
           active: true,
           infoLabel:
             "Move the slider to remove all areas <br/>that have a certain <b>distance to theaters</b>.",
+          icon: "mdi-drama-masks",
+          isMin: true,
         },
       ],
       mapBounds: null,
@@ -90,7 +95,13 @@ export default {
     processNewRequest: function (response) {
       this.requestResponse = response;
     },
-
+    changeSlidersIsMinState: function (sliderName) {
+      for (var i in this.sliders) {
+        if (this.sliders[i].name == sliderName) {
+          this.sliders[i].isMin = !this.sliders[i].isMin;
+        }
+      }
+    },
     handleClick: function () {
       this.calculateCenterPoint();
       this.getMapZoom();

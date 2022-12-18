@@ -13,61 +13,149 @@
       @input="changeActiveState()"
     >
     </v-select>
-    <p class="text">Distance to ...</p>
+    <p class="text-capitalize pt-2 mb-0" style="color: #000000de" dense>
+      Distance to ...
+    </p>
     <br />
-    <v-row v-for="slider in sliders" :key="slider.label">
-      <v-col
-        v-if="slider.active"
-        cols="1"
-        class="d-flex center-align justify-center"
-      >
-        <v-tooltip right z-index="1000">
-          <template v-slot:activator="{ on, attrs }">
-            <v-icon slot="prependIcon" v-bind="attrs" v-on="on"
-              >mdi-information-outline</v-icon
-            >
-          </template>
-          <span v-html="slider.infoLabel"></span>
-        </v-tooltip>
-      </v-col>
-      <v-col
-        v-if="slider.active"
-        cols="10"
-        class="d-flex center-align justify-center"
-        style="padding-top: 15px"
-      >
-        <v-slider
-          hide-details
-          v-model="slider.value"
-          step="10"
-          thumb-label="always"
-          :thumb-size="30"
-          max="2000"
+    <v-row v-for="slider in sliders" :key="slider.label" class="py-3 px-3">
+      <v-col class="lessPadding"
+        ><v-card
+          v-if="slider.active"
+          width="100%"
+          elevation="0"
+          tile
           dense
-          :label="slider.name + ':'"
-          @end="doRequest"
-        ></v-slider>
-      </v-col>
-      <v-col
-        v-if="slider.active"
-        cols="1"
-        class="d-flex center-align justify-center"
-      >
-        <v-tooltip left z-index="1000">
-          <template v-slot:activator="{ on, attrs }">
-            <v-btn
-              id="deleteBtn"
-              rounded
+          cols="12"
+        >
+          <div tile class="d-flex paddingTop">
+            <v-row>
+              <v-col cols="4">
+                <p color="black" class="text-capitalize mb-0" dense>
+                  {{ slider.name }}
+
+                  <v-tooltip right z-index="1000">
+                    <template v-slot:activator="{ on, attrs }">
+                      <v-btn
+                        dense
+                        small
+                        color="white"
+                        elevation="0"
+                        v-bind="attrs"
+                        v-on="on"
+                        class="bNoPadding"
+                      >
+                        <v-icon small style="color: #000000de"
+                          >mdi-information-outline</v-icon
+                        >
+                      </v-btn>
+                    </template>
+                    <span v-html="slider.infoLabel"></span>
+                  </v-tooltip>
+                </p>
+              </v-col>
+              <v-col cols="3">
+                <v-btn
+                  elevation="0"
+                  dense
+                  small
+                  outlined
+                  @click="$emit('isMinOfSliderHasChanged', slider.name)"
+                  class="text-lowercase bNoPadding"
+                >
+                  {{ slider.isMin ? "at least" : "less than" }}
+                </v-btn>
+              </v-col>
+              <v-col cols="4"> {{ slider.value }} m </v-col>
+              <v-col cols="1">
+                <div class="d-flex center-align justify-center bNoPadding">
+                  <v-tooltip left z-index="1000">
+                    <template v-slot:activator="{ on, attrs }">
+                      <v-btn
+                        id="deleteBtn"
+                        elevation="0"
+                        small
+                        class="bNoPadding"
+                        color="white"
+                        @click="
+                          (slider.active = false), removeLayer(slider.name)
+                        "
+                      >
+                        <v-icon
+                          style="color: #000000de"
+                          v-bind="attrs"
+                          v-on="on"
+                          >mdi-close</v-icon
+                        >
+                      </v-btn>
+                    </template>
+                    <span class="bNoPadding"
+                      >Remove {{ slider.name }} layer</span
+                    >
+                  </v-tooltip>
+                </div>
+              </v-col>
+            </v-row>
+            <!--layer name + icon-->
+
+            <!--<v-spacer></v-spacer>-->
+            <!-- less than / at least button-->
+            <!--<v-btn
               elevation="0"
-              depressed
-              plain
-              @click="(slider.active = false), removeLayer(slider.name)"
+              dense
+              small
+              outlined
+              @click="$emit('isMinOfSliderHasChanged', slider.name)"
+              class="text-lowercase bNoPadding"
             >
-              <v-icon v-bind="attrs" v-on="on">mdi-close</v-icon>
+              {{ slider.isMin ? "at least" : "less than" }}
             </v-btn>
-          </template>
-          <span>Delete layer</span>
-        </v-tooltip>
+            <v-spacer></v-spacer>-->
+            <!-- slider value -->
+            <!--<v-btn
+              dense
+              small
+              color="white"
+              elevation="0"
+              class="text-none bNoPadding"
+            >
+              {{ slider.value }} m
+            </v-btn>
+            <v-spacer></v-spacer>-->
+            <!-- remove layer button-->
+            <!--<div class="d-flex center-align justify-center bNoPadding">
+              <v-tooltip left z-index="1000">
+                <template v-slot:activator="{ on, attrs }">
+                  <v-btn
+                    id="deleteBtn"
+                    elevation="0"
+                    small
+                    class="bNoPadding"
+                    color="white"
+                    @click="(slider.active = false), removeLayer(slider.name)"
+                  >
+                    <v-icon v-bind="attrs" v-on="on">mdi-close</v-icon>
+                  </v-btn>
+                </template>
+                <span class="bNoPadding">Remove {{ slider.name }} layer</span>
+              </v-tooltip>
+            </div>-->
+          </div>
+          <div
+            v-if="slider.active"
+            cols="1"
+            class="d-flex center-align justify-center"
+          >
+            <v-slider
+              hide-details
+              v-model="slider.value"
+              step="10"
+              :thumb-size="30"
+              max="2000"
+              dense
+              @end="doRequest"
+            ></v-slider>
+          </div>
+        </v-card>
       </v-col>
     </v-row>
     <br />
@@ -76,6 +164,7 @@
     <div v-for="configuration in configurations" :key="configuration.name">
       <v-btn
         width="100%"
+        small
         @click="
           (activeSliders = configuration.activeSliders),
             adjustSliders(configuration.activeSliders, configuration.values)
@@ -89,7 +178,7 @@
 <script>
 export default {
   name: "MenuView",
-  emits: ["newRequest"],
+  emits: ["newRequest", "isMinOfSliderHasChanged"],
   data() {
     return {
       activeSliders: ["Museums", "Theaters"], //The currently active Sliders
@@ -245,4 +334,22 @@ export default {
   },
 };
 </script>
-<style></style>
+<style>
+.bNoPadding {
+  padding-left: 2px !important;
+  padding-right: 2px !important;
+  min-width: 0px !important;
+}
+.noMarginBottom {
+  margin-bottom: 0px !important;
+}
+.lessPadding {
+  padding-left: 2px !important;
+  padding-right: 2px !important;
+  padding-top: 2px !important;
+  padding-bottom: 2px !important;
+}
+.paddingTop {
+  padding-top: 2px !important;
+}
+</style>
