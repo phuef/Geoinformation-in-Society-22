@@ -39,7 +39,7 @@ There are two layers accessable:
 ```
 
 The second value in each tuple represents the minium allowed distance in meters while the third value represents the maximum allowed distance in meters.
-The distances can be set to None
+The distances can be set to ```None```.
 
 The Backend is dockerized and can be started with the correct port mapping with the following command:
 ```
