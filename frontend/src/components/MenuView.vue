@@ -236,42 +236,37 @@ export default {
         this.clearMap();
       }
     },
-    // returns a string in the following form:
-    // "(bandId, sliderValue)"
-
     /**
-     * @returns String in the following form:"[(bandId, sliderValue), (bandId, sliderValue)]"
-     * this String can be put together with <serverUrl>/request/<this string> to make the request to the backend
+     * Generates String that can be put together with <serverUrl>/request/<this string> to make a request to the backend
+     * @returns String in the following form:"[(bandId, minDist, maxDist), (bandId, minDist, maxDist)]"
+     * Example: [(0, 0, 1000),(1, 0, 1500)]
      */
     requestString() {
-      // outcome should look like this: [(0, 1000),(1,1500)]
-      var a = [
-        { band: 0, value: 50 },
-        { band: 1, value: 100 },
-      ];
-      a = this.getBandValueArray(); //returns an array with the bandIds and the corresponding values
-      var b = "[";
-      for (var i in a) {
+      const bandValues = this.getBandValueArray();  // Returns array with bandIds and corresponding values
+      let requestString = "[";
+      for (const i in bandValues) {
         if (i > 0) {
-          b += ",";
+          requestString += ",";
         }
-        b += "(" + a[i].band.toString() + "," + a[i].value.toString() + ")";
+        requestString += "(" + bandValues[i].band.toString() + ","
+          + bandValues[i].minDist.toString() + "," + bandValues[i].maxDist.toString() + ")";
       }
-      b += "]";
-      return b;
+      requestString += "]";
+      return requestString;
     },
     /**
-     * Gathers the bandId and current value for each active layer
-     * @returns Array in the following form: [{band:0,value:50},{band:1,value:100}]
+     * Gathers the bandId and current values for each active layer
+     * @returns Array in the following form: [{band: 0, minDist: 0, maxDist: 1000},{band:1, minDist: 0, maxDist :1500}]
      */
     getBandValueArray() {
       // for each active layer add the bandId and its current value in an array
-      var helpArray = [];
-      for (var i in this.sliders) {
+      const helpArray = [];
+      for (const i in this.sliders) {
         if (this.sliders[i].active) {
           helpArray.push({
             band: this.sliders[i].band,
-            value: this.sliders[i].value,
+            minDist: 0,
+            maxDist: this.sliders[i].value,
           });
         }
       }
