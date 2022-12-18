@@ -43,6 +43,21 @@ def tea():
     return "The server refuses to brew coffee because it is, permanently, a teapot.", 418
 
 '''
+* Title: Coffee Route 
+* Description: A route which is accessible
+*              via localhost:5050/brewCoffee and returns HTTP-Statuscode 418
+'''
+@app.route("/apiDescription", methods = ['GET'])
+def api():
+    try:
+        with open('usr/src/backend/data/open_api_doc.json') as f:
+                data = json.load(f)
+        return data, 200
+    except(Exception):
+        print(traceback.format_exc())
+        return "Internal Server Error", 500
+
+'''
 * Title: 
 * Description: (band, min, max)
 '''
