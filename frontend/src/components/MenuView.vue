@@ -95,50 +95,6 @@
                 </div>
               </v-col>
             </v-row>
-            <!--layer name + icon-->
-
-            <!--<v-spacer></v-spacer>-->
-            <!-- less than / at least button-->
-            <!--<v-btn
-              elevation="0"
-              dense
-              small
-              outlined
-              @click="$emit('isMinOfSliderHasChanged', slider.name)"
-              class="text-lowercase bNoPadding"
-            >
-              {{ slider.isMin ? "at least" : "less than" }}
-            </v-btn>
-            <v-spacer></v-spacer>-->
-            <!-- slider value -->
-            <!--<v-btn
-              dense
-              small
-              color="white"
-              elevation="0"
-              class="text-none bNoPadding"
-            >
-              {{ slider.value }} m
-            </v-btn>
-            <v-spacer></v-spacer>-->
-            <!-- remove layer button-->
-            <!--<div class="d-flex center-align justify-center bNoPadding">
-              <v-tooltip left z-index="1000">
-                <template v-slot:activator="{ on, attrs }">
-                  <v-btn
-                    id="deleteBtn"
-                    elevation="0"
-                    small
-                    class="bNoPadding"
-                    color="white"
-                    @click="(slider.active = false), removeLayer(slider.name)"
-                  >
-                    <v-icon v-bind="attrs" v-on="on">mdi-close</v-icon>
-                  </v-btn>
-                </template>
-                <span class="bNoPadding">Remove {{ slider.name }} layer</span>
-              </v-tooltip>
-            </div>-->
           </div>
           <div
             v-if="slider.active"
