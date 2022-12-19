@@ -139,9 +139,10 @@
             <v-col
               style="color: #000000de"
               cols="6"
+              class="p-0"
               v-html="configuration.name"
             ></v-col>
-            <v-col cols="5">
+            <v-col class="d-flex justify-center" cols="5">
               <v-btn
                 color="rgb(72,72,72)"
                 class="white--text text-capitalize"
