@@ -13,9 +13,7 @@
       @input="changeActiveState()"
     >
     </v-select>
-    <p class="text-capitalize pt-2 mb-0" style="color: #000000de" dense>
-      Distance to ...
-    </p>
+    <p class="text pt-2 mb-0" style="color: #000000de" dense>Distance to ...</p>
     <br />
     <v-row v-for="slider in sliders" :key="slider.label" class="py-3 px-3">
       <v-col class="lessPadding"
@@ -117,19 +115,53 @@
       </v-col>
     </v-row>
     <br />
-    <v-divider></v-divider>
+    <v-divider style="border-color: rgba(127, 127, 127)"></v-divider>
     <br />
-    <div v-for="configuration in configurations" :key="configuration.name">
-      <v-btn
-        width="100%"
-        small
-        @click="
-          (activeSliders = configuration.activeSliders),
-            adjustSliders(configuration.activeSliders, configuration.values)
-        "
-        >{{ configuration.name }}</v-btn
-      >
-    </div>
+    <v-expansion-panels flat>
+      <v-expansion-panel>
+        <v-expansion-panel-header
+          style="color: #000000de; padding-left: 0px; font-size: 16px"
+          dense
+        >
+          Pre-configurated examples:
+        </v-expansion-panel-header>
+        <v-expansion-panel-content>
+          <v-row
+            v-for="configuration in configurations"
+            :key="configuration.name"
+            align="center"
+          >
+            <v-col
+              style="color: #000000de"
+              cols="1"
+              v-html="'<b>' + configuration.index + ')</b>'"
+            ></v-col>
+            <v-col
+              style="color: #000000de"
+              cols="6"
+              v-html="configuration.name"
+            ></v-col>
+            <v-col cols="5">
+              <v-btn
+                color="rgb(72,72,72)"
+                class="white--text text-capitalize"
+                elevation="0"
+                height="50px"
+                @click="
+                  (activeSliders = configuration.activeSliders),
+                    adjustSliders(
+                      configuration.activeSliders,
+                      configuration.values,
+                      configuration.isMin
+                    )
+                "
+                v-html="'Show this <br/>configuration'"
+              ></v-btn>
+            </v-col>
+          </v-row>
+        </v-expansion-panel-content>
+      </v-expansion-panel>
+    </v-expansion-panels>
   </div>
 </template>
 
@@ -143,14 +175,18 @@ export default {
       configurations: [
         // The pre-configurations that can be set upfront in the following form:
         {
-          name: "Find your Museum", // name of the configuration - gets displayed
+          index: 1,
+          name: "Find museums with a minimum distance of 1000 m.", // name of the configuration - gets displayed
           activeSliders: ["Museums"], // the name(s) of the slider(s) that should be shown
-          values: [100], // the values that the slider(s) should have
+          values: [1000], // the values that the slider(s) should have
+          isMin: true,
         },
         {
-          name: "Find your Theater",
+          index: 2,
+          name: "Find theaters with a maximum distance of 500 m.",
           activeSliders: ["Theaters"],
-          values: [0],
+          values: [500],
+          isMin: false,
         },
       ],
       response: "",
@@ -248,7 +284,7 @@ export default {
     /**
      * Adjusts the shown layers according to a given configuration
      */
-    adjustSliders(activeSliders, values) {
+    adjustSliders(activeSliders, values, isMin) {
       for (var h in this.sliders) {
         this.sliders[h].active = false;
       }
@@ -257,6 +293,8 @@ export default {
           if (this.sliders[j].name == activeSliders[i]) {
             this.sliders[j].active = true;
             this.sliders[j].value = values[i];
+            console.log(this.sliders[i].isMin);
+            this.sliders[i].isMin = isMin;
           }
         }
       }
