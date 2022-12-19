@@ -59,7 +59,9 @@
                   dense
                   small
                   outlined
-                  @click="$emit('isMinOfSliderHasChanged', slider.name)"
+                  @click="
+                    $emit('isMinOfSliderHasChanged', slider.name), doRequest()
+                  "
                   class="text-lowercase bNoPadding"
                 >
                   {{ slider.isMin ? "at least" : "less than" }}
@@ -95,50 +97,6 @@
                 </div>
               </v-col>
             </v-row>
-            <!--layer name + icon-->
-
-            <!--<v-spacer></v-spacer>-->
-            <!-- less than / at least button-->
-            <!--<v-btn
-              elevation="0"
-              dense
-              small
-              outlined
-              @click="$emit('isMinOfSliderHasChanged', slider.name)"
-              class="text-lowercase bNoPadding"
-            >
-              {{ slider.isMin ? "at least" : "less than" }}
-            </v-btn>
-            <v-spacer></v-spacer>-->
-            <!-- slider value -->
-            <!--<v-btn
-              dense
-              small
-              color="white"
-              elevation="0"
-              class="text-none bNoPadding"
-            >
-              {{ slider.value }} m
-            </v-btn>
-            <v-spacer></v-spacer>-->
-            <!-- remove layer button-->
-            <!--<div class="d-flex center-align justify-center bNoPadding">
-              <v-tooltip left z-index="1000">
-                <template v-slot:activator="{ on, attrs }">
-                  <v-btn
-                    id="deleteBtn"
-                    elevation="0"
-                    small
-                    class="bNoPadding"
-                    color="white"
-                    @click="(slider.active = false), removeLayer(slider.name)"
-                  >
-                    <v-icon v-bind="attrs" v-on="on">mdi-close</v-icon>
-                  </v-btn>
-                </template>
-                <span class="bNoPadding">Remove {{ slider.name }} layer</span>
-              </v-tooltip>
-            </div>-->
           </div>
           <div
             v-if="slider.active"
@@ -240,22 +198,31 @@ export default {
     // "(bandId, sliderValue)"
 
     /**
+     * @returns String
+     */
+    getTupelForRequest(band, value, isMin) {
+      var tupel = "(" + band + ",";
+      if (isMin) {
+        tupel += value + ",None)";
+      } else {
+        tupel += "0," + value + ")";
+      }
+      return tupel;
+    },
+    /**
      * @returns String in the following form:"[(bandId, sliderValue), (bandId, sliderValue)]"
      * this String can be put together with <serverUrl>/request/<this string> to make the request to the backend
      */
     requestString() {
       // outcome should look like this: [(0, 1000),(1,1500)]
-      var a = [
-        { band: 0, value: 50 },
-        { band: 1, value: 100 },
-      ];
+      var a = [];
       a = this.getBandValueArray(); //returns an array with the bandIds and the corresponding values
       var b = "[";
       for (var i in a) {
         if (i > 0) {
           b += ",";
         }
-        b += "(" + a[i].band.toString() + "," + a[i].value.toString() + ")";
+        b += this.getTupelForRequest(a[i].band, a[i].value, a[i].isMin);
       }
       b += "]";
       return b;
@@ -272,6 +239,7 @@ export default {
           helpArray.push({
             band: this.sliders[i].band,
             value: this.sliders[i].value,
+            isMin: this.sliders[i].isMin,
           });
         }
       }
