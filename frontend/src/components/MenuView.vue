@@ -75,7 +75,9 @@
                   dense
                   small
                   outlined
-                  @click="$emit('isMinOfSliderHasChanged', slider.name)"
+                  @click="
+                    $emit('isMinOfSliderHasChanged', slider.name), doRequest()
+                  "
                   class="text-lowercase bNoPadding"
                 >
                   {{ slider.isMin ? "at least" : "less than" }}
@@ -212,22 +214,31 @@ export default {
     // "(bandId, sliderValue)"
 
     /**
+     * @returns String
+     */
+    getTupelForRequest(band, value, isMin) {
+      var tupel = "(" + band + ",";
+      if (isMin) {
+        tupel += value + ",None)";
+      } else {
+        tupel += "0," + value + ")";
+      }
+      return tupel;
+    },
+    /**
      * @returns String in the following form:"[(bandId, sliderValue), (bandId, sliderValue)]"
      * this String can be put together with <serverUrl>/request/<this string> to make the request to the backend
      */
     requestString() {
       // outcome should look like this: [(0, 1000),(1,1500)]
-      var a = [
-        { band: 0, value: 50 },
-        { band: 1, value: 100 },
-      ];
+      var a = [];
       a = this.getBandValueArray(); //returns an array with the bandIds and the corresponding values
       var b = "[";
       for (var i in a) {
         if (i > 0) {
           b += ",";
         }
-        b += "(" + a[i].band.toString() + "," + a[i].value.toString() + ")";
+        b += this.getTupelForRequest(a[i].band, a[i].value, a[i].isMin);
       }
       b += "]";
       return b;
@@ -244,6 +255,7 @@ export default {
           helpArray.push({
             band: this.sliders[i].band,
             value: this.sliders[i].value,
+            isMin: this.sliders[i].isMin,
           });
         }
       }
