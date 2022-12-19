@@ -1,13 +1,21 @@
 <template>
   <div class="pt-8 pl-6 pr-1">
     <div class="body-1 text-xs-body-2">
-    <p>Do you have the desire to <span class="highlight-gray">Find your Spot</span>?
-    With this application you can search for a specific location that meets your interests. 
-    <mark>Define the layers</mark> that you want, <mark>specify the distance</mark>, 
-    and that`s it, congrats, you just found your Spot.<br /></p>
-    <p><mark>Need help?</mark> For detailed information of the functionalities, <span class="highlight-yellow">use the information</span> buttons below.</p>
+      <p>
+        Do you have the desire to
+        <span class="highlight-gray">Find your Spot</span>? With this
+        application you can search for a specific location that meets your
+        interests. <mark>Define the layers</mark> that you want,
+        <mark>specify the distance</mark>, and that`s it, congrats, you just
+        found your Spot.<br />
+      </p>
+      <p>
+        <mark>Need help?</mark> For detailed information of the functionalities,
+        <span class="highlight-yellow">use the information</span> buttons below.
+      </p>
     </div>
     <v-divider></v-divider>
+
     <v-select
       v-model="activeSliders"
       :items="sliders"
@@ -15,32 +23,120 @@
       item-value="name"
       deletable-chips
       chips
-      label="selected layers"
+      label="Selected layers:"
       multiple
       dense
       @input="changeActiveState()"
     >
     </v-select>
-    <div v-for="slider in sliders" :key="slider.label">
-      <!--<v-card-subtitle>{{slider.label}}</v-card-subtitle> -->
-      <v-slider
-        v-if="slider.active"
-        v-model="slider.value"
-        step="50"
-        thumb-label="always"
-        ticks
-        max="1000"
-        dense
-        :label="slider.label + ':'"
-        append-icon="mdi-close"
-        prepend-icon="mdi-information-outline"
-        @click:append="(slider.active = false), removeLayer(slider.name)"
-      ></v-slider>
-    </div>
+    <p class="text-capitalize pt-2 mb-0" style="color: #000000de" dense>
+      Distance to ...
+    </p>
+    <br />
+    <v-row v-for="slider in sliders" :key="slider.label" class="py-3 px-3">
+      <v-col class="lessPadding"
+        ><v-card
+          v-if="slider.active"
+          width="100%"
+          elevation="0"
+          tile
+          dense
+          cols="12"
+        >
+          <div tile class="d-flex paddingTop">
+            <v-row>
+              <v-col cols="4">
+                <p color="black" class="text-capitalize mb-0" dense>
+                  {{ slider.name }}
+
+                  <v-tooltip right z-index="1000">
+                    <template v-slot:activator="{ on, attrs }">
+                      <v-btn
+                        dense
+                        small
+                        color="white"
+                        elevation="0"
+                        v-bind="attrs"
+                        v-on="on"
+                        class="bNoPadding"
+                      >
+                        <v-icon small style="color: #000000de"
+                          >mdi-information-outline</v-icon
+                        >
+                      </v-btn>
+                    </template>
+                    <span v-html="slider.infoLabel"></span>
+                  </v-tooltip>
+                </p>
+              </v-col>
+              <v-col cols="3">
+                <v-btn
+                  elevation="0"
+                  dense
+                  small
+                  outlined
+                  @click="$emit('isMinOfSliderHasChanged', slider.name)"
+                  class="text-lowercase bNoPadding"
+                >
+                  {{ slider.isMin ? "at least" : "less than" }}
+                </v-btn>
+              </v-col>
+              <v-col cols="4"> {{ slider.value }} m </v-col>
+              <v-col cols="1">
+                <div class="d-flex center-align justify-center bNoPadding">
+                  <v-tooltip left z-index="1000">
+                    <template v-slot:activator="{ on, attrs }">
+                      <v-btn
+                        id="deleteBtn"
+                        elevation="0"
+                        small
+                        class="bNoPadding"
+                        color="white"
+                        @click="
+                          (slider.active = false), removeLayer(slider.name)
+                        "
+                      >
+                        <v-icon
+                          style="color: #000000de"
+                          v-bind="attrs"
+                          v-on="on"
+                          >mdi-close</v-icon
+                        >
+                      </v-btn>
+                    </template>
+                    <span class="bNoPadding"
+                      >Remove {{ slider.name }} layer</span
+                    >
+                  </v-tooltip>
+                </div>
+              </v-col>
+            </v-row>
+          </div>
+          <div
+            v-if="slider.active"
+            cols="1"
+            class="d-flex center-align justify-center"
+          >
+            <v-slider
+              hide-details
+              v-model="slider.value"
+              step="10"
+              :thumb-size="30"
+              max="2000"
+              dense
+              @end="doRequest"
+            ></v-slider>
+          </div>
+        </v-card>
+      </v-col>
+    </v-row>
+    <br />
     <v-divider></v-divider>
+    <br />
     <div v-for="configuration in configurations" :key="configuration.name">
       <v-btn
         width="100%"
+        small
         @click="
           (activeSliders = configuration.activeSliders),
             adjustSliders(configuration.activeSliders, configuration.values)
@@ -53,51 +149,32 @@
 
 <script>
 export default {
-  name: "MapView",
+  name: "MenuView",
+  emits: ["newRequest", "isMinOfSliderHasChanged"],
   data() {
     return {
-      sliders: [
-        //All availabe sliders
-        {
-          name: "Parks",
-          label: "Distance to parks",
-          value: 0,
-          active: true,
-          infoLabel:
-            "Move the slider to remove all areas that have a certain distance to parks",
-        },
-        {
-          name: "Water",
-          label: "Distance to areas of water",
-          value: 0,
-          active: true,
-          infoLabel:
-            "Move the slider to remove all areas that have a certain distance to areas of water",
-        },
-        {
-          name: "Trashcans",
-          label: "Distance to trashcan",
-          value: 0,
-          active: true,
-          infoLabel:
-            "Move the slider to remove all areas that have a certain distance to trashcans",
-        },
-      ],
-      activeSliders: ["Parks", "Water", "Trashcans"], //The currently active Sliders
+      activeSliders: ["Museums", "Theaters"], //The currently active Sliders
       configurations: [
-        //The pre-configurations
+        // The pre-configurations that can be set upfront in the following form:
         {
-          name: "Find your Park",
-          activeSliders: ["Parks", "Water"],
-          values: [200, 0],
+          name: "Find your Museum", // name of the configuration - gets displayed
+          activeSliders: ["Museums"], // the name(s) of the slider(s) that should be shown
+          values: [100], // the values that the slider(s) should have
         },
         {
-          name: "Find your Trashcan",
-          activeSliders: ["Trashcans"],
+          name: "Find your Theater",
+          activeSliders: ["Theaters"],
           values: [0],
         },
       ],
+      response: "",
     };
+  },
+  props: {
+    /* eslint-disable */
+    sliders: {
+      type: Array,
+    },
   },
   methods: {
     /**
@@ -114,6 +191,7 @@ export default {
           }
         }
       }
+      this.doRequest();
     },
     /**
      * Removes a layer with a given name
@@ -124,6 +202,52 @@ export default {
           this.activeSliders.splice(j, 1);
         }
       }
+      if (this.activeSliders.length != 0) {
+        this.doRequest();
+      } else {
+        this.clearMap();
+      }
+    },
+    // returns a string in the following form:
+    // "(bandId, sliderValue)"
+
+    /**
+     * @returns String in the following form:"[(bandId, sliderValue), (bandId, sliderValue)]"
+     * this String can be put together with <serverUrl>/request/<this string> to make the request to the backend
+     */
+    requestString() {
+      // outcome should look like this: [(0, 1000),(1,1500)]
+      var a = [
+        { band: 0, value: 50 },
+        { band: 1, value: 100 },
+      ];
+      a = this.getBandValueArray(); //returns an array with the bandIds and the corresponding values
+      var b = "[";
+      for (var i in a) {
+        if (i > 0) {
+          b += ",";
+        }
+        b += "(" + a[i].band.toString() + "," + a[i].value.toString() + ")";
+      }
+      b += "]";
+      return b;
+    },
+    /**
+     * Gathers the bandId and current value for each active layer
+     * @returns Array in the following form: [{band:0,value:50},{band:1,value:100}]
+     */
+    getBandValueArray() {
+      // for each active layer add the bandId and its current value in an array
+      var helpArray = [];
+      for (var i in this.sliders) {
+        if (this.sliders[i].active) {
+          helpArray.push({
+            band: this.sliders[i].band,
+            value: this.sliders[i].value,
+          });
+        }
+      }
+      return helpArray;
     },
     /**
      * Adjusts the shown layers according to a given configuration
@@ -141,6 +265,7 @@ export default {
         }
       }
       this.removeNotActiveLayers();
+      this.doRequest();
     },
     /**
      * Removes all layers that are currently not active
@@ -156,16 +281,37 @@ export default {
           }
       }
     },
+    /**
+     * sends a request to the backend with the current parameters (e.g. http://localhost:5050/request/[(0,0),(1,50)])
+     * @emits response of the server to the parent component (MainPage), so it can be added to the map component
+     */
+    async doRequest() {
+      // the request to the backend to retrieve the areas that meet the current conditions (configured by the user)
+      const response = await fetch(
+        "http://localhost:5050/request/" + this.requestString()
+      );
+      const geojson = await response.json();
+      this.response = geojson;
+
+      // sends an event, that the parent component (in this case Mainpage) can listen to
+      this.$emit("newRequest", this.response);
+    },
+    async clearMap() {
+      this.$emit("clearMap", null);
+    },
+  },
+  mounted() {
+    // do request at mount with the initial configuration
+    this.doRequest();
   },
 };
 </script>
 
-
 <style scoped>
-  div {
-    text-align: justify;
-  }
-  .highlight-gray {
+div {
+  text-align: justify;
+}
+.highlight-gray {
   background-image: linear-gradient(to right, #e9e9e9, #e9e9e9);
   border-radius: 6px;
   padding: 3px 6px;
@@ -182,7 +328,7 @@ export default {
 
 mark {
   -webkit-animation: 1.5s highlight 1.5s 1 normal forwards;
-          animation: 1.5s highlight 1.5s 1 normal forwards;
+  animation: 1.5s highlight 1.5s 1 normal forwards;
   background-color: none;
   background: linear-gradient(90deg, #e9e9e9 50%, rgba(255, 255, 255, 0) 50%);
   background-size: 200% 100%;
@@ -199,5 +345,23 @@ mark {
   to {
     background-position: 0 0;
   }
+}
+
+.bNoPadding {
+  padding-left: 2px !important;
+  padding-right: 2px !important;
+  min-width: 0px !important;
+}
+.noMarginBottom {
+  margin-bottom: 0px !important;
+}
+.lessPadding {
+  padding-left: 2px !important;
+  padding-right: 2px !important;
+  padding-top: 2px !important;
+  padding-bottom: 2px !important;
+}
+.paddingTop {
+  padding-top: 2px !important;
 }
 </style>

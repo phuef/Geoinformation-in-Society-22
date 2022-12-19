@@ -1,2 +1,2 @@
-Kanal 1 Theater
-Kanal 3 Museen
+Kanal 0 Theater
+Kanal 1 Museen

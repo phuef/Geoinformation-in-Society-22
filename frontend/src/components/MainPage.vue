@@ -1,27 +1,35 @@
 <template>
-  <v-container id="mainContainer" fluid style="height: 100vh">
-    <v-row style="height: 100%">
-      <v-col v-if="showMenu"> <MenuView /> </v-col>
-      <v-col>
-        <div id="mapContainer">
-          <!--<div class="d-none d-sm-flex align-items-center" id="iconContainer">-->
-          <div id="iconContainer">
-            <v-icon
-              v-if="showMenu"
-              @click="showMenu = !showMenu"
-              id="collapseIcon"
-            >
+  <v-container
+    id="mainContainer"
+    class="fill-height"
+    fluid
+    style="height: 100vh"
+  >
+    <v-row no-gutters class="fill-height" style="height: 100%">
+      <v-col cols="12" xs="12" sm="6" v-if="showMenu">
+        <MenuView
+          @newRequest="processNewRequest"
+          @isMinOfSliderHasChanged="changeSlidersIsMinState"
+          @clearMap="processNewRequest"
+          :sliders="sliders"
+        />
+      </v-col>
+      <v-col cols="12" xs="12" :sm="mapViewSize">
+        <div id="mapContainer" :key="mapViewSize">
+          <div class="d-none d-sm-flex align-items-center" id="iconContainer">
+            <v-icon v-if="showMenu" @click="handleClick" id="collapseIcon">
               mdi-menu-left</v-icon
             >
-            <v-icon
-              v-if="!showMenu"
-              @click="showMenu = !showMenu"
-              id="openIcon"
-            >
+            <v-icon v-if="!showMenu" @click="handleClick" id="openIcon">
               mdi-menu-right</v-icon
             >
           </div>
-          <MapView />
+          <MapView
+            :geojson="requestResponse"
+            :center="mapCenterPoint"
+            :zoom="mapZoom"
+            ref="map"
+          />
         </div>
       </v-col>
     </v-row>
@@ -30,33 +38,104 @@
 
 <script>
 import MapView from "./MapView.vue";
+// eslint-disable-next-line
 import MenuView from "./MenuView.vue";
 
 export default {
   name: "MainPage",
   components: {
     MapView,
+    // eslint-disable-next-line
     MenuView,
   },
   data() {
     return {
       showMenu: true,
+      requestResponse: null,
+      sliders: [
+        // All availabe sliders
+        // TODO: add new layers to this list, when new layers are added to the backend.
+        //       The layers need to have the structure shown and explained below
+        {
+          name: "Museums", // the layer name that gets displayed at the layer selection
+          label: "Distance to museums", // the label that gets shown at the slider
+          value: 2000, // the value the slider has
+          band: 0, // the corresponding band ID the layer has in the backend
+          active: true, // wether the layer is currently selected by the user
+          // the text that shall be displayed when the user hovers over the info button
+          infoLabel:
+            "Move the slider to remove all areas <br/>that have a certain <b>distance to museums</b>.",
+          icon: "mdi-bank",
+          isMin: true,
+        },
+        {
+          name: "Theaters",
+          label: "Distance to theaters",
+          value: 2000,
+          band: 1,
+          active: true,
+          infoLabel:
+            "Move the slider to remove all areas <br/>that have a certain <b>distance to theaters</b>.",
+          icon: "mdi-drama-masks",
+          isMin: true,
+        },
+      ],
+      mapBounds: null,
+      mapCenterPoint: [51.96229626341511, 7.6256090207326395],
+      mapZoom: 10,
     };
+  },
+  computed: {
+    mapViewSize: function () {
+      // makes sure that the map is displayed on the full screen when the menu is not shown
+      return this.showMenu ? "6" : "12";
+    },
+  },
+  methods: {
+    processNewRequest: function (response) {
+      this.requestResponse = response;
+    },
+    changeSlidersIsMinState: function (sliderName) {
+      for (var i in this.sliders) {
+        if (this.sliders[i].name == sliderName) {
+          this.sliders[i].isMin = !this.sliders[i].isMin;
+        }
+      }
+    },
+    handleClick: function () {
+      this.calculateCenterPoint();
+      this.getMapZoom();
+      this.showMenu = !this.showMenu;
+    },
+    calculateCenterPoint: function () {
+      this.mapBounds = this.$refs.map.getMapBounds();
+      if (this.showMenu) {
+        this.mapCenterPoint = [
+          this.mapBounds.getSouth() +
+            (this.mapBounds.getNorth() - this.mapBounds.getSouth()) / 2,
+          this.mapBounds.getWest(),
+        ];
+      } else {
+        this.mapCenterPoint = [
+          this.mapBounds.getSouth() +
+            (this.mapBounds.getNorth() - this.mapBounds.getSouth()) / 2,
+          this.mapBounds.getWest() +
+            (3 * (this.mapBounds.getEast() - this.mapBounds.getWest())) / 4,
+        ];
+      }
+    },
+    getMapZoom: function () {
+      this.mapZoom = this.$refs.map.getMapZoom();
+    },
+  },
+  mounted() {
+    this.calculateCenterPoint();
+    this.getMapZoom();
   },
 };
 </script>
 
 <style scoped>
-/*@media (max-width: 600px) {
-  .v-row {
-    flex-direction: column;
-  }
-}
-@media (min-width: 601px) {
-  .v-row {
-    flex-direction: row;
-  }
-}*/
 #iconContainer {
   margin: 0;
   position: absolute;
