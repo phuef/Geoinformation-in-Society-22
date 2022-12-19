@@ -59,7 +59,9 @@
                   dense
                   small
                   outlined
-                  @click="$emit('isMinOfSliderHasChanged', slider.name)"
+                  @click="
+                    $emit('isMinOfSliderHasChanged', slider.name), doRequest()
+                  "
                   class="text-lowercase bNoPadding"
                 >
                   {{ slider.isMin ? "at least" : "less than" }}
