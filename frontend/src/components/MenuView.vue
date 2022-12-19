@@ -341,6 +341,9 @@ export default {
 };
 </script>
 <style>
+.v-expansion-panel-content > .v-expansion-panel-content__wrap {
+  padding: 0 !important;
+}
 .bNoPadding {
   padding-left: 2px !important;
   padding-right: 2px !important;
