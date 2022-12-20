@@ -29,7 +29,7 @@ The backend is developed with Python and employs the Flask WSGI. It is configure
 A Hello-World "Test" can be accessed via localhost:5050/ while the filtered rasters can be accessed via localhost:5050/request/<params>.
 The params-Parameter must conform to the following structure:
 ```
-[(band, value),...]
+[(band, minValue, maxValue),...]
 ```
 
 There are two layers accessable:
@@ -38,7 +38,8 @@ There are two layers accessable:
 1: Distance to Museums in Münster
 ```
 
-The second value in each tuple represents the maximum allowed distance in meters
+The second value in each tuple represents the minium allowed distance in meters while the third value represents the maximum allowed distance in meters.
+The distances can be set to ```None```.
 
 The Backend is dockerized and can be started with the correct port mapping with the following command:
 ```
