@@ -5,7 +5,6 @@
         <v-toolbar-title style="cursor: pointer" @click="$router.push('/')"
           >Find Your Spot</v-toolbar-title
         >
-
         <v-spacer></v-spacer>
         <div class="d-none d-sm-flex align-items-center">
           <v-toolbar-items>

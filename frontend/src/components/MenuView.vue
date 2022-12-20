@@ -165,7 +165,6 @@
         </v-expansion-panel-content>
       </v-expansion-panel>
     </v-expansion-panels>
-    >>>>>>> fe-ideas
   </div>
 </template>
 
