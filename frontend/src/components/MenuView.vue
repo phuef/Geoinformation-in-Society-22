@@ -1,5 +1,5 @@
 <template>
-  <div class="pt-8 pl-6 pr-1">
+  <div class="pa-4 pt-8">
     <div class="body-1 text-xs-body-2">
       <p>
         Do you have the desire to
