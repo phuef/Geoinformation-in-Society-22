@@ -8,6 +8,8 @@
 // eslint-disable-next-line
 import L, { featureGroup } from "leaflet";
 import "leaflet/dist/leaflet.css";
+import "leaflet-draw";
+import 'leaflet-draw/dist/leaflet.draw.css';
 delete L.Icon.Default.prototype._getIconUrl;
 // required, cause otherwise the marker icons (icon itself and shadow) are not available
 L.Icon.Default.mergeOptions({
@@ -26,6 +28,7 @@ export default {
       tileLayer: null,
       colorblindLayer: null,
       resultLayer: null,
+      drawLayer: new L.FeatureGroup(),
       resultPane: null,
       geojsonFeature: {
         type: "Feature",
@@ -91,6 +94,28 @@ export default {
           position: "topright",
         })
         .addTo(this.map);
+
+      this.map.addLayer(this.drawLayer);
+      const drawControl = new L.Control.Draw({
+        draw: {
+          polyline: false,
+          circle: false,
+          rectangle: false,
+          circlemarker: false,
+          polygon: {
+            shapeOptions: {
+              color: '#00ffdd'
+            }
+          }
+        },
+        edit: {
+          featureGroup: this.drawLayer
+        }
+      });
+      this.map.addControl(drawControl);
+      this.map.on(L.Draw.Event.CREATED, (event) => {
+        this.drawLayer.addLayer(event.layer);
+      });
     },
     changeGeojson: function (newGeojson) {
       this.resultJson = JSON.parse(JSON.stringify(newGeojson));
