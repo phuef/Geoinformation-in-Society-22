@@ -119,7 +119,7 @@
     <v-divider style="border-color: rgba(127, 127, 127)"></v-divider>
     <br />
 
-    <v-expansion-panels flat>
+    <v-expansion-panels flat data-v-step="1">
       <v-expansion-panel>
         <v-expansion-panel-header
           style="color: #000000de; padding-left: 0px; font-size: 16px"
