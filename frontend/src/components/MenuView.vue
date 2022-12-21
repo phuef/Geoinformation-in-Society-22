@@ -1,15 +1,20 @@
 <template>
   <div class="pt-8 pl-6 pr-1">
     <div class="body-1 text-xs-body-2">
-    <p>Do you have the desire to <span class="highlight-gray">Find your Spot</span>?
-    With this application you can search for a  location that meets your interests. 
-    <span class="highlight-gray">Define the layers</span> that you want, <span class="highlight-gray">specify the distance</span>, 
-    and that`s it, congrats, you just found your Spot.<br/><br/>
-    <span class="highlight-gray">Need help?</span> For detailed information of the functionalities, use this demo button.</p>
+      <p>
+        Do you have the desire to
+        <span class="highlight-gray">Find your Spot</span>? With this
+        application you can search for a location that meets your interests.
+        <span class="highlight-gray">Define the layers</span> that you want,
+        <span class="highlight-gray">specify the distance</span>, and that`s it,
+        congrats, you just found your Spot.<br /><br />
+        <span class="highlight-gray">Need help?</span> For detailed information
+        of the functionalities, use this demo button.
+      </p>
     </div>
     <v-divider></v-divider>
     <v-select
-      class="pt-3"  
+      class="pt-3"
       v-model="activeSliders"
       :items="sliders"
       item-text="name"
@@ -313,20 +318,20 @@ export default {
 </script>
 
 <style scoped>
-  div {
-    text-align: justify;
-  }
-  .highlight-gray {
+div {
+  text-align: justify;
+}
+.highlight-gray {
   background-image: linear-gradient(to right, #e9e9e9, #e9e9e9);
   border-radius: 6px;
   padding: 3px 6px;
-  }
+}
 
-  .bNoPadding {
+.bNoPadding {
   padding-left: 2px !important;
   padding-right: 2px !important;
   min-width: 0px !important;
-      }
+}
 
 .noMarginBottom {
   margin-bottom: 0px !important;
@@ -342,4 +347,3 @@ export default {
   padding-top: 2px !important;
 }
 </style>
-
