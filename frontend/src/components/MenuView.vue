@@ -14,7 +14,7 @@
     </div>
     <v-divider></v-divider>
     <v-select
-      class="pt-3"
+      class="pt-7"
       v-model="activeSliders"
       :items="sliders"
       item-text="name"
