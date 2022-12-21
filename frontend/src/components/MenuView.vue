@@ -3,11 +3,12 @@
     <div class="body-1 text-xs-body-2">
       <p>
         Do you have the desire to
-        <span class="highlight-gray">Find your Spot</span>? With this
-        application you can search for a location that meets your interests.
-        <span class="highlight-gray">Define the layers</span> that you want,
-        <span class="highlight-gray">specify the distance</span>, and that`s it,
-        congrats, you just found your Spot.<br /><br />
+        <span class="highlight-gray">Find your Spot</span>?<br /><br />
+        With this application you can search for a location that meets your
+        leisure interests.
+        <span class="highlight-gray">Add the layers</span> that you want,
+        <span class="highlight-gray">specify the distance</span> to your target
+        location, and that`s it, congrats, you just found your Spot.<br /><br />
         <span class="highlight-gray">Need help?</span> For detailed information
         of the functionalities, use this demo button.
       </p>
