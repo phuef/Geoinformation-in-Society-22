@@ -25,9 +25,9 @@
             >
           </div>
           <MapView
-            :geojson="requestResponse"
             :center="mapCenterPoint"
             :zoom="mapZoom"
+            :result-geo-json="requestResponse"
             ref="map"
           />
         </div>
