@@ -16,6 +16,17 @@
     <p class="text-capitalize pt-2 mb-0" style="color: #000000de" dense>
       Distance to ...
     </p>
+    <v-alert
+      v-if="isResponseEmpty"
+      outlined
+      colored-border
+      type="info"
+      elevation="0"
+      class="py-2 px-2 mb-0"
+    >
+      Your search query didn't get any results. Adjust your search query to see
+      results.
+    </v-alert>
     <br />
     <v-row v-for="slider in sliders" :key="slider.label" class="py-3 px-3">
       <v-col class="lessPadding"
@@ -299,6 +310,11 @@ export default {
   mounted() {
     // do request at mount with the initial configuration
     this.doRequest();
+  },
+  computed: {
+    isResponseEmpty() {
+      return this.response.features == "" ? true : false;
+    },
   },
 };
 </script>
