@@ -1,5 +1,8 @@
 <template>
-  <div class="container d-flex align-stretch bg-light" style="flex: 1">
+  <div
+    class="container d-flex align-stretch bg-light"
+    style="flex: 1; padding: 0px"
+  >
     <div id="mapContainer"></div>
   </div>
 </template>
@@ -108,6 +111,10 @@ export default {
     getMapZoom: function () {
       return this.map.getZoom();
     },
+    showBusStations: function (geojson) {
+      // eslint-disable-next-line
+      this.busGeojson = console.log(JSON.parse(JSON.stringify(geojson)));
+    },
   },
   props: {
     geojson: {
@@ -129,6 +136,15 @@ export default {
       required: true,
       type: Number,
     },
+    busGeojson: {
+      type: Object,
+      default() {
+        return {
+          features: [],
+          type: "FeatureCollection",
+        };
+      },
+    },
   },
   mounted() {
     // Some error occurred by re-saving this file. The error said that the map was already initialized but this try-catch block solves it.
@@ -139,6 +155,7 @@ export default {
     }
 
     this.changeGeojson(this.geojson);
+    this.showBusStations(this.busGeojson);
   },
   watch: {
     geojson: function (newGeojson) {

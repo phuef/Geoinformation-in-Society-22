@@ -29,14 +29,38 @@
             :center="mapCenterPoint"
             :zoom="mapZoom"
             ref="map"
+            :busGeojson="busGeojson"
           />
           <div
-            class="p"
-            style="z-index: 9999; position: absolute; padding-left: 10px"
+            class=""
+            style="
+              z-index: 9999;
+              position: absolute;
+              padding-left: 12px;
+              padding-top: 12px;
+            "
           >
-            <v-btn elevation="0" style="background-color: white">
-              <v-icon> mdi-bus-stop </v-icon>
-            </v-btn>
+            <v-tooltip right z-index="1000">
+              <template v-slot:activator="{ on, attrs }">
+                <v-btn
+                  elevation="0"
+                  style="
+                    background-color: white;
+                    border: 2px solid rgba(150, 150, 150, 0.5);
+                    -webkit-background-clip: padding-box; /* for Safari */
+                    width: 54px;
+                    height: 54px;
+                    padding: 0px;
+                  "
+                  v-bind="attrs"
+                  v-on="on"
+                  @click="doBusRequest()"
+                >
+                  <v-icon> mdi-bus-stop </v-icon>
+                </v-btn>
+              </template>
+              <span v-html="'Show / Remove<br\>bus stops'"></span>
+            </v-tooltip>
           </div>
         </div>
       </v-col>
@@ -91,6 +115,7 @@ export default {
       mapBounds: null,
       mapCenterPoint: [51.96229626341511, 7.6256090207326395],
       mapZoom: 10,
+      busGeojson: null,
     };
   },
   computed: {
@@ -140,8 +165,9 @@ export default {
       const busResponse = await fetch(
         "https://rest.busradar.conterra.de/prod/haltestellen"
       );
-      const geojson = await busResponse.json();
-      this.busResponse = geojson;
+      this.busGeojson = await busResponse.json();
+      this.busResponse = this.busGeojson;
+      //console.log(JSON.parse(JSON.stringify(this.busGeojson)));
     },
   },
   mounted() {
