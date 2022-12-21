@@ -30,6 +30,14 @@
             :zoom="mapZoom"
             ref="map"
           />
+          <div
+            class="p"
+            style="z-index: 9999; position: absolute; padding-left: 10px"
+          >
+            <v-btn elevation="0" style="background-color: white">
+              <v-icon> mdi-bus-stop </v-icon>
+            </v-btn>
+          </div>
         </div>
       </v-col>
     </v-row>
@@ -126,6 +134,14 @@ export default {
     },
     getMapZoom: function () {
       this.mapZoom = this.$refs.map.getMapZoom();
+    },
+    async doBusRequest() {
+      // the request to the backend to retrieve the areas that meet the current conditions (configured by the user)
+      const busResponse = await fetch(
+        "https://rest.busradar.conterra.de/prod/haltestellen"
+      );
+      const geojson = await busResponse.json();
+      this.busResponse = geojson;
     },
   },
   mounted() {
