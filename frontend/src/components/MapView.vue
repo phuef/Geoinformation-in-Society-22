@@ -91,21 +91,6 @@ export default {
           position: "topright",
         })
         .addTo(this.map);
-
-      this.map.addEventListener('contextmenu', (event) => {
-        const options = {
-          opacity: 0.9,
-          riseOnHover: true
-        };
-        const marker = L.marker(event.latlng, options).addTo(this.map);
-        marker.addEventListener('click', (event) => {
-          this.map.panTo(event.latlng);
-        })
-        marker.addEventListener('contextmenu', () => {
-          marker.remove(this.map)
-        });
-      });
-
     },
     changeGeojson: function (newGeojson) {
       this.resultJson = JSON.parse(JSON.stringify(newGeojson));
