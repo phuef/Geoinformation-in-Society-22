@@ -6,8 +6,6 @@ Created on Wed Nov 23 15:35:31 2022
 """
 import unittest
 import requests
-import logging
-import subprocess
 
 class test(unittest.TestCase):
     

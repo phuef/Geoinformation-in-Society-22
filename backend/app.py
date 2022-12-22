@@ -9,8 +9,8 @@ from flask import Flask, request, make_response
 from flask_cors import CORS
 from ast import literal_eval
 import json
-from utils_cy import DistanceStack #import "cythonized" utils
-#from utils import DistanceStack
+#from utils_cy import DistanceStack #import "cythonized" utils
+from utils import DistanceStack
 import traceback
 
 #configure flask to use HTTP 1.1 only
@@ -43,9 +43,9 @@ def tea():
     return "The server refuses to brew coffee because it is, permanently, a teapot.", 418
 
 '''
-* Title: Coffee Route 
+* Title: API-Description Route 
 * Description: A route which is accessible
-*              via localhost:5050/brewCoffee and returns HTTP-Statuscode 418
+*              via localhost:5050/apiDescription and returns OpenAPI Documentation of the API
 '''
 @app.route("/apiDescription", methods = ['GET'])
 def api():
@@ -72,6 +72,8 @@ def raster(requestParams):
                 if(i[1] != None and i[2] != None):
                     if(i[1] > i[2]):
                         return "Bad Request", 400
+                elif(i[1] == None and i[2] == None):
+                    return "Bad Request", 400
             fileID = stack.filterStack(params) #filter stack
             
             geojson = stack.filterResult() #load and filter results
