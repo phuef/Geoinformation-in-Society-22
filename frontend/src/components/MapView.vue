@@ -43,6 +43,7 @@ export default {
         },
       },
       resultJson: null,
+      //busGeojsonParsed: null,
     };
   },
   methods: {
@@ -111,9 +112,10 @@ export default {
     getMapZoom: function () {
       return this.map.getZoom();
     },
-    showBusStations: function (geojson) {
-      // eslint-disable-next-line
-      this.busGeojson = console.log(JSON.parse(JSON.stringify(geojson)));
+    showBusStations: function (geojsonString) {
+      this.busGeojsonParsed = console.log(
+        JSON.parse(JSON.stringify(geojsonString))
+      );
     },
   },
   props: {
@@ -160,6 +162,9 @@ export default {
   watch: {
     geojson: function (newGeojson) {
       this.changeGeojson(newGeojson);
+    },
+    busGeojsonString: function (newBusGeojson) {
+      this.showBusStations(newBusGeojson);
     },
   },
 };

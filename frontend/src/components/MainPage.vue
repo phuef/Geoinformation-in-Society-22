@@ -166,8 +166,7 @@ export default {
         "https://rest.busradar.conterra.de/prod/haltestellen"
       );
       this.busGeojson = await busResponse.json();
-      this.busResponse = this.busGeojson;
-      //console.log(JSON.parse(JSON.stringify(this.busGeojson)));
+      console.log(JSON.parse(JSON.stringify(this.busGeojson)));
     },
   },
   mounted() {
