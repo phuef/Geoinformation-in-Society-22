@@ -29,7 +29,8 @@
             :center="mapCenterPoint"
             :zoom="mapZoom"
             ref="map"
-            :busGeojson="busGeojson"
+            :busGeojsonMap="busGeojsonMain"
+            :showBussesMap="showBusses"
           />
           <div
             class=""
@@ -54,7 +55,7 @@
                   "
                   v-bind="attrs"
                   v-on="on"
-                  @click="doBusRequest()"
+                  @click="showBusses = !showBusses"
                 >
                   <v-icon> mdi-bus-stop </v-icon>
                 </v-btn>
@@ -115,7 +116,8 @@ export default {
       mapBounds: null,
       mapCenterPoint: [51.96229626341511, 7.6256090207326395],
       mapZoom: 10,
-      busGeojson: null,
+      busGeojsonMain: null,
+      showBusses: false,
     };
   },
   computed: {
@@ -165,13 +167,13 @@ export default {
       const busResponse = await fetch(
         "https://rest.busradar.conterra.de/prod/haltestellen"
       );
-      this.busGeojson = await busResponse.json();
-      console.log(JSON.parse(JSON.stringify(this.busGeojson)));
+      this.busGeojsonMain = await busResponse.json();
     },
   },
   mounted() {
     this.calculateCenterPoint();
     this.getMapZoom();
+    this.doBusRequest();
   },
 };
 </script>

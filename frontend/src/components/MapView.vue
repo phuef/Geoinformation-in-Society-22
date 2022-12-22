@@ -29,6 +29,7 @@ export default {
       tileLayer: null,
       colorblindLayer: null,
       resultLayer: null,
+      busLayer: null,
       resultPane: null,
       geojsonFeature: {
         type: "Feature",
@@ -43,7 +44,6 @@ export default {
         },
       },
       resultJson: null,
-      //busGeojsonParsed: null,
     };
   },
   methods: {
@@ -98,6 +98,7 @@ export default {
     },
     changeGeojson: function (newGeojson) {
       this.resultJson = JSON.parse(JSON.stringify(newGeojson));
+      //console.log(this.resultJson);
       try {
         this.map.removeLayer(this.resultLayer);
         this.resultLayer = L.geoJSON().addTo(this.map);
@@ -112,10 +113,28 @@ export default {
     getMapZoom: function () {
       return this.map.getZoom();
     },
-    showBusStations: function (geojsonString) {
-      this.busGeojsonParsed = console.log(
-        JSON.parse(JSON.stringify(geojsonString))
-      );
+    loadBusStations: function (geojsonString) {
+      console.log(geojsonString);
+      if (geojsonString != undefined) {
+        this.busGeojsonParsed = JSON.parse(JSON.stringify(geojsonString));
+        console.log(this.busGeojsonParsed);
+        this.busLayer = L.geoJSON(); //.addTo(this.map);
+        this.busLayer.addData(this.busGeojsonParsed);
+      } else {
+        //pass
+      }
+    },
+    showBusStations: function () {
+      console.log(this.showBussesMap);
+      if (this.showBussesMap == true) {
+        this.busLayer.addTo(this.map);
+      } else {
+        try {
+          this.map.removeLayer(this.busLayer);
+        } catch (error) {
+          //pass
+        }
+      }
     },
   },
   props: {
@@ -138,7 +157,7 @@ export default {
       required: true,
       type: Number,
     },
-    busGeojson: {
+    busGeojsonMap: {
       type: Object,
       default() {
         return {
@@ -146,6 +165,10 @@ export default {
           type: "FeatureCollection",
         };
       },
+    },
+    showBussesMap: {
+      required: true,
+      type: Boolean,
     },
   },
   mounted() {
@@ -155,7 +178,6 @@ export default {
     } catch {
       // pass
     }
-
     this.changeGeojson(this.geojson);
     this.showBusStations(this.busGeojson);
   },
@@ -163,8 +185,12 @@ export default {
     geojson: function (newGeojson) {
       this.changeGeojson(newGeojson);
     },
-    busGeojsonString: function (newBusGeojson) {
-      this.showBusStations(newBusGeojson);
+    busGeojsonMap: function (newBusGeojson) {
+      this.loadBusStations(newBusGeojson);
+      console.log(this.showBussesMap);
+    },
+    showBussesMap: function () {
+      this.showBusStations();
     },
   },
 };
