@@ -5,7 +5,7 @@ Created on Wed Nov 23 15:33:03 2022
 @author: Alexander Pilz
 """
 #Imports of required packages, classes and functions
-from flask import Flask, request, make_response
+from flask import Flask, request, make_response, render_template, jsonify
 from flask_cors import CORS
 from ast import literal_eval
 import json
@@ -49,13 +49,21 @@ def tea():
 '''
 @app.route("/apiDescription", methods = ['GET'])
 def api():
-    try:
-        with open('usr/src/backend/data/open_api_doc.json') as f:
-                data = json.load(f)
-        return data, 200
-    except(Exception):
-        print(traceback.format_exc())
-        return "Internal Server Error", 500
+    #try:
+    if(request.args.get('f')=="text/html" or request.args.get('f') == None): 
+        response = render_template('open_api_doc.html') 
+        return response, 200
+    elif(request.args.get('f')=="application/json"):
+        file = open('usr/src/backend/data/open_api_doc.json',) 
+        payload = json.load(file) 
+        file.close() 
+        response = jsonify(payload) 
+        return response, 200
+    else:
+        return "HTTP status code 406: not acceptable", 406 
+    #except(Exception):
+        #print(traceback.format_exc())
+        #return "Internal Server Error", 500
 
 '''
 * Title: 
