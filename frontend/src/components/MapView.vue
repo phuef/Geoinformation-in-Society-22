@@ -121,6 +121,12 @@ export default {
     getMapZoom: function () {
       return this.map.getZoom();
     },
+    updateOnResize: function (pixelOffset) {
+      // Move the map so that it stays in the same place on the screen
+      this.map.panBy(pixelOffset, { "animate": false })
+      // Load newly visible tiles
+      this.map.invalidateSize({ "pan": false });
+    }
   },
   mounted() {
     this.initMap();

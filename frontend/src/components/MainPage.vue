@@ -1,13 +1,9 @@
 <template>
-  <v-container
-    id="mainContainer"
-    class="fill-height"
-    fluid
-    style="height: 100vh"
-  >
+  <v-container id="mainContainer" class="fill-height"
+    fluid style="height: 100vh">
     <v-row no-gutters class="fill-height" style="height: 100%">
-      <v-col cols="12" xs="12" sm="6" v-if="showMenu">
-        <MenuView
+      <v-col cols="12" xs="12" sm="6" v-show="showMenu">
+        <MenuView ref="menu"
           @newRequest="processNewRequest"
           @isMinOfSliderHasChanged="changeSlidersIsMinState"
           @clearMap="processNewRequest"
@@ -15,7 +11,7 @@
         />
       </v-col>
       <v-col cols="12" xs="12" :sm="mapViewSize">
-        <div id="mapViewContainer" :key="mapViewSize">
+        <div id="mapViewContainer">
           <div class="d-none d-sm-flex align-items-center" id="iconContainer">
             <v-icon v-if="showMenu" @click="toggleMenu" id="collapseIcon">
               mdi-menu-left
@@ -24,11 +20,8 @@
               mdi-menu-right
             </v-icon>
           </div>
-          <MapView
-            :center="mapCenterPoint"
-            :zoom="mapZoom"
-            :result-geo-json="requestResponse"
-            ref="map"
+          <MapView ref="map" :center="mapCenterPoint"
+            :zoom="mapZoom" :result-geo-json="requestResponse"
           />
         </div>
       </v-col>
@@ -101,34 +94,42 @@ export default {
       }
     },
     toggleMenu: function () {
-      this.calculateCenterPoint();
-      this.getMapZoom();
+      const menuDim = [
+        this.$refs.menu.$el.clientWidth,
+        this.$refs.menu.$el.clientHeight
+      ]
+      // Change menu visibility
       this.showMenu = !this.showMenu;
+      this.$nextTick(() => {
+        // When the menu visibility has changed, calculate the change in size
+        const newMenuDim = [
+          this.$refs.menu.$el.clientWidth,
+          this.$refs.menu.$el.clientHeight
+        ]
+        const menuDimChange = [
+          newMenuDim[0] - menuDim[0],
+          newMenuDim[1] - menuDim[1]
+        ]
+        // Get offset depending on menu position
+        const requiredOffset = this.getMenuOffset(menuDimChange);
+        // Update map
+        this.$refs.map.updateOnResize(requiredOffset);
+      })
     },
-    calculateCenterPoint: function () {
-      this.mapBounds = this.$refs.map.getMapBounds();
-      if (this.showMenu) {
-        this.mapCenterPoint = [
-          this.mapBounds.getSouth() +
-          (this.mapBounds.getNorth() - this.mapBounds.getSouth()) / 2,
-          this.mapBounds.getWest(),
-        ];
+    getMenuOffset: function (dimChange) {
+      let pixelOffset;  // Here x, y coordinates!
+      // TODO Set offset depending on menu position
+      // this.$vuetify.breakpoint.sm
+      const horizontalLayout = false;
+      if (horizontalLayout) {
+        // Menu on top
+        pixelOffset = [0, dimChange[0]]
       } else {
-        this.mapCenterPoint = [
-          this.mapBounds.getSouth() +
-          (this.mapBounds.getNorth() - this.mapBounds.getSouth()) / 2,
-          this.mapBounds.getWest() +
-          (3 * (this.mapBounds.getEast() - this.mapBounds.getWest())) / 4,
-        ];
+        // Menu on the left side
+        pixelOffset = [dimChange[0], 0]
       }
+      return pixelOffset;
     },
-    getMapZoom: function () {
-      this.mapZoom = this.$refs.map.getMapZoom();
-    },
-  },
-  mounted() {
-    this.calculateCenterPoint();
-    this.getMapZoom();
   },
 };
 </script>
