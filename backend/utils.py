@@ -4,7 +4,7 @@ Created on Wed Nov 23 16:08:13 2022
 
 @author: Alexander Pilz
 """
-from osgeo import gdal, osr, ogr
+from osgeo import gdal, ogr
 import json
 import uuid
 
@@ -76,11 +76,12 @@ class DistanceStack:
                 array = self.bands[filterValues[i][0]].ReadAsArray() #read corresponding band from raster
                 filteredArrayA = array <= filterValues[i][2]/10
                 filteredArrayB = array >= filterValues[i][1]/10 #filter band
-                filteredArrays.append(filteredArrayA*filteredArrayB) #add filtered array to list
-            
+                filteredArrays.append(filteredArrayA) #add filtered array to list
+                filteredArrays.append(filteredArrayB) #add filtered array to list
+
         combinedArray = filteredArrays[0] #initialize combined array
         
-        for y in filteredArrays: #iterate over filtered bands
+        for y in filteredArrays[1:]: #iterate over filtered bands
             combinedArray *= y #combine boolean values
             
         driver = gdal.GetDriverByName('MEM') #initialize in memory driver
@@ -93,7 +94,7 @@ class DistanceStack:
         drv = ogr.GetDriverByName('GEOJSON') #initialize GEOJSON driver
         outfile = drv.CreateDataSource("usr/src/backend/results/" + self.uuid + ".json") #create GEOJSON
         outlayer = outfile.CreateLayer('test', srs=srs, geom_type=ogr.wkbPolygon) #add layer to GEOJSON
-        newField = ogr.FieldDefn('DN', ogr.OFTReal) #create field
+        newField = ogr.FieldDefn('DN', ogr.OFTInteger) #create field
         outlayer.CreateField(newField) #add field to GEOJSON
         
         gdal.Polygonize(output.GetRasterBand(1), None, outlayer, 0, []) #polygonize combined raster based on pixel values
@@ -108,8 +109,4 @@ class DistanceStack:
                 data['features'].remove(feature)
             feature['geometry']['coordinates'] = feature['geometry']['coordinates'][::-1]
         data['crs'] = "WGS-84 - EPSG: 4326"
-            
         return data
-                
-
-
