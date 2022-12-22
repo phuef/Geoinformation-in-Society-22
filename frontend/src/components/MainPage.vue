@@ -15,14 +15,14 @@
         />
       </v-col>
       <v-col cols="12" xs="12" :sm="mapViewSize">
-        <div id="mapContainer" :key="mapViewSize">
+        <div id="mapViewContainer" :key="mapViewSize">
           <div class="d-none d-sm-flex align-items-center" id="iconContainer">
-            <v-icon v-if="showMenu" @click="handleClick" id="collapseIcon">
-              mdi-menu-left</v-icon
-            >
-            <v-icon v-if="!showMenu" @click="handleClick" id="openIcon">
-              mdi-menu-right</v-icon
-            >
+            <v-icon v-if="showMenu" @click="toggleMenu" id="collapseIcon">
+              mdi-menu-left
+            </v-icon>
+            <v-icon v-if="!showMenu" @click="toggleMenu" id="openIcon">
+              mdi-menu-right
+            </v-icon>
           </div>
           <MapView
             :center="mapCenterPoint"
@@ -38,14 +38,12 @@
 
 <script>
 import MapView from "./MapView.vue";
-// eslint-disable-next-line
 import MenuView from "./MenuView.vue";
 
 export default {
   name: "MainPage",
   components: {
     MapView,
-    // eslint-disable-next-line
     MenuView,
   },
   data() {
@@ -96,13 +94,13 @@ export default {
       this.requestResponse = response;
     },
     changeSlidersIsMinState: function (sliderName) {
-      for (var i in this.sliders) {
+      for (const i in this.sliders) {
         if (this.sliders[i].name == sliderName) {
           this.sliders[i].isMin = !this.sliders[i].isMin;
         }
       }
     },
-    handleClick: function () {
+    toggleMenu: function () {
       this.calculateCenterPoint();
       this.getMapZoom();
       this.showMenu = !this.showMenu;
@@ -112,15 +110,15 @@ export default {
       if (this.showMenu) {
         this.mapCenterPoint = [
           this.mapBounds.getSouth() +
-            (this.mapBounds.getNorth() - this.mapBounds.getSouth()) / 2,
+          (this.mapBounds.getNorth() - this.mapBounds.getSouth()) / 2,
           this.mapBounds.getWest(),
         ];
       } else {
         this.mapCenterPoint = [
           this.mapBounds.getSouth() +
-            (this.mapBounds.getNorth() - this.mapBounds.getSouth()) / 2,
+          (this.mapBounds.getNorth() - this.mapBounds.getSouth()) / 2,
           this.mapBounds.getWest() +
-            (3 * (this.mapBounds.getEast() - this.mapBounds.getWest())) / 4,
+          (3 * (this.mapBounds.getEast() - this.mapBounds.getWest())) / 4,
         ];
       }
     },
@@ -141,13 +139,16 @@ export default {
   position: absolute;
   top: 45%;
 }
+
 #mainContainer {
   padding: 0px;
   width: 100%;
 }
-#mapContainer {
+
+#mapViewContainer {
   height: 100%;
 }
+
 #collapseIcon,
 #openIcon {
   padding: 0px;

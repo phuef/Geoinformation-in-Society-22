@@ -1,7 +1,5 @@
 <template>
-  <div class="container d-flex align-stretch bg-light" style="flex: 1">
-    <div id="mapContainer"></div>
-  </div>
+  <v-container id="mapContainer" fluid fill-height />
 </template>
 
 <script>
