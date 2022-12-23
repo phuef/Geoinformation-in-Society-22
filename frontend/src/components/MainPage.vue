@@ -138,7 +138,7 @@ export default {
 #iconContainer {
   margin: 0;
   position: absolute;
-  top: 45%;
+  top: 50%;
 }
 
 #mainContainer {
