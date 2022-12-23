@@ -4,7 +4,7 @@
     <h2 class="pt-4">Disclosures according to §5 TMG</h2>
     <br />
     <p>
-      Find Your Spot<br />
+      Find your spot<br />
       Institute for Geoinformatics<br />
       Heisenbergstraße 2<br />
       48149 Münster<br />
