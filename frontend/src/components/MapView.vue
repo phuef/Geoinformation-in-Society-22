@@ -18,6 +18,7 @@ L.Icon.Default.mergeOptions({
   iconUrl: require("leaflet/dist/images/marker-icon.png"),
   shadowUrl: require("leaflet/dist/images/marker-shadow.png"),
 });
+import busMarker from "@/assets/alpha-b-circle-outline-dark-grey.png";
 
 export default {
   name: "MapView",
@@ -98,7 +99,6 @@ export default {
     },
     changeGeojson: function (newGeojson) {
       this.resultJson = JSON.parse(JSON.stringify(newGeojson));
-      //console.log(this.resultJson);
       try {
         this.map.removeLayer(this.resultLayer);
         this.resultLayer = L.geoJSON().addTo(this.map);
@@ -114,18 +114,24 @@ export default {
       return this.map.getZoom();
     },
     loadBusStations: function (geojsonString) {
+      const busIcon = L.icon({
+        iconUrl: busMarker,
+        iconSize: [15, 15],
+        //iconAnchor: [23, 23],
+      });
       console.log(geojsonString);
       if (geojsonString != undefined) {
         this.busGeojsonParsed = JSON.parse(JSON.stringify(geojsonString));
-        console.log(this.busGeojsonParsed);
-        this.busLayer = L.geoJSON(); //.addTo(this.map);
-        this.busLayer.addData(this.busGeojsonParsed);
+        this.busLayer = L.geoJSON(this.busGeojsonParsed, {
+          pointToLayer: function (_feature, latlng) {
+            return L.marker(latlng, { icon: busIcon });
+          },
+        });
       } else {
         //pass
       }
     },
     showBusStations: function () {
-      console.log(this.showBussesMap);
       if (this.showBussesMap == true) {
         this.busLayer.addTo(this.map);
       } else {
