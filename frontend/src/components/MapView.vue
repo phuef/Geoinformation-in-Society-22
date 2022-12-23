@@ -119,7 +119,6 @@ export default {
         iconSize: [15, 15],
         //iconAnchor: [23, 23],
       });
-      console.log(geojsonString);
       if (geojsonString != undefined) {
         this.busGeojsonParsed = JSON.parse(JSON.stringify(geojsonString));
         this.busLayer = L.geoJSON(this.busGeojsonParsed, {
@@ -130,10 +129,16 @@ export default {
       } else {
         //pass
       }
+      console.log("l.132", this.busLayer);
     },
-    showBusStations: function () {
+    showBusStations: async function () {
       if (this.showBussesMap == true) {
-        this.busLayer.addTo(this.map);
+        if (this.busLayer != null) {
+          this.busLayer.addTo(this.map);
+        } else {
+          await this.loadBusStations();
+          this.busLayer.addTo(this.map); // PROBLEM
+        }
       } else {
         try {
           this.map.removeLayer(this.busLayer);
@@ -185,15 +190,17 @@ export default {
       // pass
     }
     this.changeGeojson(this.geojson);
-    this.showBusStations(this.busGeojson);
+    console.log("mounted");
+    this.loadBusStations(this.busGeojson);
+    console.log(this.busLayer);
   },
   watch: {
     geojson: function (newGeojson) {
       this.changeGeojson(newGeojson);
     },
     busGeojsonMap: function (newBusGeojson) {
+      console.log(this.newBusGeojson);
       this.loadBusStations(newBusGeojson);
-      console.log(this.showBussesMap);
     },
     showBussesMap: function () {
       this.showBusStations();

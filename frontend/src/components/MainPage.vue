@@ -170,10 +170,12 @@ export default {
       this.busGeojsonMain = await busResponse.json();
     },
   },
-  mounted() {
+  async mounted() {
     this.calculateCenterPoint();
     this.getMapZoom();
-    this.doBusRequest();
+    await this.doBusRequest();
+    this.$refs.map.loadBusStations();
+    console.log(this.busGeojsonMain);
   },
 };
 </script>
