@@ -9,6 +9,8 @@ import "leaflet-draw";
 import "leaflet-draw/dist/leaflet.draw.css";
 import { GeoSearchControl, OpenStreetMapProvider } from "leaflet-geosearch";
 import "leaflet-geosearch/dist/geosearch.css"
+import "leaflet.locatecontrol";
+import "leaflet.locatecontrol/dist/L.Control.Locate.min.css";
 
 // Make marker icons available (icon itself and shadow)
 delete L.Icon.Default.prototype._getIconUrl;
@@ -106,6 +108,15 @@ export default {
         });
         marker.addTo(this.drawLayer);
       });
+
+      L.control.locate({
+        position: "topright",
+        initialZoomLevel: 16,
+        showPopup: false,
+        strings: {
+          title: "Show your location"
+        }
+      }).addTo(this.map);
 
       this.map.addLayer(this.drawLayer);
       const drawControl = new L.Control.Draw({
