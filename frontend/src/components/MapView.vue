@@ -7,8 +7,6 @@ import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import "leaflet-draw";
 import 'leaflet-draw/dist/leaflet.draw.css';
-import "leaflet-control-geocoder"
-import "leaflet-control-geocoder/dist/Control.Geocoder.css"
 
 // Make marker icons available (icon itself and shadow)
 delete L.Icon.Default.prototype._getIconUrl;
@@ -84,14 +82,6 @@ export default {
 
       L.control.zoom({
         position: "topright",
-      }).addTo(this.map);
-
-      L.control.geocoder({
-        position: "topleft",
-        collapsed: true,
-        expand: "touch",  // default because hover is broken
-        placeholder: "Search...",
-        defaultMarkGeocode: true
       }).addTo(this.map);
 
       this.map.addLayer(this.drawLayer);
