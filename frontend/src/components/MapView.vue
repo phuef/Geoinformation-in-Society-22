@@ -7,6 +7,8 @@ import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import "leaflet-draw";
 import 'leaflet-draw/dist/leaflet.draw.css';
+import { GeoSearchControl, OpenStreetMapProvider } from "leaflet-geosearch";
+import "leaflet-geosearch/dist/geosearch.css"
 
 // Make marker icons available (icon itself and shadow)
 delete L.Icon.Default.prototype._getIconUrl;
@@ -83,6 +85,22 @@ export default {
       L.control.zoom({
         position: "topright",
       }).addTo(this.map);
+
+      const searchProvider = new OpenStreetMapProvider();
+      new GeoSearchControl({
+        provider: searchProvider,
+        style: "button",
+        showMarker: false,
+        autoCompleteDelay: 1000,
+        autoClose: true,
+      }).addTo(this.map);
+      this.map.on("geosearch/showlocation", (event) => {
+        const marker = event.marker;
+        marker.on("move", () => {
+          marker.off()  // remove address popup when marker is moved
+        });
+        marker.addTo(this.drawLayer);
+      });
 
       this.map.addLayer(this.drawLayer);
       const drawControl = new L.Control.Draw({
