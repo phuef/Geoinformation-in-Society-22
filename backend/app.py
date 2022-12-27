@@ -111,4 +111,4 @@ if __name__ == '__main__':
     * Port: 5050
     '''
     app.run(port=5050, debug=True, use_reloader=False, host='0.0.0.0') #start app
-    #Request localhost:5050/request/[(0,None,300),(1,None,200)]
+    #Request localhost:5050/request/[(0,300,None)]
