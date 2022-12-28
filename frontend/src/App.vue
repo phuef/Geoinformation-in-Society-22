@@ -2,7 +2,7 @@
   <v-app>
     <div style="d-flex">
       <v-app-bar elevation="4" color="grey darken-4" class="px-0" dark width>
-        <v-toolbar-title style="cursor: pointer" @click="$router.push('/')"
+        <v-toolbar-title style="cursor: pointer" @click="$router.go('/')"
           >Find your spot</v-toolbar-title
         >
 
