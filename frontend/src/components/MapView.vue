@@ -1,15 +1,15 @@
 <template>
-  <div class="container d-flex align-stretch bg-light" style="flex: 1">
-    <div id="mapContainer"></div>
-  </div>
+  <v-container id="mapContainer" fluid fill-height />
 </template>
 
 <script>
-// eslint-disable-next-line
-import L, { featureGroup } from "leaflet";
+import L from "leaflet";
 import "leaflet/dist/leaflet.css";
+import "leaflet-draw";
+import 'leaflet-draw/dist/leaflet.draw.css';
+
+// Make marker icons available (icon itself and shadow)
 delete L.Icon.Default.prototype._getIconUrl;
-// required, cause otherwise the marker icons (icon itself and shadow) are not available
 L.Icon.Default.mergeOptions({
   iconRetinaUrl: require("leaflet/dist/images/marker-icon-2x.png"),
   iconUrl: require("leaflet/dist/images/marker-icon.png"),
@@ -20,27 +20,24 @@ export default {
   name: "MapView",
   data() {
     return {
-      //zoom: 10,
-      //center: [51.96229626341511, 7.6256090207326395], // changed from the cetner coords from münster to some coords in the eastside because of map width 100 vw
       map: null,
       tileLayer: null,
       colorblindLayer: null,
-      resultLayer: null,
-      resultPane: null,
-      geojsonFeature: {
-        type: "Feature",
-        properties: {
-          name: "Coors Field",
-          amenity: "Baseball Stadium",
-          popupContent: "This is where the Rockies play!",
-        },
-        geometry: {
-          type: "Point",
-          coordinates: [7.62451171875, 51.96288477548509],
-        },
-      },
-      resultJson: null,
+      drawLayer: new L.FeatureGroup(),
     };
+  },
+  props: {
+    center: {
+      required: true,
+      type: Array,
+    },
+    zoom: {
+      required: true,
+      type: Number,
+    },
+    resultGeoJson: {
+      type: Object,
+    },
   },
   methods: {
     initMap: function () {
@@ -80,26 +77,42 @@ export default {
       };
 
       this.resultLayer = L.geoJSON().addTo(this.map);
-      if (this.resultJson != null) {
-        this.resultLayer.addData(this.resultJson);
-      }
 
       L.control.layers(basemaps).addTo(this.map);
 
-      L.control
-        .zoom({
-          position: "topright",
-        })
-        .addTo(this.map);
+      L.control.zoom({
+        position: "topright",
+      }).addTo(this.map);
+
+      this.map.addLayer(this.drawLayer);
+      const drawControl = new L.Control.Draw({
+        draw: {
+          polyline: false,
+          circle: false,
+          rectangle: false,
+          circlemarker: false,
+          polygon: {
+            shapeOptions: {
+              color: '#00ffdd'
+            }
+          }
+        },
+        edit: {
+          featureGroup: this.drawLayer
+        }
+      });
+      this.map.addControl(drawControl);
+      this.map.on(L.Draw.Event.CREATED, (event) => {
+        this.drawLayer.addLayer(event.layer);
+      });
     },
-    changeGeojson: function (newGeojson) {
-      this.resultJson = JSON.parse(JSON.stringify(newGeojson));
+    updateResultLayer: function (newGeoJson) {
+      newGeoJson = JSON.parse(JSON.stringify(newGeoJson));
+      this.resultLayer.clearLayers();
       try {
-        this.map.removeLayer(this.resultLayer);
-        this.resultLayer = L.geoJSON().addTo(this.map);
-        this.resultLayer.addData(this.resultJson);
+        this.resultLayer.addData(newGeoJson);
       } catch (error) {
-        //pass
+        console.warn(error)
       }
     },
     getMapBounds: function () {
@@ -108,55 +121,34 @@ export default {
     getMapZoom: function () {
       return this.map.getZoom();
     },
-  },
-  props: {
-    geojson: {
-      type: Object,
-      default() {
-        return {
-          crs: "urn:ogc:def:crs:EPSG::3857",
-          features: [],
-          name: "test",
-          type: "FeatureCollection",
-        };
-      },
-    },
-    center: {
-      required: true,
-      type: Array,
-    },
-    zoom: {
-      required: true,
-      type: Number,
-    },
+    updateOnResize: function (pixelOffset) {
+      // Move the map so that it stays in the same place on the screen
+      this.map.panBy(pixelOffset, { "animate": false })
+      // Load newly visible tiles
+      this.map.invalidateSize({ "pan": false });
+    }
   },
   mounted() {
-    // Some error occurred by re-saving this file. The error said that the map was already initialized but this try-catch block solves it.
-    try {
-      this.initMap();
-    } catch {
-      // pass
+    this.initMap();
+    if (this.resultGeoJson) {
+      this.updateResultLayer(this.resultGeoJson);
     }
-
-    this.changeGeojson(this.geojson);
   },
   watch: {
-    geojson: function (newGeojson) {
-      this.changeGeojson(newGeojson);
+    resultGeoJson: function (newGeoJson) {
+      this.updateResultLayer(newGeoJson);
     },
   },
 };
 </script>
 
 <style scoped>
-#mapContainer {
-  width: 100%;
-}
 @media (min-width: 1264px) {
   .wrapper {
     flex: 1;
     min-height: 0;
   }
+
   #mapContainer {
     width: 100%;
     height: 100%;

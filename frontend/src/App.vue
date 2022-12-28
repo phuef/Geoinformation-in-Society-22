@@ -3,7 +3,7 @@
     <div style="d-flex">
       <v-app-bar elevation="4" color="grey darken-4" class="px-0" dark width>
         <v-toolbar-title style="cursor: pointer" @click="$router.push('/')"
-          >Find Your Spot</v-toolbar-title
+          >Find your spot</v-toolbar-title
         >
         <v-spacer></v-spacer>
         <div class="d-none d-sm-flex align-items-center">
