@@ -39,8 +39,9 @@
         :xl="showMenu ? 9 : 12"
         :style="{ height: menuHeight }"
       >
-        <div id="mapViewContainer">
+        <div id="mapViewContainer" data-v-step="2">
           <div
+            data-v-step="3"
             id="menuButton"
             class="d-sm-flex align-items-center"
             @click="toggleMenu"
@@ -158,9 +159,6 @@ export default {
         }
       }
     },
-    startTour() {
-      this.$tours["myTour"].start();
-    },
     toggleMenu: function () {
       const menuDim = [
         this.$refs.menuContainer.clientWidth,
@@ -168,6 +166,7 @@ export default {
       ];
       // Change menu visibility
       this.showMenu = !this.showMenu;
+      this.stopTour();
       this.$nextTick(() => {
         // When the menu visibility has changed, calculate the change in size
         const menuDimChange = [
@@ -194,6 +193,9 @@ export default {
     },
     onResize() {
       this.$refs.map.updateOnResize();
+    },
+    startTour() {
+      this.$tours["myTour"].start();
     },
     stopTour() {
       this.$tours["myTour"].stop();
