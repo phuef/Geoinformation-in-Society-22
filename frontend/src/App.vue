@@ -9,9 +9,6 @@
         <div class="d-none d-sm-flex align-items-center">
           <v-toolbar-items>
             <v-btn to="/" dark text class="ms-3"> Main </v-btn>
-            <v-btn class="ms-3" dark text @click="startTour()">
-              Start Demo
-            </v-btn>
             <v-btn to="/impressum" dark text class="ms-3"> Legal Notice </v-btn>
           </v-toolbar-items>
         </div>
@@ -40,7 +37,6 @@
         </div>
       </v-app-bar>
     </div>
-    <v-tour name="myTour" :steps="steps"></v-tour>
     <router-view />
   </v-app>
 </template>
@@ -50,34 +46,9 @@ export default {
   name: "App",
   components: {},
   data() {
-    return {
-      steps: [
-        {
-          target: '[data-v-step="0"]', // We're using document.querySelector() under the hood
-          header: {
-            title: "Switch Layers",
-          },
-          content: `Click her to change the <strong>selected layers </strong>`,
-        },
-        {
-          target: '[data-v-step="1"]',
-          content: "Here are preconfigurations which you can choose from",
-        },
-        {
-          target: '[data-v-step="2"]',
-          content: "In the map you can see the visualised results ",
-          params: {
-            placement: "left", // Any valid Popper.js placement. See https://popper.js.org/popper-documentation.html#Popper.placements
-          },
-        },
-      ],
-    };
+    return {};
   },
-  methods: {
-    startTour() {
-      this.$tours["myTour"].start();
-    },
-  },
+  methods: {},
 };
 </script>
 

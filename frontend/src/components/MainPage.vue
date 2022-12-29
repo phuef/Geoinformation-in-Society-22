@@ -1,9 +1,15 @@
 <template>
-  <v-container id="mainContainer" class="fill-height"
-    fluid style="height: 100vh">
+  <v-container
+    id="mainContainer"
+    class="fill-height"
+    fluid
+    style="height: 100vh"
+  >
     <v-row no-gutters class="fill-height" style="height: 100%">
       <v-col cols="12" xs="12" sm="6" v-show="showMenu">
-        <MenuView ref="menu"
+        <v-btn class="ms-3" @click="startTour()"> Start Demo </v-btn>
+        <MenuView
+          ref="menu"
           @newRequest="processNewRequest"
           @isMinOfSliderHasChanged="changeSlidersIsMinState"
           @clearMap="processNewRequest"
@@ -20,12 +26,16 @@
               mdi-menu-right
             </v-icon>
           </div>
-          <MapView ref="map" :center="mapCenterPoint"
-            :zoom="mapZoom" :result-geo-json="requestResponse"
+          <MapView
+            ref="map"
+            :center="mapCenterPoint"
+            :zoom="mapZoom"
+            :result-geo-json="requestResponse"
           />
         </div>
       </v-col>
     </v-row>
+    <v-tour name="myTour" :steps="steps"></v-tour>
   </v-container>
 </template>
 
@@ -74,6 +84,26 @@ export default {
       mapBounds: null,
       mapCenterPoint: [51.96229626341511, 7.6256090207326395],
       mapZoom: 10,
+      steps: [
+        {
+          target: '[data-v-step="0"]', // We're using document.querySelector() under the hood
+          header: {
+            title: "Switch Layers",
+          },
+          content: `Click her to change the <strong>selected layers </strong>`,
+        },
+        {
+          target: '[data-v-step="1"]',
+          content: "Here are preconfigurations which you can choose from",
+        },
+        {
+          target: '[data-v-step="2"]',
+          content: "In the map you can see the visualised results ",
+          params: {
+            placement: "left", // Any valid Popper.js placement. See https://popper.js.org/popper-documentation.html#Popper.placements
+          },
+        },
+      ],
     };
   },
   computed: {
@@ -96,39 +126,42 @@ export default {
     toggleMenu: function () {
       const menuDim = [
         this.$refs.menu.$el.clientWidth,
-        this.$refs.menu.$el.clientHeight
-      ]
+        this.$refs.menu.$el.clientHeight,
+      ];
       // Change menu visibility
       this.showMenu = !this.showMenu;
       this.$nextTick(() => {
         // When the menu visibility has changed, calculate the change in size
         const newMenuDim = [
           this.$refs.menu.$el.clientWidth,
-          this.$refs.menu.$el.clientHeight
-        ]
+          this.$refs.menu.$el.clientHeight,
+        ];
         const menuDimChange = [
           newMenuDim[0] - menuDim[0],
-          newMenuDim[1] - menuDim[1]
-        ]
+          newMenuDim[1] - menuDim[1],
+        ];
         // Get offset depending on menu position
         const requiredOffset = this.getMenuOffset(menuDimChange);
         // Update map
         this.$refs.map.updateOnResize(requiredOffset);
-      })
+      });
     },
     getMenuOffset: function (dimChange) {
-      let pixelOffset;  // Here x, y coordinates!
+      let pixelOffset; // Here x, y coordinates!
       // TODO Set offset depending on menu position
       // this.$vuetify.breakpoint.sm
       const horizontalLayout = false;
       if (horizontalLayout) {
         // Menu on top
-        pixelOffset = [0, dimChange[0]]
+        pixelOffset = [0, dimChange[0]];
       } else {
         // Menu on the left side
-        pixelOffset = [dimChange[0], 0]
+        pixelOffset = [dimChange[0], 0];
       }
       return pixelOffset;
+    },
+    startTour() {
+      this.$tours["myTour"].start();
     },
   },
 };
@@ -146,7 +179,7 @@ export default {
   width: 100%;
 }
 
-#mapViewContainer {
+#mapContainer {
   height: 100%;
 }
 

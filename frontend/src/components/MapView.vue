@@ -6,7 +6,7 @@
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import "leaflet-draw";
-import 'leaflet-draw/dist/leaflet.draw.css';
+import "leaflet-draw/dist/leaflet.draw.css";
 
 // Make marker icons available (icon itself and shadow)
 delete L.Icon.Default.prototype._getIconUrl;
@@ -80,9 +80,11 @@ export default {
 
       L.control.layers(basemaps).addTo(this.map);
 
-      L.control.zoom({
-        position: "topright",
-      }).addTo(this.map);
+      L.control
+        .zoom({
+          position: "topright",
+        })
+        .addTo(this.map);
 
       this.map.addLayer(this.drawLayer);
       const drawControl = new L.Control.Draw({
@@ -93,13 +95,13 @@ export default {
           circlemarker: false,
           polygon: {
             shapeOptions: {
-              color: '#00ffdd'
-            }
-          }
+              color: "#00ffdd",
+            },
+          },
         },
         edit: {
-          featureGroup: this.drawLayer
-        }
+          featureGroup: this.drawLayer,
+        },
       });
       this.map.addControl(drawControl);
       this.map.on(L.Draw.Event.CREATED, (event) => {
@@ -112,7 +114,7 @@ export default {
       try {
         this.resultLayer.addData(newGeoJson);
       } catch (error) {
-        console.warn(error)
+        console.warn(error);
       }
     },
     getMapBounds: function () {
@@ -123,10 +125,10 @@ export default {
     },
     updateOnResize: function (pixelOffset) {
       // Move the map so that it stays in the same place on the screen
-      this.map.panBy(pixelOffset, { "animate": false })
+      this.map.panBy(pixelOffset, { animate: false });
       // Load newly visible tiles
-      this.map.invalidateSize({ "pan": false });
-    }
+      this.map.invalidateSize({ pan: false });
+    },
   },
   mounted() {
     this.initMap();
