@@ -6,7 +6,7 @@
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import "leaflet-draw";
-import 'leaflet-draw/dist/leaflet.draw.css';
+import "leaflet-draw/dist/leaflet.draw.css";
 
 // Make marker icons available (icon itself and shadow)
 delete L.Icon.Default.prototype._getIconUrl;
@@ -44,7 +44,10 @@ export default {
       this.map = L.map("mapContainer", {
         layers: this.tileLayer,
         zoomControl: false,
+        attributionControl: false,
       }).setView(this.center, this.zoom);
+
+      L.control.attribution({ prefix: false }).addTo(this.map);
 
       // To make sure, that the two basement options lie underneath the outputlayers which should be visualized,
       // a Pane with a z-Index gets created, which makes sure they will always lie underneath.
@@ -80,9 +83,11 @@ export default {
 
       L.control.layers(basemaps).addTo(this.map);
 
-      L.control.zoom({
-        position: "topright",
-      }).addTo(this.map);
+      L.control
+        .zoom({
+          position: "topright",
+        })
+        .addTo(this.map);
 
       this.map.addLayer(this.drawLayer);
       const drawControl = new L.Control.Draw({
@@ -93,13 +98,13 @@ export default {
           circlemarker: false,
           polygon: {
             shapeOptions: {
-              color: '#00ffdd'
-            }
-          }
+              color: "#00ffdd",
+            },
+          },
         },
         edit: {
-          featureGroup: this.drawLayer
-        }
+          featureGroup: this.drawLayer,
+        },
       });
       this.map.addControl(drawControl);
       this.map.on(L.Draw.Event.CREATED, (event) => {
@@ -112,7 +117,7 @@ export default {
       try {
         this.resultLayer.addData(newGeoJson);
       } catch (error) {
-        console.warn(error)
+        console.warn(error);
       }
     },
     getMapBounds: function () {
@@ -121,12 +126,17 @@ export default {
     getMapZoom: function () {
       return this.map.getZoom();
     },
-    updateOnResize: function (pixelOffset) {
+    updateOnResize: function (pixelOffset = [0, 0]) {
       // Move the map so that it stays in the same place on the screen
-      this.map.panBy(pixelOffset, { "animate": false })
+      this.map.panBy(pixelOffset, { animate: false });
       // Load newly visible tiles
-      this.map.invalidateSize({ "pan": false });
-    }
+      this.map.invalidateSize({ pan: false });
+    },
+  },
+  watch: {
+    resultGeoJson: function (newGeoJson) {
+      this.updateResultLayer(newGeoJson);
+    },
   },
   mounted() {
     this.initMap();
@@ -134,24 +144,7 @@ export default {
       this.updateResultLayer(this.resultGeoJson);
     }
   },
-  watch: {
-    resultGeoJson: function (newGeoJson) {
-      this.updateResultLayer(newGeoJson);
-    },
-  },
 };
 </script>
 
-<style scoped>
-@media (min-width: 1264px) {
-  .wrapper {
-    flex: 1;
-    min-height: 0;
-  }
-
-  #mapContainer {
-    width: 100%;
-    height: 100%;
-  }
-}
-</style>
+<style scoped></style>
