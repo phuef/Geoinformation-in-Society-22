@@ -17,14 +17,21 @@
         />
       </v-col>
       <v-col cols="12" xs="12" :sm="mapViewSize">
-        <div data-v-step="2" id="mapContainer" :key="mapViewSize">
-          <div class="d-none d-sm-flex align-items-center" id="iconContainer">
-            <v-icon v-if="showMenu" @click="toggleMenu" id="collapseIcon">
-              mdi-menu-left
-            </v-icon>
-            <v-icon v-if="!showMenu" @click="toggleMenu" id="openIcon">
-              mdi-menu-right
-            </v-icon>
+        <div
+          data-v-step="2"
+          id="mapContainer"
+          :key="mapViewSize"
+          class="fill-height"
+        >
+          <div class="d-none d-sm-flex fill-height" fluid>
+            <div class="d-flex align-center justify-center">
+              <v-icon v-if="showMenu" @click="toggleMenu" id="collapseIcon">
+                mdi-menu-left
+              </v-icon>
+              <v-icon v-if="!showMenu" @click="toggleMenu" id="openIcon">
+                mdi-menu-right
+              </v-icon>
+            </div>
           </div>
           <MapView
             ref="map"
@@ -168,19 +175,9 @@ export default {
 </script>
 
 <style scoped>
-#iconContainer {
-  margin: 0;
-  position: absolute;
-  top: 50%;
-}
-
 #mainContainer {
   padding: 0px;
   width: 100%;
-}
-
-#mapContainer {
-  height: 100%;
 }
 
 #collapseIcon,
