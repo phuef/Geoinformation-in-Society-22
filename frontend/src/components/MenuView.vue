@@ -11,6 +11,7 @@
         location, and that`s it, congrats, you just found your Spot.<br /><br />
         <span class="highlight-gray">Need help?</span> For detailed information
         of the functionalities, use this demo button.
+        <a @click="startTour()">test</a>
       </p>
     </div>
     <v-divider></v-divider>
@@ -363,10 +364,7 @@ export default {
 .v-expansion-panel-content > .v-expansion-panel-content__wrap {
   padding: 0 !important;
 }
-=======
-
-<style scoped>
-div {
+======= <style scoped > div {
   text-align: justify;
 }
 .highlight-gray {
@@ -375,8 +373,7 @@ div {
   padding: 3px 6px;
 }
 
->>>>>>> fe-introduction-top-of-sliders
-.bNoPadding {
+>>>>>>>fe-introduction-top-of-sliders .bNoPadding {
   padding-left: 2px !important;
   padding-right: 2px !important;
   min-width: 0px !important;
