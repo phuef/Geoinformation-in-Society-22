@@ -21,6 +21,7 @@
           fluid
           style="height: 100%"
         >
+          <v-btn class="ms-3" @click="startTour()"> Start Demo </v-btn>
           <MenuView
             ref="menu"
             @newRequest="processNewRequest"
@@ -57,6 +58,7 @@
         </div>
       </v-col>
     </v-row>
+    <v-tour name="myTour" :steps="steps"></v-tour>
   </v-container>
 </template>
 
@@ -104,6 +106,26 @@ export default {
       ],
       mapCenterPoint: [51.96229626341511, 7.6256090207326395],
       mapZoom: 10,
+      steps: [
+        {
+          target: '[data-v-step="0"]', // We're using document.querySelector() under the hood
+          header: {
+            title: "Switch Layers",
+          },
+          content: `Click her to change the <strong>selected layers </strong>`,
+        },
+        {
+          target: '[data-v-step="1"]',
+          content: "Here are preconfigurations which you can choose from",
+        },
+        {
+          target: '[data-v-step="2"]',
+          content: "In the map you can see the visualised results ",
+          params: {
+            placement: "left", // Any valid Popper.js placement. See https://popper.js.org/popper-documentation.html#Popper.placements
+          },
+        },
+      ],
     };
   },
   methods: {
@@ -116,6 +138,9 @@ export default {
           this.sliders[i].isMin = !this.sliders[i].isMin;
         }
       }
+    },
+    startTour() {
+      this.$tours["myTour"].start();
     },
     toggleMenu: function () {
       const menuDim = [

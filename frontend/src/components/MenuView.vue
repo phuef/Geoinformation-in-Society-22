@@ -11,6 +11,7 @@
       multiple
       dense
       @input="changeActiveState()"
+      data-v-step="0"
     >
     </v-select>
     <p class="text pt-2 mb-0" style="color: #000000de" dense>Distance to ...</p>
@@ -117,7 +118,8 @@
     <br />
     <v-divider style="border-color: rgba(127, 127, 127)"></v-divider>
     <br />
-    <v-expansion-panels flat>
+
+    <v-expansion-panels flat data-v-step="1">
       <v-expansion-panel>
         <v-expansion-panel-header
           style="color: #000000de; padding-left: 0px; font-size: 16px"
