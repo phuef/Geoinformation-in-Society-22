@@ -24,7 +24,7 @@
           class="fill-height"
         >
           <div class="d-none d-sm-flex fill-height" fluid>
-            <div class="d-flex align-center justify-center">
+            <div data-v-step="3" class="d-flex align-center justify-center">
               <v-icon v-if="showMenu" @click="toggleMenu" id="collapseIcon">
                 mdi-menu-left
               </v-icon>
@@ -97,17 +97,36 @@ export default {
           header: {
             title: "Switch Layers",
           },
-          content: `Click her to change the <strong>selected layers </strong>`,
+          content:
+            "Click here to change the <strong>selected layers </strong>.",
         },
         {
           target: '[data-v-step="1"]',
-          content: "Here are preconfigurations which you can choose from",
+          content:
+            "Here are some <strong>examples</strong> to get an idea about the results.",
         },
         {
           target: '[data-v-step="2"]',
-          content: "In the map you can see the visualised results ",
+          content:
+            "In the map you can see the <br><strong>visualised results</strong>.",
           params: {
             placement: "left", // Any valid Popper.js placement. See https://popper.js.org/popper-documentation.html#Popper.placements
+          },
+        },
+        {
+          target: '[data-v-step="2"]',
+          content:
+            "Here you can add a <strong>marker</strong> to the map. <br> E.g. to mark a certain position.",
+          params: {
+            placement: "left-start", // Any valid Popper.js placement. See https://popper.js.org/popper-documentation.html#Popper.placements
+          },
+        },
+        {
+          target: '[data-v-step="3"]',
+          content:
+            "With this button you can <b>hide the menu</b> or elapse it, if it's hidden.",
+          params: {
+            placement: "right", // Any valid Popper.js placement. See https://popper.js.org/popper-documentation.html#Popper.placements
           },
         },
       ],
@@ -169,6 +188,9 @@ export default {
     },
     startTour() {
       this.$tours["myTour"].start();
+    },
+    stopTour() {
+      this.$tours["myTour"].stop();
     },
   },
 };
