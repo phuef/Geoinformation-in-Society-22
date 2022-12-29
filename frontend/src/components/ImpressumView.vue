@@ -1,6 +1,6 @@
 <template>
   <div class="container pt-10">
-    <h1>Legal Notice</h1>
+    <h1>Legal notice</h1>
     <h2 class="pt-4">Disclosures according to §5 TMG</h2>
     <br />
     <p>
@@ -19,6 +19,7 @@
     </v-btn>
   </div>
 </template>
+
 <script>
 export default {
   name: "ImpressumView",
