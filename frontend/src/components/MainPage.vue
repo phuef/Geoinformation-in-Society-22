@@ -246,6 +246,9 @@ export default {
   height: 100%;
   overflow: hidden;
 }
+>>> .v-step {
+  background-color: #5b7683;
+}
 
 #menuButton {
   position: absolute;
