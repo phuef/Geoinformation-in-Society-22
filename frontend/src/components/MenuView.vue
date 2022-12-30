@@ -11,13 +11,14 @@
       multiple
       dense
       @input="changeActiveState()"
+      data-v-step="0"
     >
     </v-select>
     <p class="text pt-2 mb-0" style="color: #000000de" dense>Distance to ...</p>
     <br />
     <v-row v-for="slider in sliders" :key="slider.label" class="py-3 px-3">
-      <v-col class="lessPadding"
-        ><v-card
+      <v-col class="lessPadding">
+        <v-card
           v-if="slider.active"
           width="100%"
           elevation="0"
@@ -117,7 +118,8 @@
     <br />
     <v-divider style="border-color: rgba(127, 127, 127)"></v-divider>
     <br />
-    <v-expansion-panels flat>
+
+    <v-expansion-panels flat data-v-step="1">
       <v-expansion-panel>
         <v-expansion-panel-header
           style="color: #000000de; padding-left: 0px; font-size: 16px"
@@ -341,24 +343,29 @@ export default {
   },
 };
 </script>
-<style>
+
+<style scoped>
 .v-expansion-panel-content > .v-expansion-panel-content__wrap {
   padding: 0 !important;
 }
+
 .bNoPadding {
   padding-left: 2px !important;
   padding-right: 2px !important;
   min-width: 0px !important;
 }
+
 .noMarginBottom {
   margin-bottom: 0px !important;
 }
+
 .lessPadding {
   padding-left: 2px !important;
   padding-right: 2px !important;
   padding-top: 2px !important;
   padding-bottom: 2px !important;
 }
+
 .paddingTop {
   padding-top: 2px !important;
 }

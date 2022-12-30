@@ -4,10 +4,11 @@ Created on Wed Nov 23 16:08:13 2022
 
 @author: Alexander Pilz
 """
-from osgeo import gdal, osr, ogr
+from osgeo import gdal, ogr
 import json
 import uuid
-
+import numpy as np
+from rdp import rdp
 '''
 * Title: DistanceStack
 * Description: The class DistanceStack is the main class with which the distance 
@@ -76,11 +77,12 @@ class DistanceStack:
                 array = self.bands[filterValues[i][0]].ReadAsArray() #read corresponding band from raster
                 filteredArrayA = array <= filterValues[i][2]/10
                 filteredArrayB = array >= filterValues[i][1]/10 #filter band
-                filteredArrays.append(filteredArrayA*filteredArrayB) #add filtered array to list
-            
+                filteredArrays.append(filteredArrayA) #add filtered array to list
+                filteredArrays.append(filteredArrayB) #add filtered array to list
+
         combinedArray = filteredArrays[0] #initialize combined array
         
-        for y in filteredArrays: #iterate over filtered bands
+        for y in filteredArrays[1:]: #iterate over filtered bands
             combinedArray *= y #combine boolean values
             
         driver = gdal.GetDriverByName('MEM') #initialize in memory driver
@@ -93,7 +95,7 @@ class DistanceStack:
         drv = ogr.GetDriverByName('GEOJSON') #initialize GEOJSON driver
         outfile = drv.CreateDataSource("usr/src/backend/results/" + self.uuid + ".json") #create GEOJSON
         outlayer = outfile.CreateLayer('test', srs=srs, geom_type=ogr.wkbPolygon) #add layer to GEOJSON
-        newField = ogr.FieldDefn('DN', ogr.OFTReal) #create field
+        newField = ogr.FieldDefn('DN', ogr.OFTInteger) #create field
         outlayer.CreateField(newField) #add field to GEOJSON
         
         gdal.Polygonize(output.GetRasterBand(1), None, outlayer, 0, []) #polygonize combined raster based on pixel values
@@ -104,12 +106,23 @@ class DistanceStack:
         with open('usr/src/backend/results/' + self.uuid + '.json') as f:
             data = json.load(f)
         for feature in data['features']:
-            if(feature['properties']['DN'] != 1):
-                data['features'].remove(feature)
+            #if(feature['properties']['DN'] != 1):
+                #data['features'].remove(feature)
             feature['geometry']['coordinates'] = feature['geometry']['coordinates'][::-1]
+            feature['geometry']['coordinates'][0] = ccc(rdp(feature['geometry']['coordinates'][0], epsilon=0.00012))
         data['crs'] = "WGS-84 - EPSG: 4326"
-            
         return data
-                
+    
+def ccc(coords, refinements=5):
+    coords = np.array(coords)
 
+    for _ in range(refinements):
+        L = coords.repeat(2, axis=0)
+        R = np.empty_like(L)
+        R[0] = L[0]
+        R[2::2] = L[1:-1:2]
+        R[1:-1:2] = L[2::2]
+        R[-1] = L[-1]
+        coords = L * 0.75 + R * 0.25
 
+    return coords.tolist()
