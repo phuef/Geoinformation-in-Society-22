@@ -246,7 +246,7 @@ export default {
   height: 100%;
   overflow: hidden;
 }
->>> .v-step {
+.v-step[data-v-54f9a632] {
   background-color: #5b7683;
 }
 

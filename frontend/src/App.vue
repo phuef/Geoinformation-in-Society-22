@@ -1,6 +1,6 @@
 <template>
   <v-app>
-    <v-app-bar app color="blue-grey darken-4" elevation="0" dark>
+    <v-app-bar app color="#313641" elevation="0" dark>
       <v-toolbar-title style="cursor: pointer" @click="$router.push('/')">
         Find your spot
       </v-toolbar-title>
