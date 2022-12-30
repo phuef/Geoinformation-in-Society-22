@@ -55,6 +55,7 @@
               </v-col>
               <v-col cols="3">
                 <v-btn
+                  data-v-step="4"
                   elevation="0"
                   dense
                   small

@@ -117,6 +117,11 @@ export default {
             "Click here to change the <strong>selected layers </strong>.",
         },
         {
+          target: '[data-v-step="4"]',
+          content:
+            "Here you can decide if the choosen distance should be undertood as <b>at least or less than</b>.  ",
+        },
+        {
           target: '[data-v-step="1"]',
           content:
             "Here are some <strong>examples</strong> to get an idea about the results.",
