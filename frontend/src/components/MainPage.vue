@@ -1,37 +1,54 @@
 <template>
-  <v-container
-    id="mainContainer"
-    class="fill-height"
-    fluid
-    style="height: 100vh"
-  >
-    <v-row no-gutters class="fill-height" style="height: 100%">
-      <v-col cols="12" xs="12" sm="6" v-show="showMenu">
-        <v-btn class="ms-3" @click="startTour()"> Start Demo </v-btn>
-        <MenuView
-          ref="menu"
-          @newRequest="processNewRequest"
-          @isMinOfSliderHasChanged="changeSlidersIsMinState"
-          @clearMap="processNewRequest"
-          :sliders="sliders"
-        />
-      </v-col>
-      <v-col cols="12" xs="12" :sm="mapViewSize">
+  <v-container id="mainContainer" fluid fill-height>
+    <v-row no-gutters class="fill-height" fluid>
+      <v-col
+        cols="12"
+        sm="6"
+        md="5"
+        lg="4"
+        xl="3"
+        v-show="showMenu"
+        :style="{
+          height: menuHeight,
+          maxHeight: menuHeight,
+          overflowY: 'auto',
+        }"
+      >
         <div
-          data-v-step="2"
-          id="mapContainer"
-          :key="mapViewSize"
-          class="fill-height"
+          id="menuContainer"
+          ref="menuContainer"
+          fill-height
+          fluid
+          style="height: 100%"
         >
-          <div class="d-none d-sm-flex fill-height" fluid>
-            <div class="d-flex align-center justify-center">
-              <v-icon v-if="showMenu" @click="toggleMenu" id="collapseIcon">
-                mdi-menu-left
-              </v-icon>
-              <v-icon v-if="!showMenu" @click="toggleMenu" id="openIcon">
-                mdi-menu-right
-              </v-icon>
-            </div>
+          <v-btn class="ms-3" @click="startTour()"> Start Demo </v-btn>
+          <MenuView
+            ref="menu"
+            @newRequest="processNewRequest"
+            @isMinOfSliderHasChanged="changeSlidersIsMinState"
+            @clearMap="processNewRequest"
+            :sliders="sliders"
+          />
+        </div>
+      </v-col>
+      <v-col
+        cols="12"
+        :sm="showMenu ? 6 : 12"
+        :md="showMenu ? 7 : 12"
+        :lg="showMenu ? 8 : 12"
+        :xl="showMenu ? 9 : 12"
+        :style="{ height: menuHeight }"
+      >
+        <div id="mapViewContainer" data-v-step="2">
+          <div
+            data-v-step="3"
+            id="menuButton"
+            class="d-sm-flex align-items-center"
+            @click="toggleMenu"
+            :style="menuButtonStyle"
+          >
+            <v-icon v-show="showMenu">mdi-menu-left</v-icon>
+            <v-icon v-show="!showMenu">mdi-menu-right</v-icon>
           </div>
           <MapView
             ref="map"
@@ -97,27 +114,45 @@ export default {
           header: {
             title: "Switch Layers",
           },
-          content: `Click her to change the <strong>selected layers </strong>`,
+          content:
+            "Click here to change the <strong>selected layers </strong>.",
+        },
+        {
+          target: '[data-v-step="4"]',
+          content:
+            "Here you can decide if the choosen distance should be undertood as <b>at least or less than</b>.  ",
         },
         {
           target: '[data-v-step="1"]',
-          content: "Here are preconfigurations which you can choose from",
+          content:
+            "Here are some <strong>examples</strong> to get an idea about the results.",
         },
         {
           target: '[data-v-step="2"]',
-          content: "In the map you can see the visualised results ",
+          content:
+            "In the map you can see the <br><strong>visualised results</strong>.",
           params: {
             placement: "left", // Any valid Popper.js placement. See https://popper.js.org/popper-documentation.html#Popper.placements
           },
         },
+        {
+          target: '[data-v-step="2"]',
+          content:
+            "Here you can add a <strong>marker</strong> to the map. <br> E.g. to mark a certain position.",
+          params: {
+            placement: "left-start", // Any valid Popper.js placement. See https://popper.js.org/popper-documentation.html#Popper.placements
+          },
+        },
+        {
+          target: '[data-v-step="3"]',
+          content:
+            "With this button you can <b>hide the menu</b> or elapse it, if it's hidden.",
+          params: {
+            placement: "right", // Any valid Popper.js placement. See https://popper.js.org/popper-documentation.html#Popper.placements
+          },
+        },
       ],
     };
-  },
-  computed: {
-    mapViewSize: function () {
-      // makes sure that the map is displayed on the full screen when the menu is not shown
-      return this.showMenu ? "6" : "12";
-    },
   },
   methods: {
     processNewRequest: function (response) {
@@ -132,20 +167,17 @@ export default {
     },
     toggleMenu: function () {
       const menuDim = [
-        this.$refs.menu.$el.clientWidth,
-        this.$refs.menu.$el.clientHeight,
+        this.$refs.menuContainer.clientWidth,
+        this.$refs.menuContainer.clientHeight,
       ];
       // Change menu visibility
       this.showMenu = !this.showMenu;
+      this.stopTour();
       this.$nextTick(() => {
         // When the menu visibility has changed, calculate the change in size
-        const newMenuDim = [
-          this.$refs.menu.$el.clientWidth,
-          this.$refs.menu.$el.clientHeight,
-        ];
         const menuDimChange = [
-          newMenuDim[0] - menuDim[0],
-          newMenuDim[1] - menuDim[1],
+          this.$refs.menuContainer.clientWidth - menuDim[0],
+          this.$refs.menuContainer.clientHeight - menuDim[1],
         ];
         // Get offset depending on menu position
         const requiredOffset = this.getMenuOffset(menuDimChange);
@@ -154,22 +186,57 @@ export default {
       });
     },
     getMenuOffset: function (dimChange) {
-      let pixelOffset; // Here x, y coordinates!
-      // TODO Set offset depending on menu position
-      // this.$vuetify.breakpoint.sm
-      const horizontalLayout = false;
+      let pixelOffset; // here x, y coordinates!
+      const horizontalLayout = this.$vuetify.breakpoint.xs;
       if (horizontalLayout) {
         // Menu on top
-        pixelOffset = [0, dimChange[0]];
+        pixelOffset = [0, dimChange[1]];
       } else {
         // Menu on the left side
         pixelOffset = [dimChange[0], 0];
       }
       return pixelOffset;
     },
+    onResize() {
+      this.$refs.map.updateOnResize();
+    },
     startTour() {
       this.$tours["myTour"].start();
     },
+    stopTour() {
+      this.$tours["myTour"].stop();
+    },
+    debounce(func, timeout = 200) {
+      let timer;
+      return (...args) => {
+        clearTimeout(timer);
+        timer = setTimeout(() => {
+          func.apply(this, args);
+        }, timeout);
+      };
+    },
+  },
+  computed: {
+    menuHeight() {
+      if (this.$vuetify.breakpoint.xs && this.showMenu) {
+        return "50%";
+      } else {
+        return "100%";
+      }
+    },
+    menuButtonStyle() {
+      if (this.$vuetify.breakpoint.xs) {
+        return "left: 50%; transform-origin: left; transform: translate(0, -40px) rotate(90deg)";
+      } else {
+        return "top: 50%; transform: translate(0, -50%);";
+      }
+    },
+  },
+  mounted() {
+    // Update map size when resizing window
+    window.addEventListener("resize", this.debounce(this.onResize, 500), {
+      passive: true,
+    });
   },
 };
 </script>
@@ -178,18 +245,29 @@ export default {
 #mainContainer {
   padding: 0px;
   width: 100%;
+  max-height: 100%;
 }
 
-#collapseIcon,
-#openIcon {
-  padding: 0px;
-  margin: left;
-  border-radius: 4px;
-  width: 15px;
+#mapViewContainer {
+  height: 100%;
+  overflow: hidden;
+}
+.v-step[data-v-54f9a632] {
+  background-color: #5b7683;
+}
+
+#menuButton {
+  position: absolute;
+  margin: 0;
+  width: 16px;
   height: 80px;
   background-color: white;
-  opacity: 0.8;
-  border: 1px solid grey;
-  z-index: 9999;
+  border-top-right-radius: 5px;
+  border-bottom-right-radius: 5px;
+  border: 2px solid lightgrey;
+  border-left: 0;
+  z-index: 1200;
+  display: grid;
+  place-content: center;
 }
 </style>
