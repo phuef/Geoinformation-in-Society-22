@@ -62,9 +62,9 @@
             style="
               z-index: 9999;
               position: absolute;
-              margin-left: 10px;
-              margin-top: 10px;
-              top: 0;
+              bottom: 0;
+              margin-left: 12px;
+              margin-bottom: 12px;
             "
           >
             <v-tooltip right z-index="1000">
@@ -72,10 +72,12 @@
                 <v-btn
                   elevation="0"
                   style="
+                    color: rgb(70, 70, 70);
+                    border-radius: 2px;
                     background-color: white;
-                    border: 2px solid rgba(150, 150, 150, 0.5);
-                    width: 54px;
-                    height: 54px;
+                    outline: 2px solid rgba(0, 0, 0, 0.2);
+                    min-width: 44px;
+                    height: 44px;
                     padding: 0px;
                   "
                   v-bind="attrs"
