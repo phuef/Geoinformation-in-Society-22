@@ -50,7 +50,7 @@
             <v-icon v-show="showMenu">mdi-menu-left</v-icon>
             <v-icon v-show="!showMenu">mdi-menu-right</v-icon>
           </div>
-          <div
+          <!--<div
             data-v-step="6"
             style="
               position: absolute;
@@ -60,7 +60,7 @@
             "
           >
             <v-icon>mdi-menu-left</v-icon>
-          </div>
+          </div>-->
           <!--<div
             data-v-step="5"
             style="
