@@ -123,6 +123,14 @@ export default {
             "Here you can decide if the choosen distance should be undertood as <b>at least or less than</b>.  ",
         },
         {
+          target: '[data-v-step="6"]',
+          content:
+            "Here you can specify the distance you want by moving the slider.",
+          params: {
+            placement: "left-start", // Any valid Popper.js placement. See https://popper.js.org/popper-documentation.html#Popper.placements
+          },
+        },
+        {
           target: '[data-v-step="1"]',
           content:
             "Here are some <strong>examples</strong> to get an idea about the results.",
@@ -130,7 +138,7 @@ export default {
         {
           target: '[data-v-step="2"]',
           content:
-            "In the map you can see the <br><strong>visualised results</strong>.",
+            "In the map you can see the <br><strong>results</strong> of your search.",
           params: {
             placement: "left", // Any valid Popper.js placement. See https://popper.js.org/popper-documentation.html#Popper.placements
           },
@@ -147,6 +155,13 @@ export default {
           target: '[data-v-step="3"]',
           content:
             "With this button you can <b>hide the menu</b> or elapse it, if it's hidden.",
+          params: {
+            placement: "right", // Any valid Popper.js placement. See https://popper.js.org/popper-documentation.html#Popper.placements
+          },
+        },
+        {
+          target: '[data-v-step="2"]',
+          content: "Click here to see your current location on the map",
           params: {
             placement: "right", // Any valid Popper.js placement. See https://popper.js.org/popper-documentation.html#Popper.placements
           },

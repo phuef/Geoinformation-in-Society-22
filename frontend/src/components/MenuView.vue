@@ -41,6 +41,7 @@
           tile
           dense
           cols="12"
+          data-v-step="6"
         >
           <div tile class="d-flex paddingTop">
             <v-row>
