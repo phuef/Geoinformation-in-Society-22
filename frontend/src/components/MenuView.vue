@@ -14,6 +14,14 @@
       data-v-step="0"
     >
     </v-select>
+    <v-switch
+      append-icon="mdi-bus-stop"
+      color="primary"
+      hide-details
+      style=""
+      label="Right now just a visual feature"
+    >
+    </v-switch>
     <p class="text-capitalize pt-2 mb-0" style="color: #000000de" dense>
       Distance to ...
     </p>

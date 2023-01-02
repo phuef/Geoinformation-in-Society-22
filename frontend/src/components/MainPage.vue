@@ -50,21 +50,11 @@
             <v-icon v-show="showMenu">mdi-menu-left</v-icon>
             <v-icon v-show="!showMenu">mdi-menu-right</v-icon>
           </div>
-          <MapView
-            ref="map"
-            :center="mapCenterPoint"
-            :zoom="mapZoom"
-            :busGeojsonMap="busGeojsonMain"
-            :showBussesMap="showBusses"
-            :result-geo-json="requestResponse"
-          />
           <div
             data-v-step="5"
-            class=""
             style="
               z-index: 9999;
               position: absolute;
-              top: 0;
               margin-left: 55px;
               margin-top: 12px;
             "
@@ -115,6 +105,14 @@
               }}</span>
             </v-tooltip>
           </div>
+          <MapView
+            ref="map"
+            :center="mapCenterPoint"
+            :zoom="mapZoom"
+            :busGeojsonMap="busGeojsonMain"
+            :showBussesMap="showBusses"
+            :result-geo-json="requestResponse"
+          />
         </div>
       </v-col>
     </v-row>
