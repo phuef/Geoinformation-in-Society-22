@@ -1,51 +1,75 @@
 <template>
-  <v-container
-    id="mainContainer"
-    class="fill-height"
-    fluid
-    style="height: 100vh"
-  >
-    <v-row no-gutters class="fill-height" style="height: 100%">
-      <v-col cols="12" xs="12" sm="6" v-if="showMenu">
-        <MenuView
-          @newRequest="processNewRequest"
-          @isMinOfSliderHasChanged="changeSlidersIsMinState"
-          @clearMap="processNewRequest"
-          :sliders="sliders"
-        />
+  <v-container id="mainContainer" fluid fill-height>
+    <v-row no-gutters class="fill-height" fluid>
+      <v-col
+        cols="12"
+        sm="6"
+        md="5"
+        lg="4"
+        xl="3"
+        v-show="showMenu"
+        :style="{
+          height: menuHeight,
+          maxHeight: menuHeight,
+          overflowY: 'auto',
+        }"
+      >
+        <div
+          id="menuContainer"
+          ref="menuContainer"
+          fill-height
+          fluid
+          style="height: 100%"
+        >
+          <v-btn class="ms-3" @click="startTour()"> Start Demo </v-btn>
+          <MenuView
+            ref="menu"
+            @newRequest="processNewRequest"
+            @isMinOfSliderHasChanged="changeSlidersIsMinState"
+            @clearMap="processNewRequest"
+            :sliders="sliders"
+          />
+        </div>
       </v-col>
-      <v-col cols="12" xs="12" :sm="mapViewSize">
-        <div id="mapContainer" :key="mapViewSize">
-          <div class="d-none d-sm-flex align-items-center" id="iconContainer">
-            <v-icon v-if="showMenu" @click="handleClick" id="collapseIcon">
-              mdi-menu-left</v-icon
-            >
-            <v-icon v-if="!showMenu" @click="handleClick" id="openIcon">
-              mdi-menu-right</v-icon
-            >
+      <v-col
+        cols="12"
+        :sm="showMenu ? 6 : 12"
+        :md="showMenu ? 7 : 12"
+        :lg="showMenu ? 8 : 12"
+        :xl="showMenu ? 9 : 12"
+        :style="{ height: menuHeight }"
+      >
+        <div id="mapViewContainer">
+          <div
+            id="menuButton"
+            class="d-sm-flex align-items-center"
+            @click="toggleMenu"
+            :style="menuButtonStyle"
+          >
+            <v-icon v-show="showMenu">mdi-menu-left</v-icon>
+            <v-icon v-show="!showMenu">mdi-menu-right</v-icon>
           </div>
           <MapView
-            :geojson="requestResponse"
+            ref="map"
             :center="mapCenterPoint"
             :zoom="mapZoom"
-            ref="map"
+            :result-geo-json="requestResponse"
           />
         </div>
       </v-col>
     </v-row>
+    <v-tour name="myTour" :steps="steps"></v-tour>
   </v-container>
 </template>
 
 <script>
 import MapView from "./MapView.vue";
-// eslint-disable-next-line
 import MenuView from "./MenuView.vue";
 
 export default {
   name: "MainPage",
   components: {
     MapView,
-    // eslint-disable-next-line
     MenuView,
   },
   data() {
@@ -80,84 +104,137 @@ export default {
           isMin: false,
         },
       ],
-      mapBounds: null,
       mapCenterPoint: [51.96229626341511, 7.6256090207326395],
       mapZoom: 10,
+      steps: [
+        {
+          target: '[data-v-step="0"]', // We're using document.querySelector() under the hood
+          header: {
+            title: "Switch Layers",
+          },
+          content: `Click her to change the <strong>selected layers </strong>`,
+        },
+        {
+          target: '[data-v-step="1"]',
+          content: "Here are preconfigurations which you can choose from",
+        },
+        {
+          target: '[data-v-step="2"]',
+          content: "In the map you can see the visualised results ",
+          params: {
+            placement: "left", // Any valid Popper.js placement. See https://popper.js.org/popper-documentation.html#Popper.placements
+          },
+        },
+      ],
     };
-  },
-  computed: {
-    mapViewSize: function () {
-      // makes sure that the map is displayed on the full screen when the menu is not shown
-      return this.showMenu ? "6" : "12";
-    },
   },
   methods: {
     processNewRequest: function (response) {
       this.requestResponse = response;
     },
     changeSlidersIsMinState: function (sliderName) {
-      for (var i in this.sliders) {
+      for (const i in this.sliders) {
         if (this.sliders[i].name == sliderName) {
           this.sliders[i].isMin = !this.sliders[i].isMin;
         }
       }
     },
-    handleClick: function () {
-      this.calculateCenterPoint();
-      this.getMapZoom();
-      this.showMenu = !this.showMenu;
+    startTour() {
+      this.$tours["myTour"].start();
     },
-    calculateCenterPoint: function () {
-      this.mapBounds = this.$refs.map.getMapBounds();
-      if (this.showMenu) {
-        this.mapCenterPoint = [
-          this.mapBounds.getSouth() +
-            (this.mapBounds.getNorth() - this.mapBounds.getSouth()) / 2,
-          this.mapBounds.getWest(),
+    toggleMenu: function () {
+      const menuDim = [
+        this.$refs.menuContainer.clientWidth,
+        this.$refs.menuContainer.clientHeight,
+      ];
+      // Change menu visibility
+      this.showMenu = !this.showMenu;
+      this.$nextTick(() => {
+        // When the menu visibility has changed, calculate the change in size
+        const menuDimChange = [
+          this.$refs.menuContainer.clientWidth - menuDim[0],
+          this.$refs.menuContainer.clientHeight - menuDim[1],
         ];
+        // Get offset depending on menu position
+        const requiredOffset = this.getMenuOffset(menuDimChange);
+        // Update map
+        this.$refs.map.updateOnResize(requiredOffset);
+      });
+    },
+    getMenuOffset: function (dimChange) {
+      let pixelOffset; // here x, y coordinates!
+      const horizontalLayout = this.$vuetify.breakpoint.xs;
+      if (horizontalLayout) {
+        // Menu on top
+        pixelOffset = [0, dimChange[1]];
       } else {
-        this.mapCenterPoint = [
-          this.mapBounds.getSouth() +
-            (this.mapBounds.getNorth() - this.mapBounds.getSouth()) / 2,
-          this.mapBounds.getWest() +
-            (3 * (this.mapBounds.getEast() - this.mapBounds.getWest())) / 4,
-        ];
+        // Menu on the left side
+        pixelOffset = [dimChange[0], 0];
+      }
+      return pixelOffset;
+    },
+    onResize() {
+      this.$refs.map.updateOnResize();
+    },
+    debounce(func, timeout = 200) {
+      let timer;
+      return (...args) => {
+        clearTimeout(timer);
+        timer = setTimeout(() => {
+          func.apply(this, args);
+        }, timeout);
+      };
+    },
+  },
+  computed: {
+    menuHeight() {
+      if (this.$vuetify.breakpoint.xs && this.showMenu) {
+        return "50%";
+      } else {
+        return "100%";
       }
     },
-    getMapZoom: function () {
-      this.mapZoom = this.$refs.map.getMapZoom();
+    menuButtonStyle() {
+      if (this.$vuetify.breakpoint.xs) {
+        return "left: 50%; transform-origin: left; transform: translate(0, -40px) rotate(90deg)";
+      } else {
+        return "top: 50%; transform: translate(0, -50%);";
+      }
     },
   },
   mounted() {
-    this.calculateCenterPoint();
-    this.getMapZoom();
+    // Update map size when resizing window
+    window.addEventListener("resize", this.debounce(this.onResize, 500), {
+      passive: true,
+    });
   },
 };
 </script>
 
 <style scoped>
-#iconContainer {
-  margin: 0;
-  position: absolute;
-  top: 45%;
-}
 #mainContainer {
   padding: 0px;
   width: 100%;
+  max-height: 100%;
 }
-#mapContainer {
+
+#mapViewContainer {
   height: 100%;
+  overflow: hidden;
 }
-#collapseIcon,
-#openIcon {
-  padding: 0px;
-  margin: left;
-  border-radius: 4px;
-  width: 15px;
+
+#menuButton {
+  position: absolute;
+  margin: 0;
+  width: 16px;
   height: 80px;
   background-color: white;
-  opacity: 0.8;
-  border: 1px solid grey;
-  z-index: 9999;
+  border-top-right-radius: 5px;
+  border-bottom-right-radius: 5px;
+  border: 2px solid lightgrey;
+  border-left: 0;
+  z-index: 1200;
+  display: grid;
+  place-content: center;
 }
 </style>
