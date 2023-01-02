@@ -19,11 +19,11 @@
     </p>
     <v-alert
       v-if="isResponseEmpty"
-      outlined
+      text
+      color="rgb(25,118,210)"
       colored-border
       type="info"
-      elevation="0"
-      class="py-2 px-2 mb-0"
+      class="py-2 px-2 mb-0 mt-3"
     >
       There is no spot that matches the current query. Adjust the sliders to
       find one.
