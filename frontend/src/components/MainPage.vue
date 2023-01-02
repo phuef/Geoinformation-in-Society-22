@@ -62,8 +62,8 @@
             style="
               z-index: 9999;
               position: absolute;
-              margin-left: 12px;
-              margin-top: 12px;
+              margin-left: 10px;
+              margin-top: 10px;
               top: 0;
             "
           >
@@ -281,5 +281,6 @@ export default {
   z-index: 1200;
   display: grid;
   place-content: center;
+  cursor: pointer;
 }
 </style>
