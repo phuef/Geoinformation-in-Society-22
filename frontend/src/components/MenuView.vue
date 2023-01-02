@@ -1,21 +1,33 @@
 <template>
   <div class="pa-4 pt-8">
-    <div data-v-step="0">
-      <v-select
-        v-model="activeSliders"
-        :items="sliders"
-        item-text="name"
-        item-value="name"
-        deletable-chips
-        chips
-        label="Selected layers:"
-        multiple
-        dense
-        @input="changeActiveState()"
-      >
-      </v-select>
-    </div>
-    <p class="text pt-2 mb-0" style="color: #000000de" dense>Distance to ...</p>
+    <v-select
+      v-model="activeSliders"
+      :items="sliders"
+      item-text="name"
+      item-value="name"
+      deletable-chips
+      chips
+      label="Selected layers:"
+      multiple
+      dense
+      @input="changeActiveState()"
+      data-v-step="0"
+    >
+    </v-select>
+    <p class="text-capitalize pt-2 mb-0" style="color: #000000de" dense>
+      Distance to ...
+    </p>
+    <v-alert
+      v-if="isResponseEmpty"
+      text
+      color="rgb(25,118,210)"
+      colored-border
+      type="info"
+      class="py-2 px-2 mb-0 mt-3"
+    >
+      There is no spot that matches the current query. Adjust the sliders to
+      find one.
+    </v-alert>
     <br />
     <v-row v-for="slider in sliders" :key="slider.label" class="py-3 px-3">
       <v-col class="lessPadding">
@@ -342,6 +354,11 @@ export default {
   mounted() {
     // do request at mount with the initial configuration
     this.doRequest();
+  },
+  computed: {
+    isResponseEmpty() {
+      return this.response.features == "" ? true : false;
+    },
   },
 };
 </script>
