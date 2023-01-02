@@ -26,32 +26,35 @@ with open("test.geojson") as f:
   features = json.load(f)["features"]
 
 coords = features[0]["geometry"]["coordinates"][0]
-#start = coords[0]
-#coords = coords[1:-1]
-newCoords = rdp(coords, epsilon=0.00015)
-newCoords = chaikins_corner_cutting(newCoords)
-#prev_coord = start
-#for i in coords:
-#    newCoords.append([(prev_coord[0]+i[0])/2, (prev_coord[1]+i[1])/2])
-#    prev_coord = i
-#newCoords.insert(0, newCoords[-1])
-#newCoords.append(start)
-print(newCoords.tolist())
 
-x={
-  "type": "FeatureCollection",
-  "features": [
-    {
-      "type": "Feature",
-      "properties": {},
-      "geometry": {
-        "coordinates": [
-          newCoords.tolist()
-        ],
-        "type": "Polygon"
-      }
+print(type(features[0]["properties"]["DN"]))
+if(features[0]["properties"]["DN"] == 1):
+    #start = coords[0]
+    #coords = coords[1:-1]
+    newCoords = rdp(coords, epsilon=0.00015)
+    newCoords = chaikins_corner_cutting(newCoords)
+    #prev_coord = start
+    #for i in coords:
+    #    newCoords.append([(prev_coord[0]+i[0])/2, (prev_coord[1]+i[1])/2])
+    #    prev_coord = i
+    #newCoords.insert(0, newCoords[-1])
+    #newCoords.append(start)
+    print(newCoords.tolist())
+    
+    x={
+      "type": "FeatureCollection",
+      "features": [
+        {
+          "type": "Feature",
+          "properties": {},
+          "geometry": {
+            "coordinates": [
+              newCoords.tolist()
+            ],
+            "type": "Polygon"
+          }
+        }
+      ]
     }
-  ]
-}
-with open('data.json', 'w') as f:
-    json.dump(x, f)
+    with open('data.json', 'w') as f:
+        json.dump(x, f)
