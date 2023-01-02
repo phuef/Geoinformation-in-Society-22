@@ -276,8 +276,8 @@ export default {
   width: 16px;
   height: 80px;
   background-color: white;
-  border-top-right-radius: 5px;
-  border-bottom-right-radius: 5px;
+  border-top-right-radius: 4px;
+  border-bottom-right-radius: 4px;
   border: 2px solid lightgrey;
   border-left: 0;
   z-index: 1200;

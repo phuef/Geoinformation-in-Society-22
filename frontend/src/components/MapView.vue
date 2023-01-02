@@ -176,7 +176,6 @@ export default {
       const busIcon = L.icon({
         iconUrl: busMarker,
         iconSize: [15, 15],
-        //iconAnchor: [23, 23],
       });
       if (geojsonString != undefined) {
         this.busGeojsonParsed = JSON.parse(JSON.stringify(geojsonString));
@@ -188,7 +187,6 @@ export default {
       } else {
         //pass
       }
-      console.log("l.132", this.busLayer);
     },
     showBusStations: async function () {
       if (this.showBussesMap == true) {
@@ -218,7 +216,6 @@ export default {
       this.updateResultLayer(newGeoJson);
     },
     busGeojsonMap: function (newBusGeojson) {
-      console.log(this.newBusGeojson);
       this.loadBusStations(newBusGeojson);
     },
     showBussesMap: function () {
