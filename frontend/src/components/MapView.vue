@@ -11,6 +11,9 @@ import { GeoSearchControl, OpenStreetMapProvider } from "leaflet-geosearch";
 import "leaflet-geosearch/dist/geosearch.css";
 import "leaflet.locatecontrol";
 import "leaflet.locatecontrol/dist/L.Control.Locate.min.css";
+import "leaflet.markercluster/dist/leaflet.markercluster.js";
+import "leaflet.markercluster/dist/MarkerCluster.css";
+import "leaflet.markercluster/dist/MarkerCluster.Default.css";
 
 // Make marker icons available (icon itself and shadow)
 delete L.Icon.Default.prototype._getIconUrl;
@@ -29,6 +32,7 @@ export default {
       tileLayer: null,
       colorblindLayer: null,
       busLayer: null,
+      busLayerMarkerCluster: null,
       drawLayer: new L.FeatureGroup(),
     };
   },
@@ -184,21 +188,24 @@ export default {
             return L.marker(latlng, { icon: busIcon });
           },
         });
+        this.busLayerMarkerCluster = L.markerClusterGroup().addLayer(
+          this.busLayer
+        );
       } else {
         //pass
       }
     },
     showBusStations: async function () {
       if (this.showBussesMap == true) {
-        if (this.busLayer != null) {
-          this.busLayer.addTo(this.map);
+        if (this.busLayerMarkerCluster != null) {
+          this.busLayerMarkerCluster.addTo(this.map);
         } else {
           await this.loadBusStations();
-          this.busLayer.addTo(this.map); // PROBLEM
+          this.busLayerMarkerCluster.addTo(this.map); // PROBLEM
         }
       } else {
         try {
-          this.map.removeLayer(this.busLayer);
+          this.map.removeLayer(this.busLayerMarkerCluster);
         } catch (error) {
           //pass
         }
