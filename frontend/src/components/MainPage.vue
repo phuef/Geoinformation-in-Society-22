@@ -119,7 +119,7 @@ export default {
         {
           target: '[data-v-step="4"]',
           content:
-            "Here you can decide if the choosen distance should be undertood as <b>at least or less than</b>.  ",
+            "Here you can decide if the choosen distance should be understood as <b>at least or less than</b>.  ",
         },
         {
           target: '[data-v-step="1"]',
