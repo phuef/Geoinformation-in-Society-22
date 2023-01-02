@@ -4,7 +4,7 @@ Created on Wed Nov 23 16:08:13 2022
 
 @author: Alexander Pilz
 """
-from osgeo import gdal, ogr
+from osgeo import ogr, gdal
 import json
 import uuid
 import numpy as np
@@ -86,7 +86,7 @@ class DistanceStack:
             combinedArray *= y #combine boolean values
             
         driver = gdal.GetDriverByName('MEM') #initialize in memory driver
-        output = driver.Create('', xsize=self.raster.RasterXSize, ysize=self.raster.RasterYSize, bands=1, eType=gdal.GDT_Byte) #create rater
+        output = driver.Create('', xsize=self.raster.RasterXSize, ysize=self.raster.RasterYSize, bands=1, eType=gdal.GDT_Int16) #create rater
         output.SetGeoTransform(self.transform) #set geotransform of output image
         output.SetProjection(srs.ExportToWkt()) #set projection of output image
         output.GetRasterBand(1).WriteArray(combinedArray.astype(int))  #write the array to the raster
@@ -101,19 +101,28 @@ class DistanceStack:
         gdal.Polygonize(output.GetRasterBand(1), None, outlayer, 0, []) #polygonize combined raster based on pixel values
         output = outfile = outlayer =  None #free variables
         return self.uuid #return uuid of DistanceStack
-    
+
+    '''
+    * Title: filterResult
+    * Description: Filters the resulting .geojson according to the DN values
+    '''
     def filterResult(self):
         with open('usr/src/backend/results/' + self.uuid + '.json') as f:
             data = json.load(f)
+        validFeatures = []
         for feature in data['features']:
-            #if(feature['properties']['DN'] != 1):
-                #data['features'].remove(feature)
-            feature['geometry']['coordinates'] = feature['geometry']['coordinates'][::-1]
-            feature['geometry']['coordinates'][0] = ccc(rdp(feature['geometry']['coordinates'][0], epsilon=0.00012))
-        data['crs'] = "WGS-84 - EPSG: 4326"
-        return data
-    
-def ccc(coords, refinements=5):
+            if(feature['properties']['DN'] == 0 or feature['properties']['DN'] == '0'):
+                feature['geometry']['coordinates'] = feature['geometry']['coordinates'][::-1]
+                validFeatures.append(feature)
+            #feature['geometry']['coordinates'][0] = ccc(rdp(feature['geometry']['coordinates'][0], epsilon=0.00025))
+        result = {"type": "FeatureCollection", "crs": "WGS-84 - EPSG: 4326", "features": validFeatures}
+        return result
+
+'''
+* Title: ccc - chaikin's corner cutting
+* Description: An implementation of chaikin's corner cutting
+'''    
+def ccc(coords, refinements=2):
     coords = np.array(coords)
 
     for _ in range(refinements):
