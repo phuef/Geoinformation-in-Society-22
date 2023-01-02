@@ -113,11 +113,10 @@ class DistanceStack:
         with open('usr/src/backend/results/' + self.uuid + '.json') as f:
             data = json.load(f)
         validFeatures = []
-        cdef int i 
-        for i in range(0, len(data['features'])):
-            if(data[i]['properties']['DN'] == 0 or data[i]['properties']['DN'] == '0'):
-                data[i]['geometry']['coordinates'] = data[i]['geometry']['coordinates'][::-1]
-                validFeatures.append(data[i])
+        for feature in data['features']:
+            if(feature['properties']['DN'] == 0 or feature['properties']['DN'] == '0'):
+                feature['geometry']['coordinates'] = feature['geometry']['coordinates'][::-1]
+                validFeatures.append(feature)
             #feature['geometry']['coordinates'][0] = ccc(rdp(feature['geometry']['coordinates'][0], epsilon=0.00025)) #smoothing off for now
         result = {"type": "FeatureCollection", "crs": "WGS-84 - EPSG: 4326", "features": validFeatures}
         return result
