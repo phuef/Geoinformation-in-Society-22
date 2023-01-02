@@ -50,17 +50,18 @@
             <v-icon v-show="showMenu">mdi-menu-left</v-icon>
             <v-icon v-show="!showMenu">mdi-menu-right</v-icon>
           </div>
-          <!--<div
+          <div
             data-v-step="6"
             style="
               position: absolute;
               z-index: 9999;
               right: 0;
-              margin-right: 50px;
+              margin-right: 60px;
+              height: 70px;
             "
           >
-            <v-icon>mdi-menu-left</v-icon>
-          </div>-->
+            <v-icon></v-icon>
+          </div>
           <!--<div
             data-v-step="5"
             style="
@@ -226,17 +227,6 @@ export default {
           },
         },
         {
-          target: '[data-v-step="5"]',
-          header: {
-            title: "Add location",
-          },
-          content:
-            "Here you can add a <strong>marker</strong> to the map. <br> E.g. to mark a certain position.",
-          params: {
-            placement: "left-start", // Any valid Popper.js placement. See https://popper.js.org/popper-documentation.html#Popper.placements
-          },
-        },
-        /*{
           target: '[data-v-step="6"]',
           header: {
             title: "Layer control",
@@ -246,7 +236,7 @@ export default {
           params: {
             placement: "left-start", // Any valid Popper.js placement. See https://popper.js.org/popper-documentation.html#Popper.placements
           },
-        },*/
+        },
         {
           target: '[data-v-step="3"]',
           header: {
