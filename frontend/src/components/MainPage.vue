@@ -59,36 +59,60 @@
             :result-geo-json="requestResponse"
           />
           <div
+            data-v-step="5"
             class=""
             style="
               z-index: 9999;
               position: absolute;
-              bottom: 0;
-              margin-left: 12px;
-              margin-bottom: 12px;
+              top: 0;
+              margin-left: 55px;
+              margin-top: 12px;
             "
           >
-            <v-tooltip top z-index="1000">
+            <v-tooltip right z-index="1000">
               <template v-slot:activator="{ on, attrs }">
+                <!--<v-checkbox
+                  color="purple"
+                  off-icon="mdi-bus-stop"
+                  on-icon="mdi-bus-stop"
+                  v-bind="attrs"
+                  v-on="on"
+                  v-model="showBusses"
+                >
+                </v-checkbox>-->
+                <!--<v-switch
+                  inset
+                  append-icon="mdi-bus-stop"
+                  color="primary"
+                  hide-details
+                  v-bind="attrs"
+                  v-on="on"
+                  v-model="showBusses"
+                  style="background-color: rgb(120, 120, 120)"
+                >
+                </v-switch>-->
                 <v-btn
                   elevation="0"
                   style="
-                    color: rgb(70, 70, 70);
                     border-radius: 2px;
                     background-color: white;
                     outline: 2px solid rgba(0, 0, 0, 0.2);
-                    min-width: 44px;
-                    height: 44px;
+                    min-width: 30px;
+                    height: 30px;
                     padding: 0px;
                   "
                   v-bind="attrs"
                   v-on="on"
                   @click="showBusses = !showBusses"
                 >
-                  <v-icon> mdi-bus-stop </v-icon>
+                  <v-icon :color="!showBusses ? 'rgb(70, 70, 70)' : 'primary'">
+                    mdi-bus-stop
+                  </v-icon>
                 </v-btn>
               </template>
-              <span v-html="'Show / Remove<br\>bus stops'"></span>
+              <span>{{
+                !showBusses ? "Add bus stops" : "Remove bus stops"
+              }}</span>
             </v-tooltip>
           </div>
         </div>
@@ -182,6 +206,17 @@ export default {
         },
         {
           target: '[data-v-step="2"]',
+          header: {
+            title: "Add location",
+          },
+          content:
+            "Here you can add a <strong>marker</strong> to the map. <br> E.g. to mark a certain position.",
+          params: {
+            placement: "left-start", // Any valid Popper.js placement. See https://popper.js.org/popper-documentation.html#Popper.placements
+          },
+        },
+        {
+          target: '[data-v-step="5"]',
           header: {
             title: "Add location",
           },
