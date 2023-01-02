@@ -1243,6 +1243,15 @@ static PyObject* __Pyx_PyInt_TrueDivideObjC(PyObject *op1, PyObject *op2, long i
     (inplace ? PyNumber_InPlaceTrueDivide(op1, op2) : PyNumber_TrueDivide(op1, op2))
 #endif
 
+/* SliceTupleAndList.proto */
+#if CYTHON_COMPILING_IN_CPYTHON
+static CYTHON_INLINE PyObject* __Pyx_PyList_GetSlice(PyObject* src, Py_ssize_t start, Py_ssize_t stop);
+static CYTHON_INLINE PyObject* __Pyx_PyTuple_GetSlice(PyObject* src, Py_ssize_t start, Py_ssize_t stop);
+#else
+#define __Pyx_PyList_GetSlice(seq, start, stop)   PySequence_GetSlice(seq, start, stop)
+#define __Pyx_PyTuple_GetSlice(seq, start, stop)  PySequence_GetSlice(seq, start, stop)
+#endif
+
 /* PyObjectLookupSpecial.proto */
 #if CYTHON_USE_PYTYPE_LOOKUP && CYTHON_USE_TYPE_SLOTS
 static CYTHON_INLINE PyObject* __Pyx_PyObject_LookupSpecial(PyObject* obj, PyObject* attr_name) {
@@ -1344,7 +1353,26 @@ static PyObject *__Pyx_PyDict_GetItem(PyObject *d, PyObject* key);
 #endif
 
 /* PyIntCompare.proto */
-static CYTHON_INLINE PyObject* __Pyx_PyInt_NeObjC(PyObject *op1, PyObject *op2, long intval, long inplace);
+static CYTHON_INLINE PyObject* __Pyx_PyInt_EqObjC(PyObject *op1, PyObject *op2, long intval, long inplace);
+
+/* IncludeStringH.proto */
+#include <string.h>
+
+/* BytesEquals.proto */
+static CYTHON_INLINE int __Pyx_PyBytes_Equals(PyObject* s1, PyObject* s2, int equals);
+
+/* UnicodeEquals.proto */
+static CYTHON_INLINE int __Pyx_PyUnicode_Equals(PyObject* s1, PyObject* s2, int equals);
+
+/* SetItemInt.proto */
+#define __Pyx_SetItemInt(o, i, v, type, is_signed, to_py_func, is_list, wraparound, boundscheck)\
+    (__Pyx_fits_Py_ssize_t(i, type, is_signed) ?\
+    __Pyx_SetItemInt_Fast(o, (Py_ssize_t)i, v, is_list, wraparound, boundscheck) :\
+    (is_list ? (PyErr_SetString(PyExc_IndexError, "list assignment index out of range"), -1) :\
+               __Pyx_SetItemInt_Generic(o, to_py_func(i), v)))
+static int __Pyx_SetItemInt_Generic(PyObject *o, PyObject *j, PyObject *v);
+static CYTHON_INLINE int __Pyx_SetItemInt_Fast(PyObject *o, Py_ssize_t i, PyObject *v,
+                                               int is_list, int wraparound, int boundscheck);
 
 /* Import.proto */
 static PyObject *__Pyx_Import(PyObject *name, PyObject *from_list, int level);
@@ -1505,20 +1533,30 @@ int __pyx_module_is_main_utils_cy = 0;
 
 /* Implementation of 'utils_cy' */
 static PyObject *__pyx_builtin_range;
+static PyObject *__pyx_builtin_print;
 static PyObject *__pyx_builtin_open;
+static const char __pyx_k_0[] = "0";
+static const char __pyx_k_L[] = "L";
+static const char __pyx_k_R[] = "R";
 static const char __pyx_k_f[] = "f";
 static const char __pyx_k_i[] = "i";
 static const char __pyx_k_y[] = "y";
 static const char __pyx_k_DN[] = "DN";
 static const char __pyx_k__2[] = "";
+static const char __pyx_k_np[] = "np";
 static const char __pyx_k_MEM[] = "MEM";
+static const char __pyx_k__20[] = "_";
+static const char __pyx_k_ccc[] = "ccc";
 static const char __pyx_k_crs[] = "crs";
 static const char __pyx_k_doc[] = "__doc__";
 static const char __pyx_k_drv[] = "drv";
 static const char __pyx_k_ogr[] = "ogr";
 static const char __pyx_k_osr[] = "osr";
+static const char __pyx_k_rdp[] = "rdp";
 static const char __pyx_k_srs[] = "srs";
 static const char __pyx_k_Open[] = "Open";
+static const char __pyx_k_Rows[] = "==> Rows:";
+static const char __pyx_k_axis[] = "axis";
 static const char __pyx_k_band[] = "band";
 static const char __pyx_k_data[] = "data";
 static const char __pyx_k_exit[] = "__exit__";
@@ -1531,12 +1569,15 @@ static const char __pyx_k_name[] = "__name__";
 static const char __pyx_k_open[] = "open";
 static const char __pyx_k_self[] = "self";
 static const char __pyx_k_test[] = "test";
+static const char __pyx_k_type[] = "type";
 static const char __pyx_k_uuid[] = "uuid";
 static const char __pyx_k_array[] = "array";
 static const char __pyx_k_bands[] = "bands";
 static const char __pyx_k_eType[] = "eType";
 static const char __pyx_k_enter[] = "__enter__";
+static const char __pyx_k_numpy[] = "numpy";
 static const char __pyx_k_osgeo[] = "osgeo";
+static const char __pyx_k_print[] = "print";
 static const char __pyx_k_range[] = "range";
 static const char __pyx_k_uuid4[] = "uuid4";
 static const char __pyx_k_xsize[] = "xsize";
@@ -1544,20 +1585,23 @@ static const char __pyx_k_ysize[] = "ysize";
 static const char __pyx_k_Create[] = "Create";
 static const char __pyx_k_append[] = "append";
 static const char __pyx_k_astype[] = "astype";
+static const char __pyx_k_coords[] = "coords";
 static const char __pyx_k_driver[] = "driver";
 static const char __pyx_k_import[] = "__import__";
 static const char __pyx_k_json_2[] = "json";
 static const char __pyx_k_module[] = "__module__";
 static const char __pyx_k_output[] = "output";
 static const char __pyx_k_raster[] = "raster";
-static const char __pyx_k_remove[] = "remove";
+static const char __pyx_k_repeat[] = "repeat";
+static const char __pyx_k_result[] = "result";
 static const char __pyx_k_test_2[] = "__test__";
+static const char __pyx_k_tolist[] = "tolist";
+static const char __pyx_k_Columns[] = "==> Columns:";
 static const char __pyx_k_GEOJSON[] = "GEOJSON";
-static const char __pyx_k_OFTReal[] = "OFTReal";
-static const char __pyx_k_feature[] = "feature";
+static const char __pyx_k_Maximum[] = "==> Maximum:";
+static const char __pyx_k_Minimum[] = "==> Minimum:";
 static const char __pyx_k_outfile[] = "outfile";
 static const char __pyx_k_prepare[] = "__prepare__";
-static const char __pyx_k_GDT_Byte[] = "GDT_Byte";
 static const char __pyx_k_features[] = "features";
 static const char __pyx_k_geometry[] = "geometry";
 static const char __pyx_k_newField[] = "newField";
@@ -1565,11 +1609,18 @@ static const char __pyx_k_outlayer[] = "outlayer";
 static const char __pyx_k_qualname[] = "__qualname__";
 static const char __pyx_k_utils_cy[] = "utils_cy";
 static const char __pyx_k_FieldDefn[] = "FieldDefn";
+static const char __pyx_k_GDT_Int16[] = "GDT_Int16";
 static const char __pyx_k_geom_type[] = "geom_type";
 static const char __pyx_k_metaclass[] = "__metaclass__";
 static const char __pyx_k_transform[] = "transform";
+static const char __pyx_k_Band_count[] = "==> Band count:";
+static const char __pyx_k_GetMaximum[] = "GetMaximum";
+static const char __pyx_k_GetMinimum[] = "GetMinimum";
+static const char __pyx_k_OFTInteger[] = "OFTInteger";
 static const char __pyx_k_Polygonize[] = "Polygonize";
+static const char __pyx_k_Projection[] = "==> Projection: ";
 static const char __pyx_k_WriteArray[] = "WriteArray";
+static const char __pyx_k_empty_like[] = "empty_like";
 static const char __pyx_k_properties[] = "properties";
 static const char __pyx_k_wkbPolygon[] = "wkbPolygon";
 static const char __pyx_k_CreateField[] = "CreateField";
@@ -1581,14 +1632,19 @@ static const char __pyx_k_RasterYSize[] = "RasterYSize";
 static const char __pyx_k_ReadAsArray[] = "ReadAsArray";
 static const char __pyx_k_coordinates[] = "coordinates";
 static const char __pyx_k_filterStack[] = "filterStack";
+static const char __pyx_k_refinements[] = "refinements";
+static const char __pyx_k_NoData_value[] = "==> NoData value:";
 static const char __pyx_k_filterResult[] = "filterResult";
 static const char __pyx_k_filterValues[] = "filterValues";
 static const char __pyx_k_utils_cy_pyx[] = "utils_cy.pyx";
 static const char __pyx_k_DistanceStack[] = "DistanceStack";
+static const char __pyx_k_GetProjection[] = "GetProjection";
 static const char __pyx_k_GetRasterBand[] = "GetRasterBand";
 static const char __pyx_k_SetProjection[] = "SetProjection";
 static const char __pyx_k_combinedArray[] = "combinedArray";
 static const char __pyx_k_filteredArray[] = "filteredArray";
+static const char __pyx_k_validFeatures[] = "validFeatures";
+static const char __pyx_k_GetNoDataValue[] = "GetNoDataValue";
 static const char __pyx_k_ImportFromEPSG[] = "ImportFromEPSG";
 static const char __pyx_k_SetNoDataValue[] = "SetNoDataValue";
 static const char __pyx_k_filteredArrayA[] = "filteredArrayA";
@@ -1600,14 +1656,22 @@ static const char __pyx_k_SetGeoTransform[] = "SetGeoTransform";
 static const char __pyx_k_CreateDataSource[] = "CreateDataSource";
 static const char __pyx_k_SpatialReference[] = "SpatialReference";
 static const char __pyx_k_WGS_84_EPSG_4326[] = "WGS-84 - EPSG: 4326";
+static const char __pyx_k_distanceBandInfo[] = "distanceBandInfo";
 static const char __pyx_k_ComputeStatistics[] = "ComputeStatistics";
+static const char __pyx_k_FeatureCollection[] = "FeatureCollection";
+static const char __pyx_k_distanceStackInfo[] = "distanceStackInfo";
 static const char __pyx_k_cline_in_traceback[] = "cline_in_traceback";
 static const char __pyx_k_DistanceStack___init[] = "DistanceStack.__init__";
 static const char __pyx_k_usr_src_backend_results[] = "usr/src/backend/results/";
 static const char __pyx_k_DistanceStack_filterStack[] = "DistanceStack.filterStack";
 static const char __pyx_k_DistanceStack_filterResult[] = "DistanceStack.filterResult";
 static const char __pyx_k_Created_on_Wed_Nov_23_16_08_13[] = "\nCreated on Wed Nov 23 16:08:13 2022\n\n@author: Alexander Pilz\n";
+static const char __pyx_k_DistanceStack_distanceBandInfo[] = "DistanceStack.distanceBandInfo";
+static const char __pyx_k_DistanceStack_distanceStackInfo[] = "DistanceStack.distanceStackInfo";
 static const char __pyx_k_usr_src_backend_data_composit10x[] = "usr/src/backend/data/composit10x10.tif";
+static PyObject *__pyx_kp_u_0;
+static PyObject *__pyx_kp_u_Band_count;
+static PyObject *__pyx_kp_u_Columns;
 static PyObject *__pyx_n_s_ComputeStatistics;
 static PyObject *__pyx_n_s_Create;
 static PyObject *__pyx_n_s_CreateDataSource;
@@ -1616,24 +1680,38 @@ static PyObject *__pyx_n_s_CreateLayer;
 static PyObject *__pyx_n_u_DN;
 static PyObject *__pyx_n_s_DistanceStack;
 static PyObject *__pyx_n_s_DistanceStack___init;
+static PyObject *__pyx_n_s_DistanceStack_distanceBandInfo;
+static PyObject *__pyx_n_s_DistanceStack_distanceStackInfo;
 static PyObject *__pyx_n_s_DistanceStack_filterResult;
 static PyObject *__pyx_n_s_DistanceStack_filterStack;
 static PyObject *__pyx_n_s_ExportToWkt;
+static PyObject *__pyx_n_u_FeatureCollection;
 static PyObject *__pyx_n_s_FieldDefn;
-static PyObject *__pyx_n_s_GDT_Byte;
+static PyObject *__pyx_n_s_GDT_Int16;
 static PyObject *__pyx_n_u_GEOJSON;
 static PyObject *__pyx_n_s_GetDriverByName;
 static PyObject *__pyx_n_s_GetGeoTransform;
+static PyObject *__pyx_n_s_GetMaximum;
+static PyObject *__pyx_n_s_GetMinimum;
+static PyObject *__pyx_n_s_GetNoDataValue;
+static PyObject *__pyx_n_s_GetProjection;
 static PyObject *__pyx_n_s_GetRasterBand;
 static PyObject *__pyx_n_s_ImportFromEPSG;
+static PyObject *__pyx_n_s_L;
 static PyObject *__pyx_n_u_MEM;
-static PyObject *__pyx_n_s_OFTReal;
+static PyObject *__pyx_kp_u_Maximum;
+static PyObject *__pyx_kp_u_Minimum;
+static PyObject *__pyx_kp_u_NoData_value;
+static PyObject *__pyx_n_s_OFTInteger;
 static PyObject *__pyx_n_s_Open;
 static PyObject *__pyx_n_s_Polygonize;
+static PyObject *__pyx_kp_u_Projection;
+static PyObject *__pyx_n_s_R;
 static PyObject *__pyx_n_s_RasterCount;
 static PyObject *__pyx_n_s_RasterXSize;
 static PyObject *__pyx_n_s_RasterYSize;
 static PyObject *__pyx_n_s_ReadAsArray;
+static PyObject *__pyx_kp_u_Rows;
 static PyObject *__pyx_n_s_SetGeoTransform;
 static PyObject *__pyx_n_s_SetNoDataValue;
 static PyObject *__pyx_n_s_SetProjection;
@@ -1641,24 +1719,30 @@ static PyObject *__pyx_n_s_SpatialReference;
 static PyObject *__pyx_kp_u_WGS_84_EPSG_4326;
 static PyObject *__pyx_n_s_WriteArray;
 static PyObject *__pyx_kp_u__2;
+static PyObject *__pyx_n_s__20;
 static PyObject *__pyx_n_s_append;
 static PyObject *__pyx_n_s_array;
 static PyObject *__pyx_n_s_astype;
+static PyObject *__pyx_n_s_axis;
 static PyObject *__pyx_n_s_band;
 static PyObject *__pyx_n_s_bands;
+static PyObject *__pyx_n_s_ccc;
 static PyObject *__pyx_n_s_cline_in_traceback;
 static PyObject *__pyx_n_s_combinedArray;
 static PyObject *__pyx_n_u_coordinates;
+static PyObject *__pyx_n_s_coords;
 static PyObject *__pyx_n_u_crs;
 static PyObject *__pyx_n_s_data;
+static PyObject *__pyx_n_s_distanceBandInfo;
+static PyObject *__pyx_n_s_distanceStackInfo;
 static PyObject *__pyx_n_s_doc;
 static PyObject *__pyx_n_s_driver;
 static PyObject *__pyx_n_s_drv;
 static PyObject *__pyx_n_s_eType;
+static PyObject *__pyx_n_s_empty_like;
 static PyObject *__pyx_n_s_enter;
 static PyObject *__pyx_n_s_exit;
 static PyObject *__pyx_n_s_f;
-static PyObject *__pyx_n_s_feature;
 static PyObject *__pyx_n_u_features;
 static PyObject *__pyx_n_s_filterResult;
 static PyObject *__pyx_n_s_filterStack;
@@ -1681,6 +1765,8 @@ static PyObject *__pyx_n_s_metaclass;
 static PyObject *__pyx_n_s_module;
 static PyObject *__pyx_n_s_name;
 static PyObject *__pyx_n_s_newField;
+static PyObject *__pyx_n_s_np;
+static PyObject *__pyx_n_s_numpy;
 static PyObject *__pyx_n_s_ogr;
 static PyObject *__pyx_n_s_open;
 static PyObject *__pyx_n_s_osgeo;
@@ -1689,49 +1775,71 @@ static PyObject *__pyx_n_s_outfile;
 static PyObject *__pyx_n_s_outlayer;
 static PyObject *__pyx_n_s_output;
 static PyObject *__pyx_n_s_prepare;
+static PyObject *__pyx_n_s_print;
 static PyObject *__pyx_n_u_properties;
 static PyObject *__pyx_n_s_qualname;
 static PyObject *__pyx_n_s_range;
 static PyObject *__pyx_n_s_raster;
-static PyObject *__pyx_n_s_remove;
+static PyObject *__pyx_n_s_rdp;
+static PyObject *__pyx_n_s_refinements;
+static PyObject *__pyx_n_s_repeat;
+static PyObject *__pyx_n_s_result;
 static PyObject *__pyx_n_s_self;
 static PyObject *__pyx_n_s_srs;
 static PyObject *__pyx_n_u_test;
 static PyObject *__pyx_n_s_test_2;
+static PyObject *__pyx_n_s_tolist;
 static PyObject *__pyx_n_s_transform;
+static PyObject *__pyx_n_u_type;
 static PyObject *__pyx_kp_u_usr_src_backend_data_composit10x;
 static PyObject *__pyx_kp_u_usr_src_backend_results;
 static PyObject *__pyx_n_s_utils_cy;
 static PyObject *__pyx_kp_s_utils_cy_pyx;
 static PyObject *__pyx_n_s_uuid;
 static PyObject *__pyx_n_s_uuid4;
+static PyObject *__pyx_n_s_validFeatures;
 static PyObject *__pyx_n_s_wkbPolygon;
 static PyObject *__pyx_n_s_xsize;
 static PyObject *__pyx_n_s_y;
 static PyObject *__pyx_n_s_ysize;
 static PyObject *__pyx_pf_8utils_cy_13DistanceStack___init__(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_self); /* proto */
-static PyObject *__pyx_pf_8utils_cy_13DistanceStack_2filterStack(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_self, PyObject *__pyx_v_filterValues); /* proto */
-static PyObject *__pyx_pf_8utils_cy_13DistanceStack_4filterResult(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_self); /* proto */
+static PyObject *__pyx_pf_8utils_cy_13DistanceStack_2distanceStackInfo(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_self); /* proto */
+static PyObject *__pyx_pf_8utils_cy_13DistanceStack_4distanceBandInfo(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_self, PyObject *__pyx_v_band); /* proto */
+static PyObject *__pyx_pf_8utils_cy_13DistanceStack_6filterStack(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_self, PyObject *__pyx_v_filterValues); /* proto */
+static PyObject *__pyx_pf_8utils_cy_13DistanceStack_8filterResult(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_self); /* proto */
+static PyObject *__pyx_pf_8utils_cy_ccc(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_coords, PyObject *__pyx_v_refinements); /* proto */
+static PyObject *__pyx_float_0_25;
+static PyObject *__pyx_float_0_75;
 static PyObject *__pyx_int_0;
 static PyObject *__pyx_int_1;
+static PyObject *__pyx_int_2;
 static PyObject *__pyx_int_10;
 static PyObject *__pyx_int_4326;
 static PyObject *__pyx_int_neg_1;
 static PyObject *__pyx_int_neg_999;
 static PyObject *__pyx_tuple_;
 static PyObject *__pyx_slice__6;
+static PyObject *__pyx_slice__8;
+static PyObject *__pyx_slice__9;
 static PyObject *__pyx_tuple__3;
 static PyObject *__pyx_tuple__4;
 static PyObject *__pyx_tuple__5;
 static PyObject *__pyx_tuple__7;
-static PyObject *__pyx_tuple__9;
-static PyObject *__pyx_tuple__11;
-static PyObject *__pyx_codeobj__8;
-static PyObject *__pyx_codeobj__10;
-static PyObject *__pyx_codeobj__12;
+static PyObject *__pyx_tuple__10;
+static PyObject *__pyx_tuple__12;
+static PyObject *__pyx_tuple__14;
+static PyObject *__pyx_tuple__16;
+static PyObject *__pyx_tuple__18;
+static PyObject *__pyx_tuple__21;
+static PyObject *__pyx_codeobj__11;
+static PyObject *__pyx_codeobj__13;
+static PyObject *__pyx_codeobj__15;
+static PyObject *__pyx_codeobj__17;
+static PyObject *__pyx_codeobj__19;
+static PyObject *__pyx_codeobj__22;
 /* Late includes */
 
-/* "utils_cy.pyx":18
+/* "utils_cy.pyx":19
  * class DistanceStack:
  *     #Constructor
  *     def __init__(self):             # <<<<<<<<<<<<<<
@@ -1773,34 +1881,34 @@ static PyObject *__pyx_pf_8utils_cy_13DistanceStack___init__(CYTHON_UNUSED PyObj
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("__init__", 0);
 
-  /* "utils_cy.pyx":19
+  /* "utils_cy.pyx":20
  *     #Constructor
  *     def __init__(self):
  *         raster = gdal.Open('usr/src/backend/data/composit10x10.tif', 0) #open composit distance raster file             # <<<<<<<<<<<<<<
  *         self.uuid = str(uuid.uuid4()) #generate unique identifier
  *         self.raster = raster #store raster
  */
-  __Pyx_GetModuleGlobalName(__pyx_t_1, __pyx_n_s_gdal); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 19, __pyx_L1_error)
+  __Pyx_GetModuleGlobalName(__pyx_t_1, __pyx_n_s_gdal); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 20, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_t_1, __pyx_n_s_Open); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 19, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_t_1, __pyx_n_s_Open); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 20, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-  __pyx_t_1 = __Pyx_PyObject_Call(__pyx_t_2, __pyx_tuple_, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 19, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyObject_Call(__pyx_t_2, __pyx_tuple_, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 20, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   __pyx_v_raster = __pyx_t_1;
   __pyx_t_1 = 0;
 
-  /* "utils_cy.pyx":20
+  /* "utils_cy.pyx":21
  *     def __init__(self):
  *         raster = gdal.Open('usr/src/backend/data/composit10x10.tif', 0) #open composit distance raster file
  *         self.uuid = str(uuid.uuid4()) #generate unique identifier             # <<<<<<<<<<<<<<
  *         self.raster = raster #store raster
  *         self.bands = [] #initialize bands
  */
-  __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_n_s_uuid); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 20, __pyx_L1_error)
+  __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_n_s_uuid); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 21, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_t_2, __pyx_n_s_uuid4); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 20, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_t_2, __pyx_n_s_uuid4); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 21, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   __pyx_t_2 = NULL;
@@ -1815,64 +1923,64 @@ static PyObject *__pyx_pf_8utils_cy_13DistanceStack___init__(CYTHON_UNUSED PyObj
   }
   __pyx_t_1 = (__pyx_t_2) ? __Pyx_PyObject_CallOneArg(__pyx_t_3, __pyx_t_2) : __Pyx_PyObject_CallNoArg(__pyx_t_3);
   __Pyx_XDECREF(__pyx_t_2); __pyx_t_2 = 0;
-  if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 20, __pyx_L1_error)
+  if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 21, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-  __pyx_t_3 = __Pyx_PyObject_CallOneArg(((PyObject *)(&PyUnicode_Type)), __pyx_t_1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 20, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_PyObject_CallOneArg(((PyObject *)(&PyUnicode_Type)), __pyx_t_1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 21, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-  if (__Pyx_PyObject_SetAttrStr(__pyx_v_self, __pyx_n_s_uuid, __pyx_t_3) < 0) __PYX_ERR(0, 20, __pyx_L1_error)
+  if (__Pyx_PyObject_SetAttrStr(__pyx_v_self, __pyx_n_s_uuid, __pyx_t_3) < 0) __PYX_ERR(0, 21, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
 
-  /* "utils_cy.pyx":21
+  /* "utils_cy.pyx":22
  *         raster = gdal.Open('usr/src/backend/data/composit10x10.tif', 0) #open composit distance raster file
  *         self.uuid = str(uuid.uuid4()) #generate unique identifier
  *         self.raster = raster #store raster             # <<<<<<<<<<<<<<
  *         self.bands = [] #initialize bands
- *         cdef int i
+ * 
  */
-  if (__Pyx_PyObject_SetAttrStr(__pyx_v_self, __pyx_n_s_raster, __pyx_v_raster) < 0) __PYX_ERR(0, 21, __pyx_L1_error)
+  if (__Pyx_PyObject_SetAttrStr(__pyx_v_self, __pyx_n_s_raster, __pyx_v_raster) < 0) __PYX_ERR(0, 22, __pyx_L1_error)
 
-  /* "utils_cy.pyx":22
+  /* "utils_cy.pyx":23
  *         self.uuid = str(uuid.uuid4()) #generate unique identifier
  *         self.raster = raster #store raster
  *         self.bands = [] #initialize bands             # <<<<<<<<<<<<<<
+ * 
  *         cdef int i
- *         for i in range(1, raster.RasterCount + 1): #iterate over bands in raster
  */
-  __pyx_t_3 = PyList_New(0); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 22, __pyx_L1_error)
+  __pyx_t_3 = PyList_New(0); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 23, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
-  if (__Pyx_PyObject_SetAttrStr(__pyx_v_self, __pyx_n_s_bands, __pyx_t_3) < 0) __PYX_ERR(0, 22, __pyx_L1_error)
+  if (__Pyx_PyObject_SetAttrStr(__pyx_v_self, __pyx_n_s_bands, __pyx_t_3) < 0) __PYX_ERR(0, 23, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
 
-  /* "utils_cy.pyx":24
- *         self.bands = [] #initialize bands
+  /* "utils_cy.pyx":26
+ * 
  *         cdef int i
  *         for i in range(1, raster.RasterCount + 1): #iterate over bands in raster             # <<<<<<<<<<<<<<
  *             band = raster.GetRasterBand(i) #extract band
  *             self.bands.append(band)
  */
-  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_v_raster, __pyx_n_s_RasterCount); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 24, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_v_raster, __pyx_n_s_RasterCount); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 26, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
-  __pyx_t_1 = __Pyx_PyInt_AddObjC(__pyx_t_3, __pyx_int_1, 1, 0, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 24, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyInt_AddObjC(__pyx_t_3, __pyx_int_1, 1, 0, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 26, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-  __pyx_t_4 = __Pyx_PyInt_As_long(__pyx_t_1); if (unlikely((__pyx_t_4 == (long)-1) && PyErr_Occurred())) __PYX_ERR(0, 24, __pyx_L1_error)
+  __pyx_t_4 = __Pyx_PyInt_As_long(__pyx_t_1); if (unlikely((__pyx_t_4 == (long)-1) && PyErr_Occurred())) __PYX_ERR(0, 26, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   __pyx_t_5 = __pyx_t_4;
   for (__pyx_t_6 = 1; __pyx_t_6 < __pyx_t_5; __pyx_t_6+=1) {
     __pyx_v_i = __pyx_t_6;
 
-    /* "utils_cy.pyx":25
+    /* "utils_cy.pyx":27
  *         cdef int i
  *         for i in range(1, raster.RasterCount + 1): #iterate over bands in raster
  *             band = raster.GetRasterBand(i) #extract band             # <<<<<<<<<<<<<<
  *             self.bands.append(band)
  *             self.bands[i-1].ComputeStatistics(0) #compute some key values for each band
  */
-    __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_v_raster, __pyx_n_s_GetRasterBand); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 25, __pyx_L1_error)
+    __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_v_raster, __pyx_n_s_GetRasterBand); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 27, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_3);
-    __pyx_t_2 = __Pyx_PyInt_From_int(__pyx_v_i); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 25, __pyx_L1_error)
+    __pyx_t_2 = __Pyx_PyInt_From_int(__pyx_v_i); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 27, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
     __pyx_t_7 = NULL;
     if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_3))) {
@@ -1887,38 +1995,38 @@ static PyObject *__pyx_pf_8utils_cy_13DistanceStack___init__(CYTHON_UNUSED PyObj
     __pyx_t_1 = (__pyx_t_7) ? __Pyx_PyObject_Call2Args(__pyx_t_3, __pyx_t_7, __pyx_t_2) : __Pyx_PyObject_CallOneArg(__pyx_t_3, __pyx_t_2);
     __Pyx_XDECREF(__pyx_t_7); __pyx_t_7 = 0;
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-    if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 25, __pyx_L1_error)
+    if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 27, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
     __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
     __Pyx_XDECREF_SET(__pyx_v_band, __pyx_t_1);
     __pyx_t_1 = 0;
 
-    /* "utils_cy.pyx":26
+    /* "utils_cy.pyx":28
  *         for i in range(1, raster.RasterCount + 1): #iterate over bands in raster
  *             band = raster.GetRasterBand(i) #extract band
  *             self.bands.append(band)             # <<<<<<<<<<<<<<
  *             self.bands[i-1].ComputeStatistics(0) #compute some key values for each band
  * 
  */
-    __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_bands); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 26, __pyx_L1_error)
+    __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_bands); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 28, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
-    __pyx_t_8 = __Pyx_PyObject_Append(__pyx_t_1, __pyx_v_band); if (unlikely(__pyx_t_8 == ((int)-1))) __PYX_ERR(0, 26, __pyx_L1_error)
+    __pyx_t_8 = __Pyx_PyObject_Append(__pyx_t_1, __pyx_v_band); if (unlikely(__pyx_t_8 == ((int)-1))) __PYX_ERR(0, 28, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-    /* "utils_cy.pyx":27
+    /* "utils_cy.pyx":29
  *             band = raster.GetRasterBand(i) #extract band
  *             self.bands.append(band)
  *             self.bands[i-1].ComputeStatistics(0) #compute some key values for each band             # <<<<<<<<<<<<<<
  * 
  * 
  */
-    __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_bands); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 27, __pyx_L1_error)
+    __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_bands); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 29, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_3);
     __pyx_t_9 = (__pyx_v_i - 1);
-    __pyx_t_2 = __Pyx_GetItemInt(__pyx_t_3, __pyx_t_9, long, 1, __Pyx_PyInt_From_long, 0, 1, 1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 27, __pyx_L1_error)
+    __pyx_t_2 = __Pyx_GetItemInt(__pyx_t_3, __pyx_t_9, long, 1, __Pyx_PyInt_From_long, 0, 1, 1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 29, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
     __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-    __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_t_2, __pyx_n_s_ComputeStatistics); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 27, __pyx_L1_error)
+    __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_t_2, __pyx_n_s_ComputeStatistics); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 29, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_3);
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
     __pyx_t_2 = NULL;
@@ -1933,20 +2041,20 @@ static PyObject *__pyx_pf_8utils_cy_13DistanceStack___init__(CYTHON_UNUSED PyObj
     }
     __pyx_t_1 = (__pyx_t_2) ? __Pyx_PyObject_Call2Args(__pyx_t_3, __pyx_t_2, __pyx_int_0) : __Pyx_PyObject_CallOneArg(__pyx_t_3, __pyx_int_0);
     __Pyx_XDECREF(__pyx_t_2); __pyx_t_2 = 0;
-    if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 27, __pyx_L1_error)
+    if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 29, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
     __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   }
 
-  /* "utils_cy.pyx":30
+  /* "utils_cy.pyx":32
  * 
  * 
  *         self.transform = raster.GetGeoTransform() #store transformation             # <<<<<<<<<<<<<<
  *         #self.projection = raster.GetProjection() #store projection
  *         #self.srs = osr.SpatialReference(wkt=self.projection) #store coordinate reference system
  */
-  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_v_raster, __pyx_n_s_GetGeoTransform); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 30, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_v_raster, __pyx_n_s_GetGeoTransform); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 32, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
   __pyx_t_2 = NULL;
   if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_3))) {
@@ -1960,13 +2068,13 @@ static PyObject *__pyx_pf_8utils_cy_13DistanceStack___init__(CYTHON_UNUSED PyObj
   }
   __pyx_t_1 = (__pyx_t_2) ? __Pyx_PyObject_CallOneArg(__pyx_t_3, __pyx_t_2) : __Pyx_PyObject_CallNoArg(__pyx_t_3);
   __Pyx_XDECREF(__pyx_t_2); __pyx_t_2 = 0;
-  if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 30, __pyx_L1_error)
+  if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 32, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-  if (__Pyx_PyObject_SetAttrStr(__pyx_v_self, __pyx_n_s_transform, __pyx_t_1) < 0) __PYX_ERR(0, 30, __pyx_L1_error)
+  if (__Pyx_PyObject_SetAttrStr(__pyx_v_self, __pyx_n_s_transform, __pyx_t_1) < 0) __PYX_ERR(0, 32, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "utils_cy.pyx":33
+  /* "utils_cy.pyx":35
  *         #self.projection = raster.GetProjection() #store projection
  *         #self.srs = osr.SpatialReference(wkt=self.projection) #store coordinate reference system
  *         raster = band = None #free variables             # <<<<<<<<<<<<<<
@@ -1978,7 +2086,7 @@ static PyObject *__pyx_pf_8utils_cy_13DistanceStack___init__(CYTHON_UNUSED PyObj
   __Pyx_INCREF(Py_None);
   __Pyx_XDECREF_SET(__pyx_v_band, Py_None);
 
-  /* "utils_cy.pyx":18
+  /* "utils_cy.pyx":19
  * class DistanceStack:
  *     #Constructor
  *     def __init__(self):             # <<<<<<<<<<<<<<
@@ -2004,7 +2112,414 @@ static PyObject *__pyx_pf_8utils_cy_13DistanceStack___init__(CYTHON_UNUSED PyObj
   return __pyx_r;
 }
 
-/* "utils_cy.pyx":63
+/* "utils_cy.pyx":41
+ *     * Description: Outputs some key values of the raster
+ *     '''
+ *     def distanceStackInfo(self):             # <<<<<<<<<<<<<<
+ *         print("==> Projection: ", self.raster.GetProjection())  # get projection
+ *         print("==> Columns:", self.raster.RasterXSize)  # number of columns
+ */
+
+/* Python wrapper */
+static PyObject *__pyx_pw_8utils_cy_13DistanceStack_3distanceStackInfo(PyObject *__pyx_self, PyObject *__pyx_v_self); /*proto*/
+static PyMethodDef __pyx_mdef_8utils_cy_13DistanceStack_3distanceStackInfo = {"distanceStackInfo", (PyCFunction)__pyx_pw_8utils_cy_13DistanceStack_3distanceStackInfo, METH_O, 0};
+static PyObject *__pyx_pw_8utils_cy_13DistanceStack_3distanceStackInfo(PyObject *__pyx_self, PyObject *__pyx_v_self) {
+  PyObject *__pyx_r = 0;
+  __Pyx_RefNannyDeclarations
+  __Pyx_RefNannySetupContext("distanceStackInfo (wrapper)", 0);
+  __pyx_r = __pyx_pf_8utils_cy_13DistanceStack_2distanceStackInfo(__pyx_self, ((PyObject *)__pyx_v_self));
+
+  /* function exit code */
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+static PyObject *__pyx_pf_8utils_cy_13DistanceStack_2distanceStackInfo(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_self) {
+  PyObject *__pyx_r = NULL;
+  __Pyx_RefNannyDeclarations
+  PyObject *__pyx_t_1 = NULL;
+  PyObject *__pyx_t_2 = NULL;
+  PyObject *__pyx_t_3 = NULL;
+  int __pyx_lineno = 0;
+  const char *__pyx_filename = NULL;
+  int __pyx_clineno = 0;
+  __Pyx_RefNannySetupContext("distanceStackInfo", 0);
+
+  /* "utils_cy.pyx":42
+ *     '''
+ *     def distanceStackInfo(self):
+ *         print("==> Projection: ", self.raster.GetProjection())  # get projection             # <<<<<<<<<<<<<<
+ *         print("==> Columns:", self.raster.RasterXSize)  # number of columns
+ *         print("==> Rows:", self.raster.RasterYSize)  # number of rows
+ */
+  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_raster); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 42, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_2);
+  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_t_2, __pyx_n_s_GetProjection); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 42, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_3);
+  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+  __pyx_t_2 = NULL;
+  if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_3))) {
+    __pyx_t_2 = PyMethod_GET_SELF(__pyx_t_3);
+    if (likely(__pyx_t_2)) {
+      PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_3);
+      __Pyx_INCREF(__pyx_t_2);
+      __Pyx_INCREF(function);
+      __Pyx_DECREF_SET(__pyx_t_3, function);
+    }
+  }
+  __pyx_t_1 = (__pyx_t_2) ? __Pyx_PyObject_CallOneArg(__pyx_t_3, __pyx_t_2) : __Pyx_PyObject_CallNoArg(__pyx_t_3);
+  __Pyx_XDECREF(__pyx_t_2); __pyx_t_2 = 0;
+  if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 42, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
+  __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+  __pyx_t_3 = PyTuple_New(2); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 42, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_3);
+  __Pyx_INCREF(__pyx_kp_u_Projection);
+  __Pyx_GIVEREF(__pyx_kp_u_Projection);
+  PyTuple_SET_ITEM(__pyx_t_3, 0, __pyx_kp_u_Projection);
+  __Pyx_GIVEREF(__pyx_t_1);
+  PyTuple_SET_ITEM(__pyx_t_3, 1, __pyx_t_1);
+  __pyx_t_1 = 0;
+  __pyx_t_1 = __Pyx_PyObject_Call(__pyx_builtin_print, __pyx_t_3, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 42, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
+  __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+
+  /* "utils_cy.pyx":43
+ *     def distanceStackInfo(self):
+ *         print("==> Projection: ", self.raster.GetProjection())  # get projection
+ *         print("==> Columns:", self.raster.RasterXSize)  # number of columns             # <<<<<<<<<<<<<<
+ *         print("==> Rows:", self.raster.RasterYSize)  # number of rows
+ *         print("==> Band count:", self.raster.RasterCount)  # number of bands
+ */
+  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_raster); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 43, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
+  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_t_1, __pyx_n_s_RasterXSize); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 43, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_3);
+  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+  __pyx_t_1 = PyTuple_New(2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 43, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
+  __Pyx_INCREF(__pyx_kp_u_Columns);
+  __Pyx_GIVEREF(__pyx_kp_u_Columns);
+  PyTuple_SET_ITEM(__pyx_t_1, 0, __pyx_kp_u_Columns);
+  __Pyx_GIVEREF(__pyx_t_3);
+  PyTuple_SET_ITEM(__pyx_t_1, 1, __pyx_t_3);
+  __pyx_t_3 = 0;
+  __pyx_t_3 = __Pyx_PyObject_Call(__pyx_builtin_print, __pyx_t_1, NULL); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 43, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_3);
+  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+  __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+
+  /* "utils_cy.pyx":44
+ *         print("==> Projection: ", self.raster.GetProjection())  # get projection
+ *         print("==> Columns:", self.raster.RasterXSize)  # number of columns
+ *         print("==> Rows:", self.raster.RasterYSize)  # number of rows             # <<<<<<<<<<<<<<
+ *         print("==> Band count:", self.raster.RasterCount)  # number of bands
+ * 
+ */
+  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_raster); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 44, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_3);
+  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_t_3, __pyx_n_s_RasterYSize); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 44, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
+  __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+  __pyx_t_3 = PyTuple_New(2); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 44, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_3);
+  __Pyx_INCREF(__pyx_kp_u_Rows);
+  __Pyx_GIVEREF(__pyx_kp_u_Rows);
+  PyTuple_SET_ITEM(__pyx_t_3, 0, __pyx_kp_u_Rows);
+  __Pyx_GIVEREF(__pyx_t_1);
+  PyTuple_SET_ITEM(__pyx_t_3, 1, __pyx_t_1);
+  __pyx_t_1 = 0;
+  __pyx_t_1 = __Pyx_PyObject_Call(__pyx_builtin_print, __pyx_t_3, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 44, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
+  __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+
+  /* "utils_cy.pyx":45
+ *         print("==> Columns:", self.raster.RasterXSize)  # number of columns
+ *         print("==> Rows:", self.raster.RasterYSize)  # number of rows
+ *         print("==> Band count:", self.raster.RasterCount)  # number of bands             # <<<<<<<<<<<<<<
+ * 
+ *     '''
+ */
+  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_raster); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 45, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
+  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_t_1, __pyx_n_s_RasterCount); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 45, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_3);
+  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+  __pyx_t_1 = PyTuple_New(2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 45, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
+  __Pyx_INCREF(__pyx_kp_u_Band_count);
+  __Pyx_GIVEREF(__pyx_kp_u_Band_count);
+  PyTuple_SET_ITEM(__pyx_t_1, 0, __pyx_kp_u_Band_count);
+  __Pyx_GIVEREF(__pyx_t_3);
+  PyTuple_SET_ITEM(__pyx_t_1, 1, __pyx_t_3);
+  __pyx_t_3 = 0;
+  __pyx_t_3 = __Pyx_PyObject_Call(__pyx_builtin_print, __pyx_t_1, NULL); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 45, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_3);
+  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+  __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+
+  /* "utils_cy.pyx":41
+ *     * Description: Outputs some key values of the raster
+ *     '''
+ *     def distanceStackInfo(self):             # <<<<<<<<<<<<<<
+ *         print("==> Projection: ", self.raster.GetProjection())  # get projection
+ *         print("==> Columns:", self.raster.RasterXSize)  # number of columns
+ */
+
+  /* function exit code */
+  __pyx_r = Py_None; __Pyx_INCREF(Py_None);
+  goto __pyx_L0;
+  __pyx_L1_error:;
+  __Pyx_XDECREF(__pyx_t_1);
+  __Pyx_XDECREF(__pyx_t_2);
+  __Pyx_XDECREF(__pyx_t_3);
+  __Pyx_AddTraceback("utils_cy.DistanceStack.distanceStackInfo", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __pyx_r = NULL;
+  __pyx_L0:;
+  __Pyx_XGIVEREF(__pyx_r);
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+/* "utils_cy.pyx":52
+ *     * Parameters: A band number of the underlying raster
+ *     '''
+ *     def distanceBandInfo(self, band):             # <<<<<<<<<<<<<<
+ *         print("==> Minimum:", self.bands[band].GetMinimum())
+ *         print("==> Maximum:", self.bands[band].GetMaximum())
+ */
+
+/* Python wrapper */
+static PyObject *__pyx_pw_8utils_cy_13DistanceStack_5distanceBandInfo(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
+static PyMethodDef __pyx_mdef_8utils_cy_13DistanceStack_5distanceBandInfo = {"distanceBandInfo", (PyCFunction)(void*)(PyCFunctionWithKeywords)__pyx_pw_8utils_cy_13DistanceStack_5distanceBandInfo, METH_VARARGS|METH_KEYWORDS, 0};
+static PyObject *__pyx_pw_8utils_cy_13DistanceStack_5distanceBandInfo(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
+  PyObject *__pyx_v_self = 0;
+  PyObject *__pyx_v_band = 0;
+  int __pyx_lineno = 0;
+  const char *__pyx_filename = NULL;
+  int __pyx_clineno = 0;
+  PyObject *__pyx_r = 0;
+  __Pyx_RefNannyDeclarations
+  __Pyx_RefNannySetupContext("distanceBandInfo (wrapper)", 0);
+  {
+    static PyObject **__pyx_pyargnames[] = {&__pyx_n_s_self,&__pyx_n_s_band,0};
+    PyObject* values[2] = {0,0};
+    if (unlikely(__pyx_kwds)) {
+      Py_ssize_t kw_args;
+      const Py_ssize_t pos_args = PyTuple_GET_SIZE(__pyx_args);
+      switch (pos_args) {
+        case  2: values[1] = PyTuple_GET_ITEM(__pyx_args, 1);
+        CYTHON_FALLTHROUGH;
+        case  1: values[0] = PyTuple_GET_ITEM(__pyx_args, 0);
+        CYTHON_FALLTHROUGH;
+        case  0: break;
+        default: goto __pyx_L5_argtuple_error;
+      }
+      kw_args = PyDict_Size(__pyx_kwds);
+      switch (pos_args) {
+        case  0:
+        if (likely((values[0] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_self)) != 0)) kw_args--;
+        else goto __pyx_L5_argtuple_error;
+        CYTHON_FALLTHROUGH;
+        case  1:
+        if (likely((values[1] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_band)) != 0)) kw_args--;
+        else {
+          __Pyx_RaiseArgtupleInvalid("distanceBandInfo", 1, 2, 2, 1); __PYX_ERR(0, 52, __pyx_L3_error)
+        }
+      }
+      if (unlikely(kw_args > 0)) {
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "distanceBandInfo") < 0)) __PYX_ERR(0, 52, __pyx_L3_error)
+      }
+    } else if (PyTuple_GET_SIZE(__pyx_args) != 2) {
+      goto __pyx_L5_argtuple_error;
+    } else {
+      values[0] = PyTuple_GET_ITEM(__pyx_args, 0);
+      values[1] = PyTuple_GET_ITEM(__pyx_args, 1);
+    }
+    __pyx_v_self = values[0];
+    __pyx_v_band = values[1];
+  }
+  goto __pyx_L4_argument_unpacking_done;
+  __pyx_L5_argtuple_error:;
+  __Pyx_RaiseArgtupleInvalid("distanceBandInfo", 1, 2, 2, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 52, __pyx_L3_error)
+  __pyx_L3_error:;
+  __Pyx_AddTraceback("utils_cy.DistanceStack.distanceBandInfo", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_RefNannyFinishContext();
+  return NULL;
+  __pyx_L4_argument_unpacking_done:;
+  __pyx_r = __pyx_pf_8utils_cy_13DistanceStack_4distanceBandInfo(__pyx_self, __pyx_v_self, __pyx_v_band);
+
+  /* function exit code */
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+static PyObject *__pyx_pf_8utils_cy_13DistanceStack_4distanceBandInfo(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_self, PyObject *__pyx_v_band) {
+  PyObject *__pyx_r = NULL;
+  __Pyx_RefNannyDeclarations
+  PyObject *__pyx_t_1 = NULL;
+  PyObject *__pyx_t_2 = NULL;
+  PyObject *__pyx_t_3 = NULL;
+  int __pyx_lineno = 0;
+  const char *__pyx_filename = NULL;
+  int __pyx_clineno = 0;
+  __Pyx_RefNannySetupContext("distanceBandInfo", 0);
+
+  /* "utils_cy.pyx":53
+ *     '''
+ *     def distanceBandInfo(self, band):
+ *         print("==> Minimum:", self.bands[band].GetMinimum())             # <<<<<<<<<<<<<<
+ *         print("==> Maximum:", self.bands[band].GetMaximum())
+ *         print("==> NoData value:", self.bands[band].GetNoDataValue())
+ */
+  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_bands); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 53, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_2);
+  __pyx_t_3 = __Pyx_PyObject_GetItem(__pyx_t_2, __pyx_v_band); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 53, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_3);
+  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_t_3, __pyx_n_s_GetMinimum); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 53, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_2);
+  __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+  __pyx_t_3 = NULL;
+  if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_2))) {
+    __pyx_t_3 = PyMethod_GET_SELF(__pyx_t_2);
+    if (likely(__pyx_t_3)) {
+      PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_2);
+      __Pyx_INCREF(__pyx_t_3);
+      __Pyx_INCREF(function);
+      __Pyx_DECREF_SET(__pyx_t_2, function);
+    }
+  }
+  __pyx_t_1 = (__pyx_t_3) ? __Pyx_PyObject_CallOneArg(__pyx_t_2, __pyx_t_3) : __Pyx_PyObject_CallNoArg(__pyx_t_2);
+  __Pyx_XDECREF(__pyx_t_3); __pyx_t_3 = 0;
+  if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 53, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
+  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+  __pyx_t_2 = PyTuple_New(2); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 53, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_2);
+  __Pyx_INCREF(__pyx_kp_u_Minimum);
+  __Pyx_GIVEREF(__pyx_kp_u_Minimum);
+  PyTuple_SET_ITEM(__pyx_t_2, 0, __pyx_kp_u_Minimum);
+  __Pyx_GIVEREF(__pyx_t_1);
+  PyTuple_SET_ITEM(__pyx_t_2, 1, __pyx_t_1);
+  __pyx_t_1 = 0;
+  __pyx_t_1 = __Pyx_PyObject_Call(__pyx_builtin_print, __pyx_t_2, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 53, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
+  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+
+  /* "utils_cy.pyx":54
+ *     def distanceBandInfo(self, band):
+ *         print("==> Minimum:", self.bands[band].GetMinimum())
+ *         print("==> Maximum:", self.bands[band].GetMaximum())             # <<<<<<<<<<<<<<
+ *         print("==> NoData value:", self.bands[band].GetNoDataValue())
+ * 
+ */
+  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_bands); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 54, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_2);
+  __pyx_t_3 = __Pyx_PyObject_GetItem(__pyx_t_2, __pyx_v_band); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 54, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_3);
+  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_t_3, __pyx_n_s_GetMaximum); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 54, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_2);
+  __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+  __pyx_t_3 = NULL;
+  if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_2))) {
+    __pyx_t_3 = PyMethod_GET_SELF(__pyx_t_2);
+    if (likely(__pyx_t_3)) {
+      PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_2);
+      __Pyx_INCREF(__pyx_t_3);
+      __Pyx_INCREF(function);
+      __Pyx_DECREF_SET(__pyx_t_2, function);
+    }
+  }
+  __pyx_t_1 = (__pyx_t_3) ? __Pyx_PyObject_CallOneArg(__pyx_t_2, __pyx_t_3) : __Pyx_PyObject_CallNoArg(__pyx_t_2);
+  __Pyx_XDECREF(__pyx_t_3); __pyx_t_3 = 0;
+  if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 54, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
+  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+  __pyx_t_2 = PyTuple_New(2); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 54, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_2);
+  __Pyx_INCREF(__pyx_kp_u_Maximum);
+  __Pyx_GIVEREF(__pyx_kp_u_Maximum);
+  PyTuple_SET_ITEM(__pyx_t_2, 0, __pyx_kp_u_Maximum);
+  __Pyx_GIVEREF(__pyx_t_1);
+  PyTuple_SET_ITEM(__pyx_t_2, 1, __pyx_t_1);
+  __pyx_t_1 = 0;
+  __pyx_t_1 = __Pyx_PyObject_Call(__pyx_builtin_print, __pyx_t_2, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 54, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
+  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+
+  /* "utils_cy.pyx":55
+ *         print("==> Minimum:", self.bands[band].GetMinimum())
+ *         print("==> Maximum:", self.bands[band].GetMaximum())
+ *         print("==> NoData value:", self.bands[band].GetNoDataValue())             # <<<<<<<<<<<<<<
+ * 
+ *     '''
+ */
+  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_bands); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 55, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_2);
+  __pyx_t_3 = __Pyx_PyObject_GetItem(__pyx_t_2, __pyx_v_band); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 55, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_3);
+  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_t_3, __pyx_n_s_GetNoDataValue); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 55, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_2);
+  __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+  __pyx_t_3 = NULL;
+  if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_2))) {
+    __pyx_t_3 = PyMethod_GET_SELF(__pyx_t_2);
+    if (likely(__pyx_t_3)) {
+      PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_2);
+      __Pyx_INCREF(__pyx_t_3);
+      __Pyx_INCREF(function);
+      __Pyx_DECREF_SET(__pyx_t_2, function);
+    }
+  }
+  __pyx_t_1 = (__pyx_t_3) ? __Pyx_PyObject_CallOneArg(__pyx_t_2, __pyx_t_3) : __Pyx_PyObject_CallNoArg(__pyx_t_2);
+  __Pyx_XDECREF(__pyx_t_3); __pyx_t_3 = 0;
+  if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 55, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
+  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+  __pyx_t_2 = PyTuple_New(2); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 55, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_2);
+  __Pyx_INCREF(__pyx_kp_u_NoData_value);
+  __Pyx_GIVEREF(__pyx_kp_u_NoData_value);
+  PyTuple_SET_ITEM(__pyx_t_2, 0, __pyx_kp_u_NoData_value);
+  __Pyx_GIVEREF(__pyx_t_1);
+  PyTuple_SET_ITEM(__pyx_t_2, 1, __pyx_t_1);
+  __pyx_t_1 = 0;
+  __pyx_t_1 = __Pyx_PyObject_Call(__pyx_builtin_print, __pyx_t_2, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 55, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
+  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+
+  /* "utils_cy.pyx":52
+ *     * Parameters: A band number of the underlying raster
+ *     '''
+ *     def distanceBandInfo(self, band):             # <<<<<<<<<<<<<<
+ *         print("==> Minimum:", self.bands[band].GetMinimum())
+ *         print("==> Maximum:", self.bands[band].GetMaximum())
+ */
+
+  /* function exit code */
+  __pyx_r = Py_None; __Pyx_INCREF(Py_None);
+  goto __pyx_L0;
+  __pyx_L1_error:;
+  __Pyx_XDECREF(__pyx_t_1);
+  __Pyx_XDECREF(__pyx_t_2);
+  __Pyx_XDECREF(__pyx_t_3);
+  __Pyx_AddTraceback("utils_cy.DistanceStack.distanceBandInfo", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __pyx_r = NULL;
+  __pyx_L0:;
+  __Pyx_XGIVEREF(__pyx_r);
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+/* "utils_cy.pyx":65
  *     * parameters and which do not
  *     '''
  *     def filterStack(self, filterValues):             # <<<<<<<<<<<<<<
@@ -2013,9 +2528,9 @@ static PyObject *__pyx_pf_8utils_cy_13DistanceStack___init__(CYTHON_UNUSED PyObj
  */
 
 /* Python wrapper */
-static PyObject *__pyx_pw_8utils_cy_13DistanceStack_3filterStack(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
-static PyMethodDef __pyx_mdef_8utils_cy_13DistanceStack_3filterStack = {"filterStack", (PyCFunction)(void*)(PyCFunctionWithKeywords)__pyx_pw_8utils_cy_13DistanceStack_3filterStack, METH_VARARGS|METH_KEYWORDS, 0};
-static PyObject *__pyx_pw_8utils_cy_13DistanceStack_3filterStack(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
+static PyObject *__pyx_pw_8utils_cy_13DistanceStack_7filterStack(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
+static PyMethodDef __pyx_mdef_8utils_cy_13DistanceStack_7filterStack = {"filterStack", (PyCFunction)(void*)(PyCFunctionWithKeywords)__pyx_pw_8utils_cy_13DistanceStack_7filterStack, METH_VARARGS|METH_KEYWORDS, 0};
+static PyObject *__pyx_pw_8utils_cy_13DistanceStack_7filterStack(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
   PyObject *__pyx_v_self = 0;
   PyObject *__pyx_v_filterValues = 0;
   int __pyx_lineno = 0;
@@ -2047,11 +2562,11 @@ static PyObject *__pyx_pw_8utils_cy_13DistanceStack_3filterStack(PyObject *__pyx
         case  1:
         if (likely((values[1] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_filterValues)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("filterStack", 1, 2, 2, 1); __PYX_ERR(0, 63, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("filterStack", 1, 2, 2, 1); __PYX_ERR(0, 65, __pyx_L3_error)
         }
       }
       if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "filterStack") < 0)) __PYX_ERR(0, 63, __pyx_L3_error)
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "filterStack") < 0)) __PYX_ERR(0, 65, __pyx_L3_error)
       }
     } else if (PyTuple_GET_SIZE(__pyx_args) != 2) {
       goto __pyx_L5_argtuple_error;
@@ -2064,20 +2579,20 @@ static PyObject *__pyx_pw_8utils_cy_13DistanceStack_3filterStack(PyObject *__pyx
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("filterStack", 1, 2, 2, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 63, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("filterStack", 1, 2, 2, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 65, __pyx_L3_error)
   __pyx_L3_error:;
   __Pyx_AddTraceback("utils_cy.DistanceStack.filterStack", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
   return NULL;
   __pyx_L4_argument_unpacking_done:;
-  __pyx_r = __pyx_pf_8utils_cy_13DistanceStack_2filterStack(__pyx_self, __pyx_v_self, __pyx_v_filterValues);
+  __pyx_r = __pyx_pf_8utils_cy_13DistanceStack_6filterStack(__pyx_self, __pyx_v_self, __pyx_v_filterValues);
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_8utils_cy_13DistanceStack_2filterStack(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_self, PyObject *__pyx_v_filterValues) {
+static PyObject *__pyx_pf_8utils_cy_13DistanceStack_6filterStack(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_self, PyObject *__pyx_v_filterValues) {
   PyObject *__pyx_v_srs = NULL;
   PyObject *__pyx_v_filteredArrays = NULL;
   int __pyx_v_i;
@@ -2111,19 +2626,19 @@ static PyObject *__pyx_pf_8utils_cy_13DistanceStack_2filterStack(CYTHON_UNUSED P
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("filterStack", 0);
 
-  /* "utils_cy.pyx":64
+  /* "utils_cy.pyx":66
  *     '''
  *     def filterStack(self, filterValues):
  *         srs = ogr.osr.SpatialReference()             # <<<<<<<<<<<<<<
  *         srs.ImportFromEPSG(4326)
  *         filteredArrays = [] #initialize list for filtered bands
  */
-  __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_n_s_ogr); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 64, __pyx_L1_error)
+  __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_n_s_ogr); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 66, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_t_2, __pyx_n_s_osr); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 64, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_t_2, __pyx_n_s_osr); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 66, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_t_3, __pyx_n_s_SpatialReference); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 64, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_t_3, __pyx_n_s_SpatialReference); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 66, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
   __pyx_t_3 = NULL;
@@ -2138,20 +2653,20 @@ static PyObject *__pyx_pf_8utils_cy_13DistanceStack_2filterStack(CYTHON_UNUSED P
   }
   __pyx_t_1 = (__pyx_t_3) ? __Pyx_PyObject_CallOneArg(__pyx_t_2, __pyx_t_3) : __Pyx_PyObject_CallNoArg(__pyx_t_2);
   __Pyx_XDECREF(__pyx_t_3); __pyx_t_3 = 0;
-  if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 64, __pyx_L1_error)
+  if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 66, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   __pyx_v_srs = __pyx_t_1;
   __pyx_t_1 = 0;
 
-  /* "utils_cy.pyx":65
+  /* "utils_cy.pyx":67
  *     def filterStack(self, filterValues):
  *         srs = ogr.osr.SpatialReference()
  *         srs.ImportFromEPSG(4326)             # <<<<<<<<<<<<<<
  *         filteredArrays = [] #initialize list for filtered bands
  *         cdef int i
  */
-  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_srs, __pyx_n_s_ImportFromEPSG); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 65, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_srs, __pyx_n_s_ImportFromEPSG); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 67, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __pyx_t_3 = NULL;
   if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_2))) {
@@ -2165,72 +2680,72 @@ static PyObject *__pyx_pf_8utils_cy_13DistanceStack_2filterStack(CYTHON_UNUSED P
   }
   __pyx_t_1 = (__pyx_t_3) ? __Pyx_PyObject_Call2Args(__pyx_t_2, __pyx_t_3, __pyx_int_4326) : __Pyx_PyObject_CallOneArg(__pyx_t_2, __pyx_int_4326);
   __Pyx_XDECREF(__pyx_t_3); __pyx_t_3 = 0;
-  if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 65, __pyx_L1_error)
+  if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 67, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "utils_cy.pyx":66
+  /* "utils_cy.pyx":68
  *         srs = ogr.osr.SpatialReference()
  *         srs.ImportFromEPSG(4326)
  *         filteredArrays = [] #initialize list for filtered bands             # <<<<<<<<<<<<<<
  *         cdef int i
  *         for i in range(0, len(filterValues)): #iterate over filter values
  */
-  __pyx_t_1 = PyList_New(0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 66, __pyx_L1_error)
+  __pyx_t_1 = PyList_New(0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 68, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_v_filteredArrays = ((PyObject*)__pyx_t_1);
   __pyx_t_1 = 0;
 
-  /* "utils_cy.pyx":68
+  /* "utils_cy.pyx":70
  *         filteredArrays = [] #initialize list for filtered bands
  *         cdef int i
  *         for i in range(0, len(filterValues)): #iterate over filter values             # <<<<<<<<<<<<<<
  *             if(filterValues[i][1] == None):
  *                 array = self.bands[filterValues[i][0]].ReadAsArray() #read corresponding band from raster
  */
-  __pyx_t_4 = PyObject_Length(__pyx_v_filterValues); if (unlikely(__pyx_t_4 == ((Py_ssize_t)-1))) __PYX_ERR(0, 68, __pyx_L1_error)
+  __pyx_t_4 = PyObject_Length(__pyx_v_filterValues); if (unlikely(__pyx_t_4 == ((Py_ssize_t)-1))) __PYX_ERR(0, 70, __pyx_L1_error)
   __pyx_t_5 = __pyx_t_4;
   for (__pyx_t_6 = 0; __pyx_t_6 < __pyx_t_5; __pyx_t_6+=1) {
     __pyx_v_i = __pyx_t_6;
 
-    /* "utils_cy.pyx":69
+    /* "utils_cy.pyx":71
  *         cdef int i
  *         for i in range(0, len(filterValues)): #iterate over filter values
  *             if(filterValues[i][1] == None):             # <<<<<<<<<<<<<<
  *                 array = self.bands[filterValues[i][0]].ReadAsArray() #read corresponding band from raster
  *                 filteredArray = array <= filterValues[i][2]/10 #filter band
  */
-    __pyx_t_1 = __Pyx_GetItemInt(__pyx_v_filterValues, __pyx_v_i, int, 1, __Pyx_PyInt_From_int, 0, 1, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 69, __pyx_L1_error)
+    __pyx_t_1 = __Pyx_GetItemInt(__pyx_v_filterValues, __pyx_v_i, int, 1, __Pyx_PyInt_From_int, 0, 1, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 71, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
-    __pyx_t_2 = __Pyx_GetItemInt(__pyx_t_1, 1, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 69, __pyx_L1_error)
+    __pyx_t_2 = __Pyx_GetItemInt(__pyx_t_1, 1, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 71, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-    __pyx_t_1 = PyObject_RichCompare(__pyx_t_2, Py_None, Py_EQ); __Pyx_XGOTREF(__pyx_t_1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 69, __pyx_L1_error)
+    __pyx_t_1 = PyObject_RichCompare(__pyx_t_2, Py_None, Py_EQ); __Pyx_XGOTREF(__pyx_t_1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 71, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-    __pyx_t_7 = __Pyx_PyObject_IsTrue(__pyx_t_1); if (unlikely(__pyx_t_7 < 0)) __PYX_ERR(0, 69, __pyx_L1_error)
+    __pyx_t_7 = __Pyx_PyObject_IsTrue(__pyx_t_1); if (unlikely(__pyx_t_7 < 0)) __PYX_ERR(0, 71, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
     if (__pyx_t_7) {
 
-      /* "utils_cy.pyx":70
+      /* "utils_cy.pyx":72
  *         for i in range(0, len(filterValues)): #iterate over filter values
  *             if(filterValues[i][1] == None):
  *                 array = self.bands[filterValues[i][0]].ReadAsArray() #read corresponding band from raster             # <<<<<<<<<<<<<<
  *                 filteredArray = array <= filterValues[i][2]/10 #filter band
  *                 filteredArrays.append(filteredArray) #add filtered array to list
  */
-      __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_bands); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 70, __pyx_L1_error)
+      __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_bands); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 72, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_2);
-      __pyx_t_3 = __Pyx_GetItemInt(__pyx_v_filterValues, __pyx_v_i, int, 1, __Pyx_PyInt_From_int, 0, 1, 1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 70, __pyx_L1_error)
+      __pyx_t_3 = __Pyx_GetItemInt(__pyx_v_filterValues, __pyx_v_i, int, 1, __Pyx_PyInt_From_int, 0, 1, 1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 72, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_3);
-      __pyx_t_8 = __Pyx_GetItemInt(__pyx_t_3, 0, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 70, __pyx_L1_error)
+      __pyx_t_8 = __Pyx_GetItemInt(__pyx_t_3, 0, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 72, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_8);
       __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-      __pyx_t_3 = __Pyx_PyObject_GetItem(__pyx_t_2, __pyx_t_8); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 70, __pyx_L1_error)
+      __pyx_t_3 = __Pyx_PyObject_GetItem(__pyx_t_2, __pyx_t_8); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 72, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_3);
       __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
       __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
-      __pyx_t_8 = __Pyx_PyObject_GetAttrStr(__pyx_t_3, __pyx_n_s_ReadAsArray); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 70, __pyx_L1_error)
+      __pyx_t_8 = __Pyx_PyObject_GetAttrStr(__pyx_t_3, __pyx_n_s_ReadAsArray); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 72, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_8);
       __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
       __pyx_t_3 = NULL;
@@ -2245,42 +2760,42 @@ static PyObject *__pyx_pf_8utils_cy_13DistanceStack_2filterStack(CYTHON_UNUSED P
       }
       __pyx_t_1 = (__pyx_t_3) ? __Pyx_PyObject_CallOneArg(__pyx_t_8, __pyx_t_3) : __Pyx_PyObject_CallNoArg(__pyx_t_8);
       __Pyx_XDECREF(__pyx_t_3); __pyx_t_3 = 0;
-      if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 70, __pyx_L1_error)
+      if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 72, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_1);
       __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
       __Pyx_XDECREF_SET(__pyx_v_array, __pyx_t_1);
       __pyx_t_1 = 0;
 
-      /* "utils_cy.pyx":71
+      /* "utils_cy.pyx":73
  *             if(filterValues[i][1] == None):
  *                 array = self.bands[filterValues[i][0]].ReadAsArray() #read corresponding band from raster
  *                 filteredArray = array <= filterValues[i][2]/10 #filter band             # <<<<<<<<<<<<<<
  *                 filteredArrays.append(filteredArray) #add filtered array to list
  *             elif(filterValues[i][2] == None):
  */
-      __pyx_t_1 = __Pyx_GetItemInt(__pyx_v_filterValues, __pyx_v_i, int, 1, __Pyx_PyInt_From_int, 0, 1, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 71, __pyx_L1_error)
+      __pyx_t_1 = __Pyx_GetItemInt(__pyx_v_filterValues, __pyx_v_i, int, 1, __Pyx_PyInt_From_int, 0, 1, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 73, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_1);
-      __pyx_t_8 = __Pyx_GetItemInt(__pyx_t_1, 2, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 71, __pyx_L1_error)
+      __pyx_t_8 = __Pyx_GetItemInt(__pyx_t_1, 2, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 73, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_8);
       __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-      __pyx_t_1 = __Pyx_PyInt_TrueDivideObjC(__pyx_t_8, __pyx_int_10, 10, 0, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 71, __pyx_L1_error)
+      __pyx_t_1 = __Pyx_PyInt_TrueDivideObjC(__pyx_t_8, __pyx_int_10, 10, 0, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 73, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_1);
       __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
-      __pyx_t_8 = PyObject_RichCompare(__pyx_v_array, __pyx_t_1, Py_LE); __Pyx_XGOTREF(__pyx_t_8); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 71, __pyx_L1_error)
+      __pyx_t_8 = PyObject_RichCompare(__pyx_v_array, __pyx_t_1, Py_LE); __Pyx_XGOTREF(__pyx_t_8); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 73, __pyx_L1_error)
       __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
       __Pyx_XDECREF_SET(__pyx_v_filteredArray, __pyx_t_8);
       __pyx_t_8 = 0;
 
-      /* "utils_cy.pyx":72
+      /* "utils_cy.pyx":74
  *                 array = self.bands[filterValues[i][0]].ReadAsArray() #read corresponding band from raster
  *                 filteredArray = array <= filterValues[i][2]/10 #filter band
  *                 filteredArrays.append(filteredArray) #add filtered array to list             # <<<<<<<<<<<<<<
  *             elif(filterValues[i][2] == None):
  *                 array = self.bands[filterValues[i][0]].ReadAsArray() #read corresponding band from raster
  */
-      __pyx_t_9 = __Pyx_PyList_Append(__pyx_v_filteredArrays, __pyx_v_filteredArray); if (unlikely(__pyx_t_9 == ((int)-1))) __PYX_ERR(0, 72, __pyx_L1_error)
+      __pyx_t_9 = __Pyx_PyList_Append(__pyx_v_filteredArrays, __pyx_v_filteredArray); if (unlikely(__pyx_t_9 == ((int)-1))) __PYX_ERR(0, 74, __pyx_L1_error)
 
-      /* "utils_cy.pyx":69
+      /* "utils_cy.pyx":71
  *         cdef int i
  *         for i in range(0, len(filterValues)): #iterate over filter values
  *             if(filterValues[i][1] == None):             # <<<<<<<<<<<<<<
@@ -2290,43 +2805,43 @@ static PyObject *__pyx_pf_8utils_cy_13DistanceStack_2filterStack(CYTHON_UNUSED P
       goto __pyx_L5;
     }
 
-    /* "utils_cy.pyx":73
+    /* "utils_cy.pyx":75
  *                 filteredArray = array <= filterValues[i][2]/10 #filter band
  *                 filteredArrays.append(filteredArray) #add filtered array to list
  *             elif(filterValues[i][2] == None):             # <<<<<<<<<<<<<<
  *                 array = self.bands[filterValues[i][0]].ReadAsArray() #read corresponding band from raster
  *                 filteredArray = array >= filterValues[i][1]/10 #filter band
  */
-    __pyx_t_8 = __Pyx_GetItemInt(__pyx_v_filterValues, __pyx_v_i, int, 1, __Pyx_PyInt_From_int, 0, 1, 1); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 73, __pyx_L1_error)
+    __pyx_t_8 = __Pyx_GetItemInt(__pyx_v_filterValues, __pyx_v_i, int, 1, __Pyx_PyInt_From_int, 0, 1, 1); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 75, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_8);
-    __pyx_t_1 = __Pyx_GetItemInt(__pyx_t_8, 2, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 73, __pyx_L1_error)
+    __pyx_t_1 = __Pyx_GetItemInt(__pyx_t_8, 2, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 75, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
     __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
-    __pyx_t_8 = PyObject_RichCompare(__pyx_t_1, Py_None, Py_EQ); __Pyx_XGOTREF(__pyx_t_8); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 73, __pyx_L1_error)
+    __pyx_t_8 = PyObject_RichCompare(__pyx_t_1, Py_None, Py_EQ); __Pyx_XGOTREF(__pyx_t_8); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 75, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-    __pyx_t_7 = __Pyx_PyObject_IsTrue(__pyx_t_8); if (unlikely(__pyx_t_7 < 0)) __PYX_ERR(0, 73, __pyx_L1_error)
+    __pyx_t_7 = __Pyx_PyObject_IsTrue(__pyx_t_8); if (unlikely(__pyx_t_7 < 0)) __PYX_ERR(0, 75, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
     if (__pyx_t_7) {
 
-      /* "utils_cy.pyx":74
+      /* "utils_cy.pyx":76
  *                 filteredArrays.append(filteredArray) #add filtered array to list
  *             elif(filterValues[i][2] == None):
  *                 array = self.bands[filterValues[i][0]].ReadAsArray() #read corresponding band from raster             # <<<<<<<<<<<<<<
  *                 filteredArray = array >= filterValues[i][1]/10 #filter band
  *                 filteredArrays.append(filteredArray) #add filtered array to list
  */
-      __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_bands); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 74, __pyx_L1_error)
+      __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_bands); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 76, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_1);
-      __pyx_t_3 = __Pyx_GetItemInt(__pyx_v_filterValues, __pyx_v_i, int, 1, __Pyx_PyInt_From_int, 0, 1, 1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 74, __pyx_L1_error)
+      __pyx_t_3 = __Pyx_GetItemInt(__pyx_v_filterValues, __pyx_v_i, int, 1, __Pyx_PyInt_From_int, 0, 1, 1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 76, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_3);
-      __pyx_t_2 = __Pyx_GetItemInt(__pyx_t_3, 0, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 74, __pyx_L1_error)
+      __pyx_t_2 = __Pyx_GetItemInt(__pyx_t_3, 0, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 76, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_2);
       __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-      __pyx_t_3 = __Pyx_PyObject_GetItem(__pyx_t_1, __pyx_t_2); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 74, __pyx_L1_error)
+      __pyx_t_3 = __Pyx_PyObject_GetItem(__pyx_t_1, __pyx_t_2); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 76, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_3);
       __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
       __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-      __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_t_3, __pyx_n_s_ReadAsArray); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 74, __pyx_L1_error)
+      __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_t_3, __pyx_n_s_ReadAsArray); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 76, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_2);
       __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
       __pyx_t_3 = NULL;
@@ -2341,42 +2856,42 @@ static PyObject *__pyx_pf_8utils_cy_13DistanceStack_2filterStack(CYTHON_UNUSED P
       }
       __pyx_t_8 = (__pyx_t_3) ? __Pyx_PyObject_CallOneArg(__pyx_t_2, __pyx_t_3) : __Pyx_PyObject_CallNoArg(__pyx_t_2);
       __Pyx_XDECREF(__pyx_t_3); __pyx_t_3 = 0;
-      if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 74, __pyx_L1_error)
+      if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 76, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_8);
       __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
       __Pyx_XDECREF_SET(__pyx_v_array, __pyx_t_8);
       __pyx_t_8 = 0;
 
-      /* "utils_cy.pyx":75
+      /* "utils_cy.pyx":77
  *             elif(filterValues[i][2] == None):
  *                 array = self.bands[filterValues[i][0]].ReadAsArray() #read corresponding band from raster
  *                 filteredArray = array >= filterValues[i][1]/10 #filter band             # <<<<<<<<<<<<<<
  *                 filteredArrays.append(filteredArray) #add filtered array to list
  *             else:
  */
-      __pyx_t_8 = __Pyx_GetItemInt(__pyx_v_filterValues, __pyx_v_i, int, 1, __Pyx_PyInt_From_int, 0, 1, 1); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 75, __pyx_L1_error)
+      __pyx_t_8 = __Pyx_GetItemInt(__pyx_v_filterValues, __pyx_v_i, int, 1, __Pyx_PyInt_From_int, 0, 1, 1); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 77, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_8);
-      __pyx_t_2 = __Pyx_GetItemInt(__pyx_t_8, 1, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 75, __pyx_L1_error)
+      __pyx_t_2 = __Pyx_GetItemInt(__pyx_t_8, 1, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 77, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_2);
       __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
-      __pyx_t_8 = __Pyx_PyInt_TrueDivideObjC(__pyx_t_2, __pyx_int_10, 10, 0, 0); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 75, __pyx_L1_error)
+      __pyx_t_8 = __Pyx_PyInt_TrueDivideObjC(__pyx_t_2, __pyx_int_10, 10, 0, 0); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 77, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_8);
       __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-      __pyx_t_2 = PyObject_RichCompare(__pyx_v_array, __pyx_t_8, Py_GE); __Pyx_XGOTREF(__pyx_t_2); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 75, __pyx_L1_error)
+      __pyx_t_2 = PyObject_RichCompare(__pyx_v_array, __pyx_t_8, Py_GE); __Pyx_XGOTREF(__pyx_t_2); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 77, __pyx_L1_error)
       __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
       __Pyx_XDECREF_SET(__pyx_v_filteredArray, __pyx_t_2);
       __pyx_t_2 = 0;
 
-      /* "utils_cy.pyx":76
+      /* "utils_cy.pyx":78
  *                 array = self.bands[filterValues[i][0]].ReadAsArray() #read corresponding band from raster
  *                 filteredArray = array >= filterValues[i][1]/10 #filter band
  *                 filteredArrays.append(filteredArray) #add filtered array to list             # <<<<<<<<<<<<<<
  *             else:
  *                 array = self.bands[filterValues[i][0]].ReadAsArray() #read corresponding band from raster
  */
-      __pyx_t_9 = __Pyx_PyList_Append(__pyx_v_filteredArrays, __pyx_v_filteredArray); if (unlikely(__pyx_t_9 == ((int)-1))) __PYX_ERR(0, 76, __pyx_L1_error)
+      __pyx_t_9 = __Pyx_PyList_Append(__pyx_v_filteredArrays, __pyx_v_filteredArray); if (unlikely(__pyx_t_9 == ((int)-1))) __PYX_ERR(0, 78, __pyx_L1_error)
 
-      /* "utils_cy.pyx":73
+      /* "utils_cy.pyx":75
  *                 filteredArray = array <= filterValues[i][2]/10 #filter band
  *                 filteredArrays.append(filteredArray) #add filtered array to list
  *             elif(filterValues[i][2] == None):             # <<<<<<<<<<<<<<
@@ -2386,7 +2901,7 @@ static PyObject *__pyx_pf_8utils_cy_13DistanceStack_2filterStack(CYTHON_UNUSED P
       goto __pyx_L5;
     }
 
-    /* "utils_cy.pyx":78
+    /* "utils_cy.pyx":80
  *                 filteredArrays.append(filteredArray) #add filtered array to list
  *             else:
  *                 array = self.bands[filterValues[i][0]].ReadAsArray() #read corresponding band from raster             # <<<<<<<<<<<<<<
@@ -2394,18 +2909,18 @@ static PyObject *__pyx_pf_8utils_cy_13DistanceStack_2filterStack(CYTHON_UNUSED P
  *                 filteredArrayB = array >= filterValues[i][1]/10 #filter band
  */
     /*else*/ {
-      __pyx_t_8 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_bands); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 78, __pyx_L1_error)
+      __pyx_t_8 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_bands); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 80, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_8);
-      __pyx_t_3 = __Pyx_GetItemInt(__pyx_v_filterValues, __pyx_v_i, int, 1, __Pyx_PyInt_From_int, 0, 1, 1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 78, __pyx_L1_error)
+      __pyx_t_3 = __Pyx_GetItemInt(__pyx_v_filterValues, __pyx_v_i, int, 1, __Pyx_PyInt_From_int, 0, 1, 1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 80, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_3);
-      __pyx_t_1 = __Pyx_GetItemInt(__pyx_t_3, 0, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 78, __pyx_L1_error)
+      __pyx_t_1 = __Pyx_GetItemInt(__pyx_t_3, 0, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 80, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_1);
       __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-      __pyx_t_3 = __Pyx_PyObject_GetItem(__pyx_t_8, __pyx_t_1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 78, __pyx_L1_error)
+      __pyx_t_3 = __Pyx_PyObject_GetItem(__pyx_t_8, __pyx_t_1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 80, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_3);
       __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
       __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-      __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_t_3, __pyx_n_s_ReadAsArray); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 78, __pyx_L1_error)
+      __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_t_3, __pyx_n_s_ReadAsArray); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 80, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_1);
       __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
       __pyx_t_3 = NULL;
@@ -2420,351 +2935,253 @@ static PyObject *__pyx_pf_8utils_cy_13DistanceStack_2filterStack(CYTHON_UNUSED P
       }
       __pyx_t_2 = (__pyx_t_3) ? __Pyx_PyObject_CallOneArg(__pyx_t_1, __pyx_t_3) : __Pyx_PyObject_CallNoArg(__pyx_t_1);
       __Pyx_XDECREF(__pyx_t_3); __pyx_t_3 = 0;
-      if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 78, __pyx_L1_error)
+      if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 80, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_2);
       __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
       __Pyx_XDECREF_SET(__pyx_v_array, __pyx_t_2);
       __pyx_t_2 = 0;
 
-      /* "utils_cy.pyx":79
+      /* "utils_cy.pyx":81
  *             else:
  *                 array = self.bands[filterValues[i][0]].ReadAsArray() #read corresponding band from raster
  *                 filteredArrayA = array <= filterValues[i][2]/10             # <<<<<<<<<<<<<<
  *                 filteredArrayB = array >= filterValues[i][1]/10 #filter band
- *                 filteredArrays.append(filteredArrayA*filteredArrayB) #add filtered array to list
+ *                 filteredArrays.append(filteredArrayA) #add filtered array to list
  */
-      __pyx_t_2 = __Pyx_GetItemInt(__pyx_v_filterValues, __pyx_v_i, int, 1, __Pyx_PyInt_From_int, 0, 1, 1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 79, __pyx_L1_error)
+      __pyx_t_2 = __Pyx_GetItemInt(__pyx_v_filterValues, __pyx_v_i, int, 1, __Pyx_PyInt_From_int, 0, 1, 1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 81, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_2);
-      __pyx_t_1 = __Pyx_GetItemInt(__pyx_t_2, 2, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 79, __pyx_L1_error)
+      __pyx_t_1 = __Pyx_GetItemInt(__pyx_t_2, 2, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 81, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_1);
       __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-      __pyx_t_2 = __Pyx_PyInt_TrueDivideObjC(__pyx_t_1, __pyx_int_10, 10, 0, 0); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 79, __pyx_L1_error)
+      __pyx_t_2 = __Pyx_PyInt_TrueDivideObjC(__pyx_t_1, __pyx_int_10, 10, 0, 0); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 81, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_2);
       __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-      __pyx_t_1 = PyObject_RichCompare(__pyx_v_array, __pyx_t_2, Py_LE); __Pyx_XGOTREF(__pyx_t_1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 79, __pyx_L1_error)
+      __pyx_t_1 = PyObject_RichCompare(__pyx_v_array, __pyx_t_2, Py_LE); __Pyx_XGOTREF(__pyx_t_1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 81, __pyx_L1_error)
       __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
       __Pyx_XDECREF_SET(__pyx_v_filteredArrayA, __pyx_t_1);
       __pyx_t_1 = 0;
 
-      /* "utils_cy.pyx":80
+      /* "utils_cy.pyx":82
  *                 array = self.bands[filterValues[i][0]].ReadAsArray() #read corresponding band from raster
  *                 filteredArrayA = array <= filterValues[i][2]/10
  *                 filteredArrayB = array >= filterValues[i][1]/10 #filter band             # <<<<<<<<<<<<<<
- *                 filteredArrays.append(filteredArrayA*filteredArrayB) #add filtered array to list
- * 
+ *                 filteredArrays.append(filteredArrayA) #add filtered array to list
+ *                 filteredArrays.append(filteredArrayB) #add filtered array to list
  */
-      __pyx_t_1 = __Pyx_GetItemInt(__pyx_v_filterValues, __pyx_v_i, int, 1, __Pyx_PyInt_From_int, 0, 1, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 80, __pyx_L1_error)
+      __pyx_t_1 = __Pyx_GetItemInt(__pyx_v_filterValues, __pyx_v_i, int, 1, __Pyx_PyInt_From_int, 0, 1, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 82, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_1);
-      __pyx_t_2 = __Pyx_GetItemInt(__pyx_t_1, 1, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 80, __pyx_L1_error)
+      __pyx_t_2 = __Pyx_GetItemInt(__pyx_t_1, 1, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 82, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_2);
       __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-      __pyx_t_1 = __Pyx_PyInt_TrueDivideObjC(__pyx_t_2, __pyx_int_10, 10, 0, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 80, __pyx_L1_error)
+      __pyx_t_1 = __Pyx_PyInt_TrueDivideObjC(__pyx_t_2, __pyx_int_10, 10, 0, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 82, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_1);
       __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-      __pyx_t_2 = PyObject_RichCompare(__pyx_v_array, __pyx_t_1, Py_GE); __Pyx_XGOTREF(__pyx_t_2); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 80, __pyx_L1_error)
+      __pyx_t_2 = PyObject_RichCompare(__pyx_v_array, __pyx_t_1, Py_GE); __Pyx_XGOTREF(__pyx_t_2); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 82, __pyx_L1_error)
       __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
       __Pyx_XDECREF_SET(__pyx_v_filteredArrayB, __pyx_t_2);
       __pyx_t_2 = 0;
 
-      /* "utils_cy.pyx":81
+      /* "utils_cy.pyx":83
  *                 filteredArrayA = array <= filterValues[i][2]/10
  *                 filteredArrayB = array >= filterValues[i][1]/10 #filter band
- *                 filteredArrays.append(filteredArrayA*filteredArrayB) #add filtered array to list             # <<<<<<<<<<<<<<
+ *                 filteredArrays.append(filteredArrayA) #add filtered array to list             # <<<<<<<<<<<<<<
+ *                 filteredArrays.append(filteredArrayB) #add filtered array to list
+ * 
+ */
+      __pyx_t_9 = __Pyx_PyList_Append(__pyx_v_filteredArrays, __pyx_v_filteredArrayA); if (unlikely(__pyx_t_9 == ((int)-1))) __PYX_ERR(0, 83, __pyx_L1_error)
+
+      /* "utils_cy.pyx":84
+ *                 filteredArrayB = array >= filterValues[i][1]/10 #filter band
+ *                 filteredArrays.append(filteredArrayA) #add filtered array to list
+ *                 filteredArrays.append(filteredArrayB) #add filtered array to list             # <<<<<<<<<<<<<<
  * 
  *         combinedArray = filteredArrays[0] #initialize combined array
  */
-      __pyx_t_2 = PyNumber_Multiply(__pyx_v_filteredArrayA, __pyx_v_filteredArrayB); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 81, __pyx_L1_error)
-      __Pyx_GOTREF(__pyx_t_2);
-      __pyx_t_9 = __Pyx_PyList_Append(__pyx_v_filteredArrays, __pyx_t_2); if (unlikely(__pyx_t_9 == ((int)-1))) __PYX_ERR(0, 81, __pyx_L1_error)
-      __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+      __pyx_t_9 = __Pyx_PyList_Append(__pyx_v_filteredArrays, __pyx_v_filteredArrayB); if (unlikely(__pyx_t_9 == ((int)-1))) __PYX_ERR(0, 84, __pyx_L1_error)
     }
     __pyx_L5:;
   }
 
-  /* "utils_cy.pyx":83
- *                 filteredArrays.append(filteredArrayA*filteredArrayB) #add filtered array to list
+  /* "utils_cy.pyx":86
+ *                 filteredArrays.append(filteredArrayB) #add filtered array to list
  * 
  *         combinedArray = filteredArrays[0] #initialize combined array             # <<<<<<<<<<<<<<
  * 
- *         for y in filteredArrays: #iterate over filtered bands
+ *         for y in filteredArrays[1:]: #iterate over filtered bands
  */
-  __pyx_t_2 = __Pyx_GetItemInt_List(__pyx_v_filteredArrays, 0, long, 1, __Pyx_PyInt_From_long, 1, 0, 1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 83, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_GetItemInt_List(__pyx_v_filteredArrays, 0, long, 1, __Pyx_PyInt_From_long, 1, 0, 1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 86, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __pyx_v_combinedArray = __pyx_t_2;
   __pyx_t_2 = 0;
 
-  /* "utils_cy.pyx":85
+  /* "utils_cy.pyx":88
  *         combinedArray = filteredArrays[0] #initialize combined array
  * 
- *         for y in filteredArrays: #iterate over filtered bands             # <<<<<<<<<<<<<<
+ *         for y in filteredArrays[1:]: #iterate over filtered bands             # <<<<<<<<<<<<<<
  *             combinedArray *= y #combine boolean values
  * 
  */
-  __pyx_t_2 = __pyx_v_filteredArrays; __Pyx_INCREF(__pyx_t_2); __pyx_t_4 = 0;
+  __pyx_t_2 = __Pyx_PyList_GetSlice(__pyx_v_filteredArrays, 1, PY_SSIZE_T_MAX); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 88, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_2);
+  __pyx_t_1 = __pyx_t_2; __Pyx_INCREF(__pyx_t_1); __pyx_t_4 = 0;
+  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   for (;;) {
-    if (__pyx_t_4 >= PyList_GET_SIZE(__pyx_t_2)) break;
+    if (__pyx_t_4 >= PyList_GET_SIZE(__pyx_t_1)) break;
     #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
-    __pyx_t_1 = PyList_GET_ITEM(__pyx_t_2, __pyx_t_4); __Pyx_INCREF(__pyx_t_1); __pyx_t_4++; if (unlikely(0 < 0)) __PYX_ERR(0, 85, __pyx_L1_error)
+    __pyx_t_2 = PyList_GET_ITEM(__pyx_t_1, __pyx_t_4); __Pyx_INCREF(__pyx_t_2); __pyx_t_4++; if (unlikely(0 < 0)) __PYX_ERR(0, 88, __pyx_L1_error)
     #else
-    __pyx_t_1 = PySequence_ITEM(__pyx_t_2, __pyx_t_4); __pyx_t_4++; if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 85, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_1);
+    __pyx_t_2 = PySequence_ITEM(__pyx_t_1, __pyx_t_4); __pyx_t_4++; if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 88, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_2);
     #endif
-    __Pyx_XDECREF_SET(__pyx_v_y, __pyx_t_1);
-    __pyx_t_1 = 0;
+    __Pyx_XDECREF_SET(__pyx_v_y, __pyx_t_2);
+    __pyx_t_2 = 0;
 
-    /* "utils_cy.pyx":86
+    /* "utils_cy.pyx":89
  * 
- *         for y in filteredArrays: #iterate over filtered bands
+ *         for y in filteredArrays[1:]: #iterate over filtered bands
  *             combinedArray *= y #combine boolean values             # <<<<<<<<<<<<<<
  * 
  *         driver = gdal.GetDriverByName('MEM') #initialize in memory driver
  */
-    __pyx_t_1 = PyNumber_InPlaceMultiply(__pyx_v_combinedArray, __pyx_v_y); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 86, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_1);
-    __Pyx_DECREF_SET(__pyx_v_combinedArray, __pyx_t_1);
-    __pyx_t_1 = 0;
+    __pyx_t_2 = PyNumber_InPlaceMultiply(__pyx_v_combinedArray, __pyx_v_y); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 89, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_2);
+    __Pyx_DECREF_SET(__pyx_v_combinedArray, __pyx_t_2);
+    __pyx_t_2 = 0;
 
-    /* "utils_cy.pyx":85
+    /* "utils_cy.pyx":88
  *         combinedArray = filteredArrays[0] #initialize combined array
  * 
- *         for y in filteredArrays: #iterate over filtered bands             # <<<<<<<<<<<<<<
+ *         for y in filteredArrays[1:]: #iterate over filtered bands             # <<<<<<<<<<<<<<
  *             combinedArray *= y #combine boolean values
  * 
  */
   }
-  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "utils_cy.pyx":88
+  /* "utils_cy.pyx":91
  *             combinedArray *= y #combine boolean values
  * 
  *         driver = gdal.GetDriverByName('MEM') #initialize in memory driver             # <<<<<<<<<<<<<<
- *         output = driver.Create('', xsize=self.raster.RasterXSize, ysize=self.raster.RasterYSize, bands=1, eType=gdal.GDT_Byte) #create rater
+ *         output = driver.Create('', xsize=self.raster.RasterXSize, ysize=self.raster.RasterYSize, bands=1, eType=gdal.GDT_Int16) #create rater
  *         output.SetGeoTransform(self.transform) #set geotransform of output image
  */
-  __Pyx_GetModuleGlobalName(__pyx_t_1, __pyx_n_s_gdal); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 88, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_t_1, __pyx_n_s_GetDriverByName); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 88, __pyx_L1_error)
+  __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_n_s_gdal); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 91, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_2);
+  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_t_2, __pyx_n_s_GetDriverByName); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 91, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
-  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-  __pyx_t_1 = NULL;
+  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+  __pyx_t_2 = NULL;
   if (CYTHON_UNPACK_METHODS && unlikely(PyMethod_Check(__pyx_t_3))) {
-    __pyx_t_1 = PyMethod_GET_SELF(__pyx_t_3);
-    if (likely(__pyx_t_1)) {
+    __pyx_t_2 = PyMethod_GET_SELF(__pyx_t_3);
+    if (likely(__pyx_t_2)) {
       PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_3);
-      __Pyx_INCREF(__pyx_t_1);
+      __Pyx_INCREF(__pyx_t_2);
       __Pyx_INCREF(function);
       __Pyx_DECREF_SET(__pyx_t_3, function);
     }
   }
-  __pyx_t_2 = (__pyx_t_1) ? __Pyx_PyObject_Call2Args(__pyx_t_3, __pyx_t_1, __pyx_n_u_MEM) : __Pyx_PyObject_CallOneArg(__pyx_t_3, __pyx_n_u_MEM);
-  __Pyx_XDECREF(__pyx_t_1); __pyx_t_1 = 0;
-  if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 88, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_2);
+  __pyx_t_1 = (__pyx_t_2) ? __Pyx_PyObject_Call2Args(__pyx_t_3, __pyx_t_2, __pyx_n_u_MEM) : __Pyx_PyObject_CallOneArg(__pyx_t_3, __pyx_n_u_MEM);
+  __Pyx_XDECREF(__pyx_t_2); __pyx_t_2 = 0;
+  if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 91, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-  __pyx_v_driver = __pyx_t_2;
-  __pyx_t_2 = 0;
+  __pyx_v_driver = __pyx_t_1;
+  __pyx_t_1 = 0;
 
-  /* "utils_cy.pyx":89
+  /* "utils_cy.pyx":92
  * 
  *         driver = gdal.GetDriverByName('MEM') #initialize in memory driver
- *         output = driver.Create('', xsize=self.raster.RasterXSize, ysize=self.raster.RasterYSize, bands=1, eType=gdal.GDT_Byte) #create rater             # <<<<<<<<<<<<<<
+ *         output = driver.Create('', xsize=self.raster.RasterXSize, ysize=self.raster.RasterYSize, bands=1, eType=gdal.GDT_Int16) #create rater             # <<<<<<<<<<<<<<
  *         output.SetGeoTransform(self.transform) #set geotransform of output image
  *         output.SetProjection(srs.ExportToWkt()) #set projection of output image
  */
-  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_driver, __pyx_n_s_Create); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 89, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_2);
-  __pyx_t_3 = __Pyx_PyDict_NewPresized(4); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 89, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_driver, __pyx_n_s_Create); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 92, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
+  __pyx_t_3 = __Pyx_PyDict_NewPresized(4); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 92, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
-  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_raster); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 89, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_8 = __Pyx_PyObject_GetAttrStr(__pyx_t_1, __pyx_n_s_RasterXSize); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 89, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_8);
-  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-  if (PyDict_SetItem(__pyx_t_3, __pyx_n_s_xsize, __pyx_t_8) < 0) __PYX_ERR(0, 89, __pyx_L1_error)
-  __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
-  __pyx_t_8 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_raster); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 89, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_8);
-  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_t_8, __pyx_n_s_RasterYSize); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 89, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_1);
-  __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
-  if (PyDict_SetItem(__pyx_t_3, __pyx_n_s_ysize, __pyx_t_1) < 0) __PYX_ERR(0, 89, __pyx_L1_error)
-  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-  if (PyDict_SetItem(__pyx_t_3, __pyx_n_s_bands, __pyx_int_1) < 0) __PYX_ERR(0, 89, __pyx_L1_error)
-  __Pyx_GetModuleGlobalName(__pyx_t_1, __pyx_n_s_gdal); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 89, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_8 = __Pyx_PyObject_GetAttrStr(__pyx_t_1, __pyx_n_s_GDT_Byte); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 89, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_8);
-  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-  if (PyDict_SetItem(__pyx_t_3, __pyx_n_s_eType, __pyx_t_8) < 0) __PYX_ERR(0, 89, __pyx_L1_error)
-  __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
-  __pyx_t_8 = __Pyx_PyObject_Call(__pyx_t_2, __pyx_tuple__3, __pyx_t_3); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 89, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_raster); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 92, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_2);
+  __pyx_t_8 = __Pyx_PyObject_GetAttrStr(__pyx_t_2, __pyx_n_s_RasterXSize); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 92, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_8);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+  if (PyDict_SetItem(__pyx_t_3, __pyx_n_s_xsize, __pyx_t_8) < 0) __PYX_ERR(0, 92, __pyx_L1_error)
+  __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
+  __pyx_t_8 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_raster); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 92, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_8);
+  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_t_8, __pyx_n_s_RasterYSize); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 92, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_2);
+  __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
+  if (PyDict_SetItem(__pyx_t_3, __pyx_n_s_ysize, __pyx_t_2) < 0) __PYX_ERR(0, 92, __pyx_L1_error)
+  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+  if (PyDict_SetItem(__pyx_t_3, __pyx_n_s_bands, __pyx_int_1) < 0) __PYX_ERR(0, 92, __pyx_L1_error)
+  __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_n_s_gdal); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 92, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_2);
+  __pyx_t_8 = __Pyx_PyObject_GetAttrStr(__pyx_t_2, __pyx_n_s_GDT_Int16); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 92, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_8);
+  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+  if (PyDict_SetItem(__pyx_t_3, __pyx_n_s_eType, __pyx_t_8) < 0) __PYX_ERR(0, 92, __pyx_L1_error)
+  __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
+  __pyx_t_8 = __Pyx_PyObject_Call(__pyx_t_1, __pyx_tuple__3, __pyx_t_3); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 92, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_8);
+  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
   __pyx_v_output = __pyx_t_8;
   __pyx_t_8 = 0;
 
-  /* "utils_cy.pyx":90
+  /* "utils_cy.pyx":93
  *         driver = gdal.GetDriverByName('MEM') #initialize in memory driver
- *         output = driver.Create('', xsize=self.raster.RasterXSize, ysize=self.raster.RasterYSize, bands=1, eType=gdal.GDT_Byte) #create rater
+ *         output = driver.Create('', xsize=self.raster.RasterXSize, ysize=self.raster.RasterYSize, bands=1, eType=gdal.GDT_Int16) #create rater
  *         output.SetGeoTransform(self.transform) #set geotransform of output image             # <<<<<<<<<<<<<<
  *         output.SetProjection(srs.ExportToWkt()) #set projection of output image
  *         output.GetRasterBand(1).WriteArray(combinedArray.astype(int))  #write the array to the raster
  */
-  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_v_output, __pyx_n_s_SetGeoTransform); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 90, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_v_output, __pyx_n_s_SetGeoTransform); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 93, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
-  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_transform); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 90, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_2);
-  __pyx_t_1 = NULL;
+  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_transform); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 93, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
+  __pyx_t_2 = NULL;
   if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_3))) {
-    __pyx_t_1 = PyMethod_GET_SELF(__pyx_t_3);
-    if (likely(__pyx_t_1)) {
+    __pyx_t_2 = PyMethod_GET_SELF(__pyx_t_3);
+    if (likely(__pyx_t_2)) {
       PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_3);
-      __Pyx_INCREF(__pyx_t_1);
+      __Pyx_INCREF(__pyx_t_2);
       __Pyx_INCREF(function);
       __Pyx_DECREF_SET(__pyx_t_3, function);
     }
   }
-  __pyx_t_8 = (__pyx_t_1) ? __Pyx_PyObject_Call2Args(__pyx_t_3, __pyx_t_1, __pyx_t_2) : __Pyx_PyObject_CallOneArg(__pyx_t_3, __pyx_t_2);
-  __Pyx_XDECREF(__pyx_t_1); __pyx_t_1 = 0;
-  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 90, __pyx_L1_error)
+  __pyx_t_8 = (__pyx_t_2) ? __Pyx_PyObject_Call2Args(__pyx_t_3, __pyx_t_2, __pyx_t_1) : __Pyx_PyObject_CallOneArg(__pyx_t_3, __pyx_t_1);
+  __Pyx_XDECREF(__pyx_t_2); __pyx_t_2 = 0;
+  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+  if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 93, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_8);
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
   __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
 
-  /* "utils_cy.pyx":91
- *         output = driver.Create('', xsize=self.raster.RasterXSize, ysize=self.raster.RasterYSize, bands=1, eType=gdal.GDT_Byte) #create rater
+  /* "utils_cy.pyx":94
+ *         output = driver.Create('', xsize=self.raster.RasterXSize, ysize=self.raster.RasterYSize, bands=1, eType=gdal.GDT_Int16) #create rater
  *         output.SetGeoTransform(self.transform) #set geotransform of output image
  *         output.SetProjection(srs.ExportToWkt()) #set projection of output image             # <<<<<<<<<<<<<<
  *         output.GetRasterBand(1).WriteArray(combinedArray.astype(int))  #write the array to the raster
  *         output.GetRasterBand(1).SetNoDataValue(-999)  #set the no data value
  */
-  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_v_output, __pyx_n_s_SetProjection); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 91, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_v_output, __pyx_n_s_SetProjection); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 94, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
-  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_srs, __pyx_n_s_ExportToWkt); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 91, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_1);
+  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_srs, __pyx_n_s_ExportToWkt); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 94, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_2);
   __pyx_t_10 = NULL;
-  if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_1))) {
-    __pyx_t_10 = PyMethod_GET_SELF(__pyx_t_1);
-    if (likely(__pyx_t_10)) {
-      PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_1);
-      __Pyx_INCREF(__pyx_t_10);
-      __Pyx_INCREF(function);
-      __Pyx_DECREF_SET(__pyx_t_1, function);
-    }
-  }
-  __pyx_t_2 = (__pyx_t_10) ? __Pyx_PyObject_CallOneArg(__pyx_t_1, __pyx_t_10) : __Pyx_PyObject_CallNoArg(__pyx_t_1);
-  __Pyx_XDECREF(__pyx_t_10); __pyx_t_10 = 0;
-  if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 91, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_2);
-  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-  __pyx_t_1 = NULL;
-  if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_3))) {
-    __pyx_t_1 = PyMethod_GET_SELF(__pyx_t_3);
-    if (likely(__pyx_t_1)) {
-      PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_3);
-      __Pyx_INCREF(__pyx_t_1);
-      __Pyx_INCREF(function);
-      __Pyx_DECREF_SET(__pyx_t_3, function);
-    }
-  }
-  __pyx_t_8 = (__pyx_t_1) ? __Pyx_PyObject_Call2Args(__pyx_t_3, __pyx_t_1, __pyx_t_2) : __Pyx_PyObject_CallOneArg(__pyx_t_3, __pyx_t_2);
-  __Pyx_XDECREF(__pyx_t_1); __pyx_t_1 = 0;
-  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 91, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_8);
-  __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-  __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
-
-  /* "utils_cy.pyx":92
- *         output.SetGeoTransform(self.transform) #set geotransform of output image
- *         output.SetProjection(srs.ExportToWkt()) #set projection of output image
- *         output.GetRasterBand(1).WriteArray(combinedArray.astype(int))  #write the array to the raster             # <<<<<<<<<<<<<<
- *         output.GetRasterBand(1).SetNoDataValue(-999)  #set the no data value
- * 
- */
-  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_output, __pyx_n_s_GetRasterBand); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 92, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_2);
-  __pyx_t_1 = NULL;
   if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_2))) {
-    __pyx_t_1 = PyMethod_GET_SELF(__pyx_t_2);
-    if (likely(__pyx_t_1)) {
+    __pyx_t_10 = PyMethod_GET_SELF(__pyx_t_2);
+    if (likely(__pyx_t_10)) {
       PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_2);
-      __Pyx_INCREF(__pyx_t_1);
+      __Pyx_INCREF(__pyx_t_10);
       __Pyx_INCREF(function);
       __Pyx_DECREF_SET(__pyx_t_2, function);
     }
   }
-  __pyx_t_3 = (__pyx_t_1) ? __Pyx_PyObject_Call2Args(__pyx_t_2, __pyx_t_1, __pyx_int_1) : __Pyx_PyObject_CallOneArg(__pyx_t_2, __pyx_int_1);
-  __Pyx_XDECREF(__pyx_t_1); __pyx_t_1 = 0;
-  if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 92, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_3);
-  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_t_3, __pyx_n_s_WriteArray); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 92, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_2);
-  __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_combinedArray, __pyx_n_s_astype); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 92, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_10 = NULL;
-  if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_1))) {
-    __pyx_t_10 = PyMethod_GET_SELF(__pyx_t_1);
-    if (likely(__pyx_t_10)) {
-      PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_1);
-      __Pyx_INCREF(__pyx_t_10);
-      __Pyx_INCREF(function);
-      __Pyx_DECREF_SET(__pyx_t_1, function);
-    }
-  }
-  __pyx_t_3 = (__pyx_t_10) ? __Pyx_PyObject_Call2Args(__pyx_t_1, __pyx_t_10, ((PyObject *)(&PyInt_Type))) : __Pyx_PyObject_CallOneArg(__pyx_t_1, ((PyObject *)(&PyInt_Type)));
+  __pyx_t_1 = (__pyx_t_10) ? __Pyx_PyObject_CallOneArg(__pyx_t_2, __pyx_t_10) : __Pyx_PyObject_CallNoArg(__pyx_t_2);
   __Pyx_XDECREF(__pyx_t_10); __pyx_t_10 = 0;
-  if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 92, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_3);
-  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-  __pyx_t_1 = NULL;
-  if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_2))) {
-    __pyx_t_1 = PyMethod_GET_SELF(__pyx_t_2);
-    if (likely(__pyx_t_1)) {
-      PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_2);
-      __Pyx_INCREF(__pyx_t_1);
-      __Pyx_INCREF(function);
-      __Pyx_DECREF_SET(__pyx_t_2, function);
-    }
-  }
-  __pyx_t_8 = (__pyx_t_1) ? __Pyx_PyObject_Call2Args(__pyx_t_2, __pyx_t_1, __pyx_t_3) : __Pyx_PyObject_CallOneArg(__pyx_t_2, __pyx_t_3);
-  __Pyx_XDECREF(__pyx_t_1); __pyx_t_1 = 0;
-  __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-  if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 92, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_8);
-  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
-
-  /* "utils_cy.pyx":93
- *         output.SetProjection(srs.ExportToWkt()) #set projection of output image
- *         output.GetRasterBand(1).WriteArray(combinedArray.astype(int))  #write the array to the raster
- *         output.GetRasterBand(1).SetNoDataValue(-999)  #set the no data value             # <<<<<<<<<<<<<<
- * 
- *         drv = ogr.GetDriverByName('GEOJSON') #initialize GEOJSON driver
- */
-  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_v_output, __pyx_n_s_GetRasterBand); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 93, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_3);
-  __pyx_t_1 = NULL;
-  if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_3))) {
-    __pyx_t_1 = PyMethod_GET_SELF(__pyx_t_3);
-    if (likely(__pyx_t_1)) {
-      PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_3);
-      __Pyx_INCREF(__pyx_t_1);
-      __Pyx_INCREF(function);
-      __Pyx_DECREF_SET(__pyx_t_3, function);
-    }
-  }
-  __pyx_t_2 = (__pyx_t_1) ? __Pyx_PyObject_Call2Args(__pyx_t_3, __pyx_t_1, __pyx_int_1) : __Pyx_PyObject_CallOneArg(__pyx_t_3, __pyx_int_1);
-  __Pyx_XDECREF(__pyx_t_1); __pyx_t_1 = 0;
-  if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 93, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_2);
-  __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_t_2, __pyx_n_s_SetNoDataValue); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 93, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_3);
+  if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 94, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   __pyx_t_2 = NULL;
   if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_3))) {
@@ -2776,129 +3193,236 @@ static PyObject *__pyx_pf_8utils_cy_13DistanceStack_2filterStack(CYTHON_UNUSED P
       __Pyx_DECREF_SET(__pyx_t_3, function);
     }
   }
-  __pyx_t_8 = (__pyx_t_2) ? __Pyx_PyObject_Call2Args(__pyx_t_3, __pyx_t_2, __pyx_int_neg_999) : __Pyx_PyObject_CallOneArg(__pyx_t_3, __pyx_int_neg_999);
+  __pyx_t_8 = (__pyx_t_2) ? __Pyx_PyObject_Call2Args(__pyx_t_3, __pyx_t_2, __pyx_t_1) : __Pyx_PyObject_CallOneArg(__pyx_t_3, __pyx_t_1);
   __Pyx_XDECREF(__pyx_t_2); __pyx_t_2 = 0;
-  if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 93, __pyx_L1_error)
+  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+  if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 94, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_8);
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
   __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
 
   /* "utils_cy.pyx":95
+ *         output.SetGeoTransform(self.transform) #set geotransform of output image
+ *         output.SetProjection(srs.ExportToWkt()) #set projection of output image
+ *         output.GetRasterBand(1).WriteArray(combinedArray.astype(int))  #write the array to the raster             # <<<<<<<<<<<<<<
+ *         output.GetRasterBand(1).SetNoDataValue(-999)  #set the no data value
+ * 
+ */
+  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_output, __pyx_n_s_GetRasterBand); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 95, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
+  __pyx_t_2 = NULL;
+  if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_1))) {
+    __pyx_t_2 = PyMethod_GET_SELF(__pyx_t_1);
+    if (likely(__pyx_t_2)) {
+      PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_1);
+      __Pyx_INCREF(__pyx_t_2);
+      __Pyx_INCREF(function);
+      __Pyx_DECREF_SET(__pyx_t_1, function);
+    }
+  }
+  __pyx_t_3 = (__pyx_t_2) ? __Pyx_PyObject_Call2Args(__pyx_t_1, __pyx_t_2, __pyx_int_1) : __Pyx_PyObject_CallOneArg(__pyx_t_1, __pyx_int_1);
+  __Pyx_XDECREF(__pyx_t_2); __pyx_t_2 = 0;
+  if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 95, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_3);
+  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_t_3, __pyx_n_s_WriteArray); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 95, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
+  __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_combinedArray, __pyx_n_s_astype); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 95, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_2);
+  __pyx_t_10 = NULL;
+  if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_2))) {
+    __pyx_t_10 = PyMethod_GET_SELF(__pyx_t_2);
+    if (likely(__pyx_t_10)) {
+      PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_2);
+      __Pyx_INCREF(__pyx_t_10);
+      __Pyx_INCREF(function);
+      __Pyx_DECREF_SET(__pyx_t_2, function);
+    }
+  }
+  __pyx_t_3 = (__pyx_t_10) ? __Pyx_PyObject_Call2Args(__pyx_t_2, __pyx_t_10, ((PyObject *)(&PyInt_Type))) : __Pyx_PyObject_CallOneArg(__pyx_t_2, ((PyObject *)(&PyInt_Type)));
+  __Pyx_XDECREF(__pyx_t_10); __pyx_t_10 = 0;
+  if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 95, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_3);
+  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+  __pyx_t_2 = NULL;
+  if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_1))) {
+    __pyx_t_2 = PyMethod_GET_SELF(__pyx_t_1);
+    if (likely(__pyx_t_2)) {
+      PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_1);
+      __Pyx_INCREF(__pyx_t_2);
+      __Pyx_INCREF(function);
+      __Pyx_DECREF_SET(__pyx_t_1, function);
+    }
+  }
+  __pyx_t_8 = (__pyx_t_2) ? __Pyx_PyObject_Call2Args(__pyx_t_1, __pyx_t_2, __pyx_t_3) : __Pyx_PyObject_CallOneArg(__pyx_t_1, __pyx_t_3);
+  __Pyx_XDECREF(__pyx_t_2); __pyx_t_2 = 0;
+  __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+  if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 95, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_8);
+  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+  __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
+
+  /* "utils_cy.pyx":96
+ *         output.SetProjection(srs.ExportToWkt()) #set projection of output image
+ *         output.GetRasterBand(1).WriteArray(combinedArray.astype(int))  #write the array to the raster
+ *         output.GetRasterBand(1).SetNoDataValue(-999)  #set the no data value             # <<<<<<<<<<<<<<
+ * 
+ *         drv = ogr.GetDriverByName('GEOJSON') #initialize GEOJSON driver
+ */
+  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_v_output, __pyx_n_s_GetRasterBand); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 96, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_3);
+  __pyx_t_2 = NULL;
+  if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_3))) {
+    __pyx_t_2 = PyMethod_GET_SELF(__pyx_t_3);
+    if (likely(__pyx_t_2)) {
+      PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_3);
+      __Pyx_INCREF(__pyx_t_2);
+      __Pyx_INCREF(function);
+      __Pyx_DECREF_SET(__pyx_t_3, function);
+    }
+  }
+  __pyx_t_1 = (__pyx_t_2) ? __Pyx_PyObject_Call2Args(__pyx_t_3, __pyx_t_2, __pyx_int_1) : __Pyx_PyObject_CallOneArg(__pyx_t_3, __pyx_int_1);
+  __Pyx_XDECREF(__pyx_t_2); __pyx_t_2 = 0;
+  if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 96, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
+  __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_t_1, __pyx_n_s_SetNoDataValue); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 96, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_3);
+  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+  __pyx_t_1 = NULL;
+  if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_3))) {
+    __pyx_t_1 = PyMethod_GET_SELF(__pyx_t_3);
+    if (likely(__pyx_t_1)) {
+      PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_3);
+      __Pyx_INCREF(__pyx_t_1);
+      __Pyx_INCREF(function);
+      __Pyx_DECREF_SET(__pyx_t_3, function);
+    }
+  }
+  __pyx_t_8 = (__pyx_t_1) ? __Pyx_PyObject_Call2Args(__pyx_t_3, __pyx_t_1, __pyx_int_neg_999) : __Pyx_PyObject_CallOneArg(__pyx_t_3, __pyx_int_neg_999);
+  __Pyx_XDECREF(__pyx_t_1); __pyx_t_1 = 0;
+  if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 96, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_8);
+  __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+  __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
+
+  /* "utils_cy.pyx":98
  *         output.GetRasterBand(1).SetNoDataValue(-999)  #set the no data value
  * 
  *         drv = ogr.GetDriverByName('GEOJSON') #initialize GEOJSON driver             # <<<<<<<<<<<<<<
  *         outfile = drv.CreateDataSource("usr/src/backend/results/" + self.uuid + ".json") #create GEOJSON
  *         outlayer = outfile.CreateLayer('test', srs=srs, geom_type=ogr.wkbPolygon) #add layer to GEOJSON
  */
-  __Pyx_GetModuleGlobalName(__pyx_t_3, __pyx_n_s_ogr); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 95, __pyx_L1_error)
+  __Pyx_GetModuleGlobalName(__pyx_t_3, __pyx_n_s_ogr); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 98, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
-  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_t_3, __pyx_n_s_GetDriverByName); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 95, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_2);
+  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_t_3, __pyx_n_s_GetDriverByName); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 98, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
   __pyx_t_3 = NULL;
-  if (CYTHON_UNPACK_METHODS && unlikely(PyMethod_Check(__pyx_t_2))) {
-    __pyx_t_3 = PyMethod_GET_SELF(__pyx_t_2);
+  if (CYTHON_UNPACK_METHODS && unlikely(PyMethod_Check(__pyx_t_1))) {
+    __pyx_t_3 = PyMethod_GET_SELF(__pyx_t_1);
     if (likely(__pyx_t_3)) {
-      PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_2);
+      PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_1);
       __Pyx_INCREF(__pyx_t_3);
       __Pyx_INCREF(function);
-      __Pyx_DECREF_SET(__pyx_t_2, function);
+      __Pyx_DECREF_SET(__pyx_t_1, function);
     }
   }
-  __pyx_t_8 = (__pyx_t_3) ? __Pyx_PyObject_Call2Args(__pyx_t_2, __pyx_t_3, __pyx_n_u_GEOJSON) : __Pyx_PyObject_CallOneArg(__pyx_t_2, __pyx_n_u_GEOJSON);
+  __pyx_t_8 = (__pyx_t_3) ? __Pyx_PyObject_Call2Args(__pyx_t_1, __pyx_t_3, __pyx_n_u_GEOJSON) : __Pyx_PyObject_CallOneArg(__pyx_t_1, __pyx_n_u_GEOJSON);
   __Pyx_XDECREF(__pyx_t_3); __pyx_t_3 = 0;
-  if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 95, __pyx_L1_error)
+  if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 98, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_8);
-  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   __pyx_v_drv = __pyx_t_8;
   __pyx_t_8 = 0;
 
-  /* "utils_cy.pyx":96
+  /* "utils_cy.pyx":99
  * 
  *         drv = ogr.GetDriverByName('GEOJSON') #initialize GEOJSON driver
  *         outfile = drv.CreateDataSource("usr/src/backend/results/" + self.uuid + ".json") #create GEOJSON             # <<<<<<<<<<<<<<
  *         outlayer = outfile.CreateLayer('test', srs=srs, geom_type=ogr.wkbPolygon) #add layer to GEOJSON
- *         newField = ogr.FieldDefn('DN', ogr.OFTReal) #create field
+ *         newField = ogr.FieldDefn('DN', ogr.OFTInteger) #create field
  */
-  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_drv, __pyx_n_s_CreateDataSource); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 96, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_2);
-  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_uuid); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 96, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_3);
-  __pyx_t_1 = PyNumber_Add(__pyx_kp_u_usr_src_backend_results, __pyx_t_3); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 96, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_drv, __pyx_n_s_CreateDataSource); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 99, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-  __pyx_t_3 = PyNumber_Add(__pyx_t_1, __pyx_kp_u_json); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 96, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_uuid); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 99, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
-  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-  __pyx_t_1 = NULL;
-  if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_2))) {
-    __pyx_t_1 = PyMethod_GET_SELF(__pyx_t_2);
-    if (likely(__pyx_t_1)) {
-      PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_2);
-      __Pyx_INCREF(__pyx_t_1);
-      __Pyx_INCREF(function);
-      __Pyx_DECREF_SET(__pyx_t_2, function);
-    }
-  }
-  __pyx_t_8 = (__pyx_t_1) ? __Pyx_PyObject_Call2Args(__pyx_t_2, __pyx_t_1, __pyx_t_3) : __Pyx_PyObject_CallOneArg(__pyx_t_2, __pyx_t_3);
-  __Pyx_XDECREF(__pyx_t_1); __pyx_t_1 = 0;
+  __pyx_t_2 = PyNumber_Add(__pyx_kp_u_usr_src_backend_results, __pyx_t_3); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 99, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_2);
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-  if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 96, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_8);
-  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  __pyx_v_outfile = __pyx_t_8;
-  __pyx_t_8 = 0;
-
-  /* "utils_cy.pyx":97
- *         drv = ogr.GetDriverByName('GEOJSON') #initialize GEOJSON driver
- *         outfile = drv.CreateDataSource("usr/src/backend/results/" + self.uuid + ".json") #create GEOJSON
- *         outlayer = outfile.CreateLayer('test', srs=srs, geom_type=ogr.wkbPolygon) #add layer to GEOJSON             # <<<<<<<<<<<<<<
- *         newField = ogr.FieldDefn('DN', ogr.OFTReal) #create field
- *         outlayer.CreateField(newField) #add field to GEOJSON
- */
-  __pyx_t_8 = __Pyx_PyObject_GetAttrStr(__pyx_v_outfile, __pyx_n_s_CreateLayer); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 97, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_8);
-  __pyx_t_2 = __Pyx_PyDict_NewPresized(2); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 97, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_2);
-  if (PyDict_SetItem(__pyx_t_2, __pyx_n_s_srs, __pyx_v_srs) < 0) __PYX_ERR(0, 97, __pyx_L1_error)
-  __Pyx_GetModuleGlobalName(__pyx_t_3, __pyx_n_s_ogr); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 97, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_3);
-  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_t_3, __pyx_n_s_wkbPolygon); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 97, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_1);
-  __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-  if (PyDict_SetItem(__pyx_t_2, __pyx_n_s_geom_type, __pyx_t_1) < 0) __PYX_ERR(0, 97, __pyx_L1_error)
-  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-  __pyx_t_1 = __Pyx_PyObject_Call(__pyx_t_8, __pyx_tuple__4, __pyx_t_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 97, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_1);
-  __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
-  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  __pyx_v_outlayer = __pyx_t_1;
-  __pyx_t_1 = 0;
-
-  /* "utils_cy.pyx":98
- *         outfile = drv.CreateDataSource("usr/src/backend/results/" + self.uuid + ".json") #create GEOJSON
- *         outlayer = outfile.CreateLayer('test', srs=srs, geom_type=ogr.wkbPolygon) #add layer to GEOJSON
- *         newField = ogr.FieldDefn('DN', ogr.OFTReal) #create field             # <<<<<<<<<<<<<<
- *         outlayer.CreateField(newField) #add field to GEOJSON
- * 
- */
-  __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_n_s_ogr); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 98, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_2);
-  __pyx_t_8 = __Pyx_PyObject_GetAttrStr(__pyx_t_2, __pyx_n_s_FieldDefn); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 98, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_8);
-  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_n_s_ogr); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 98, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_2);
-  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_t_2, __pyx_n_s_OFTReal); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 98, __pyx_L1_error)
+  __pyx_t_3 = PyNumber_Add(__pyx_t_2, __pyx_kp_u_json); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 99, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   __pyx_t_2 = NULL;
+  if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_1))) {
+    __pyx_t_2 = PyMethod_GET_SELF(__pyx_t_1);
+    if (likely(__pyx_t_2)) {
+      PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_1);
+      __Pyx_INCREF(__pyx_t_2);
+      __Pyx_INCREF(function);
+      __Pyx_DECREF_SET(__pyx_t_1, function);
+    }
+  }
+  __pyx_t_8 = (__pyx_t_2) ? __Pyx_PyObject_Call2Args(__pyx_t_1, __pyx_t_2, __pyx_t_3) : __Pyx_PyObject_CallOneArg(__pyx_t_1, __pyx_t_3);
+  __Pyx_XDECREF(__pyx_t_2); __pyx_t_2 = 0;
+  __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+  if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 99, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_8);
+  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+  __pyx_v_outfile = __pyx_t_8;
+  __pyx_t_8 = 0;
+
+  /* "utils_cy.pyx":100
+ *         drv = ogr.GetDriverByName('GEOJSON') #initialize GEOJSON driver
+ *         outfile = drv.CreateDataSource("usr/src/backend/results/" + self.uuid + ".json") #create GEOJSON
+ *         outlayer = outfile.CreateLayer('test', srs=srs, geom_type=ogr.wkbPolygon) #add layer to GEOJSON             # <<<<<<<<<<<<<<
+ *         newField = ogr.FieldDefn('DN', ogr.OFTInteger) #create field
+ *         outlayer.CreateField(newField) #add field to GEOJSON
+ */
+  __pyx_t_8 = __Pyx_PyObject_GetAttrStr(__pyx_v_outfile, __pyx_n_s_CreateLayer); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 100, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_8);
+  __pyx_t_1 = __Pyx_PyDict_NewPresized(2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 100, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
+  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_srs, __pyx_v_srs) < 0) __PYX_ERR(0, 100, __pyx_L1_error)
+  __Pyx_GetModuleGlobalName(__pyx_t_3, __pyx_n_s_ogr); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 100, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_3);
+  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_t_3, __pyx_n_s_wkbPolygon); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 100, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_2);
+  __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_geom_type, __pyx_t_2) < 0) __PYX_ERR(0, 100, __pyx_L1_error)
+  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+  __pyx_t_2 = __Pyx_PyObject_Call(__pyx_t_8, __pyx_tuple__4, __pyx_t_1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 100, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_2);
+  __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
+  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+  __pyx_v_outlayer = __pyx_t_2;
+  __pyx_t_2 = 0;
+
+  /* "utils_cy.pyx":101
+ *         outfile = drv.CreateDataSource("usr/src/backend/results/" + self.uuid + ".json") #create GEOJSON
+ *         outlayer = outfile.CreateLayer('test', srs=srs, geom_type=ogr.wkbPolygon) #add layer to GEOJSON
+ *         newField = ogr.FieldDefn('DN', ogr.OFTInteger) #create field             # <<<<<<<<<<<<<<
+ *         outlayer.CreateField(newField) #add field to GEOJSON
+ * 
+ */
+  __Pyx_GetModuleGlobalName(__pyx_t_1, __pyx_n_s_ogr); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 101, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
+  __pyx_t_8 = __Pyx_PyObject_GetAttrStr(__pyx_t_1, __pyx_n_s_FieldDefn); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 101, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_8);
+  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+  __Pyx_GetModuleGlobalName(__pyx_t_1, __pyx_n_s_ogr); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 101, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
+  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_t_1, __pyx_n_s_OFTInteger); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 101, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_3);
+  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+  __pyx_t_1 = NULL;
   __pyx_t_6 = 0;
   if (CYTHON_UNPACK_METHODS && unlikely(PyMethod_Check(__pyx_t_8))) {
-    __pyx_t_2 = PyMethod_GET_SELF(__pyx_t_8);
-    if (likely(__pyx_t_2)) {
+    __pyx_t_1 = PyMethod_GET_SELF(__pyx_t_8);
+    if (likely(__pyx_t_1)) {
       PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_8);
-      __Pyx_INCREF(__pyx_t_2);
+      __Pyx_INCREF(__pyx_t_1);
       __Pyx_INCREF(function);
       __Pyx_DECREF_SET(__pyx_t_8, function);
       __pyx_t_6 = 1;
@@ -2906,27 +3430,27 @@ static PyObject *__pyx_pf_8utils_cy_13DistanceStack_2filterStack(CYTHON_UNUSED P
   }
   #if CYTHON_FAST_PYCALL
   if (PyFunction_Check(__pyx_t_8)) {
-    PyObject *__pyx_temp[3] = {__pyx_t_2, __pyx_n_u_DN, __pyx_t_3};
-    __pyx_t_1 = __Pyx_PyFunction_FastCall(__pyx_t_8, __pyx_temp+1-__pyx_t_6, 2+__pyx_t_6); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 98, __pyx_L1_error)
-    __Pyx_XDECREF(__pyx_t_2); __pyx_t_2 = 0;
-    __Pyx_GOTREF(__pyx_t_1);
+    PyObject *__pyx_temp[3] = {__pyx_t_1, __pyx_n_u_DN, __pyx_t_3};
+    __pyx_t_2 = __Pyx_PyFunction_FastCall(__pyx_t_8, __pyx_temp+1-__pyx_t_6, 2+__pyx_t_6); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 101, __pyx_L1_error)
+    __Pyx_XDECREF(__pyx_t_1); __pyx_t_1 = 0;
+    __Pyx_GOTREF(__pyx_t_2);
     __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
   } else
   #endif
   #if CYTHON_FAST_PYCCALL
   if (__Pyx_PyFastCFunction_Check(__pyx_t_8)) {
-    PyObject *__pyx_temp[3] = {__pyx_t_2, __pyx_n_u_DN, __pyx_t_3};
-    __pyx_t_1 = __Pyx_PyCFunction_FastCall(__pyx_t_8, __pyx_temp+1-__pyx_t_6, 2+__pyx_t_6); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 98, __pyx_L1_error)
-    __Pyx_XDECREF(__pyx_t_2); __pyx_t_2 = 0;
-    __Pyx_GOTREF(__pyx_t_1);
+    PyObject *__pyx_temp[3] = {__pyx_t_1, __pyx_n_u_DN, __pyx_t_3};
+    __pyx_t_2 = __Pyx_PyCFunction_FastCall(__pyx_t_8, __pyx_temp+1-__pyx_t_6, 2+__pyx_t_6); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 101, __pyx_L1_error)
+    __Pyx_XDECREF(__pyx_t_1); __pyx_t_1 = 0;
+    __Pyx_GOTREF(__pyx_t_2);
     __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
   } else
   #endif
   {
-    __pyx_t_10 = PyTuple_New(2+__pyx_t_6); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 98, __pyx_L1_error)
+    __pyx_t_10 = PyTuple_New(2+__pyx_t_6); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 101, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_10);
-    if (__pyx_t_2) {
-      __Pyx_GIVEREF(__pyx_t_2); PyTuple_SET_ITEM(__pyx_t_10, 0, __pyx_t_2); __pyx_t_2 = NULL;
+    if (__pyx_t_1) {
+      __Pyx_GIVEREF(__pyx_t_1); PyTuple_SET_ITEM(__pyx_t_10, 0, __pyx_t_1); __pyx_t_1 = NULL;
     }
     __Pyx_INCREF(__pyx_n_u_DN);
     __Pyx_GIVEREF(__pyx_n_u_DN);
@@ -2934,22 +3458,22 @@ static PyObject *__pyx_pf_8utils_cy_13DistanceStack_2filterStack(CYTHON_UNUSED P
     __Pyx_GIVEREF(__pyx_t_3);
     PyTuple_SET_ITEM(__pyx_t_10, 1+__pyx_t_6, __pyx_t_3);
     __pyx_t_3 = 0;
-    __pyx_t_1 = __Pyx_PyObject_Call(__pyx_t_8, __pyx_t_10, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 98, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_1);
+    __pyx_t_2 = __Pyx_PyObject_Call(__pyx_t_8, __pyx_t_10, NULL); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 101, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_2);
     __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
   }
   __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
-  __pyx_v_newField = __pyx_t_1;
-  __pyx_t_1 = 0;
+  __pyx_v_newField = __pyx_t_2;
+  __pyx_t_2 = 0;
 
-  /* "utils_cy.pyx":99
+  /* "utils_cy.pyx":102
  *         outlayer = outfile.CreateLayer('test', srs=srs, geom_type=ogr.wkbPolygon) #add layer to GEOJSON
- *         newField = ogr.FieldDefn('DN', ogr.OFTReal) #create field
+ *         newField = ogr.FieldDefn('DN', ogr.OFTInteger) #create field
  *         outlayer.CreateField(newField) #add field to GEOJSON             # <<<<<<<<<<<<<<
  * 
  *         gdal.Polygonize(output.GetRasterBand(1), None, outlayer, 0, []) #polygonize combined raster based on pixel values
  */
-  __pyx_t_8 = __Pyx_PyObject_GetAttrStr(__pyx_v_outlayer, __pyx_n_s_CreateField); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 99, __pyx_L1_error)
+  __pyx_t_8 = __Pyx_PyObject_GetAttrStr(__pyx_v_outlayer, __pyx_n_s_CreateField); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 102, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_8);
   __pyx_t_10 = NULL;
   if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_8))) {
@@ -2961,51 +3485,51 @@ static PyObject *__pyx_pf_8utils_cy_13DistanceStack_2filterStack(CYTHON_UNUSED P
       __Pyx_DECREF_SET(__pyx_t_8, function);
     }
   }
-  __pyx_t_1 = (__pyx_t_10) ? __Pyx_PyObject_Call2Args(__pyx_t_8, __pyx_t_10, __pyx_v_newField) : __Pyx_PyObject_CallOneArg(__pyx_t_8, __pyx_v_newField);
+  __pyx_t_2 = (__pyx_t_10) ? __Pyx_PyObject_Call2Args(__pyx_t_8, __pyx_t_10, __pyx_v_newField) : __Pyx_PyObject_CallOneArg(__pyx_t_8, __pyx_v_newField);
   __Pyx_XDECREF(__pyx_t_10); __pyx_t_10 = 0;
-  if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 99, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_1);
+  if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 102, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_2);
   __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
-  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
-  /* "utils_cy.pyx":101
+  /* "utils_cy.pyx":104
  *         outlayer.CreateField(newField) #add field to GEOJSON
  * 
  *         gdal.Polygonize(output.GetRasterBand(1), None, outlayer, 0, []) #polygonize combined raster based on pixel values             # <<<<<<<<<<<<<<
  *         output = outfile = outlayer =  None #free variables
  *         return self.uuid #return uuid of DistanceStack
  */
-  __Pyx_GetModuleGlobalName(__pyx_t_8, __pyx_n_s_gdal); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 101, __pyx_L1_error)
+  __Pyx_GetModuleGlobalName(__pyx_t_8, __pyx_n_s_gdal); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 104, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_8);
-  __pyx_t_10 = __Pyx_PyObject_GetAttrStr(__pyx_t_8, __pyx_n_s_Polygonize); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 101, __pyx_L1_error)
+  __pyx_t_10 = __Pyx_PyObject_GetAttrStr(__pyx_t_8, __pyx_n_s_Polygonize); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 104, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_10);
   __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
-  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_v_output, __pyx_n_s_GetRasterBand); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 101, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_v_output, __pyx_n_s_GetRasterBand); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 104, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
-  __pyx_t_2 = NULL;
+  __pyx_t_1 = NULL;
   if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_3))) {
-    __pyx_t_2 = PyMethod_GET_SELF(__pyx_t_3);
-    if (likely(__pyx_t_2)) {
+    __pyx_t_1 = PyMethod_GET_SELF(__pyx_t_3);
+    if (likely(__pyx_t_1)) {
       PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_3);
-      __Pyx_INCREF(__pyx_t_2);
+      __Pyx_INCREF(__pyx_t_1);
       __Pyx_INCREF(function);
       __Pyx_DECREF_SET(__pyx_t_3, function);
     }
   }
-  __pyx_t_8 = (__pyx_t_2) ? __Pyx_PyObject_Call2Args(__pyx_t_3, __pyx_t_2, __pyx_int_1) : __Pyx_PyObject_CallOneArg(__pyx_t_3, __pyx_int_1);
-  __Pyx_XDECREF(__pyx_t_2); __pyx_t_2 = 0;
-  if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 101, __pyx_L1_error)
+  __pyx_t_8 = (__pyx_t_1) ? __Pyx_PyObject_Call2Args(__pyx_t_3, __pyx_t_1, __pyx_int_1) : __Pyx_PyObject_CallOneArg(__pyx_t_3, __pyx_int_1);
+  __Pyx_XDECREF(__pyx_t_1); __pyx_t_1 = 0;
+  if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 104, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_8);
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-  __pyx_t_3 = PyList_New(0); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 101, __pyx_L1_error)
+  __pyx_t_3 = PyList_New(0); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 104, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
-  __pyx_t_2 = NULL;
+  __pyx_t_1 = NULL;
   __pyx_t_6 = 0;
   if (CYTHON_UNPACK_METHODS && unlikely(PyMethod_Check(__pyx_t_10))) {
-    __pyx_t_2 = PyMethod_GET_SELF(__pyx_t_10);
-    if (likely(__pyx_t_2)) {
+    __pyx_t_1 = PyMethod_GET_SELF(__pyx_t_10);
+    if (likely(__pyx_t_1)) {
       PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_10);
-      __Pyx_INCREF(__pyx_t_2);
+      __Pyx_INCREF(__pyx_t_1);
       __Pyx_INCREF(function);
       __Pyx_DECREF_SET(__pyx_t_10, function);
       __pyx_t_6 = 1;
@@ -3013,29 +3537,29 @@ static PyObject *__pyx_pf_8utils_cy_13DistanceStack_2filterStack(CYTHON_UNUSED P
   }
   #if CYTHON_FAST_PYCALL
   if (PyFunction_Check(__pyx_t_10)) {
-    PyObject *__pyx_temp[6] = {__pyx_t_2, __pyx_t_8, Py_None, __pyx_v_outlayer, __pyx_int_0, __pyx_t_3};
-    __pyx_t_1 = __Pyx_PyFunction_FastCall(__pyx_t_10, __pyx_temp+1-__pyx_t_6, 5+__pyx_t_6); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 101, __pyx_L1_error)
-    __Pyx_XDECREF(__pyx_t_2); __pyx_t_2 = 0;
-    __Pyx_GOTREF(__pyx_t_1);
+    PyObject *__pyx_temp[6] = {__pyx_t_1, __pyx_t_8, Py_None, __pyx_v_outlayer, __pyx_int_0, __pyx_t_3};
+    __pyx_t_2 = __Pyx_PyFunction_FastCall(__pyx_t_10, __pyx_temp+1-__pyx_t_6, 5+__pyx_t_6); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 104, __pyx_L1_error)
+    __Pyx_XDECREF(__pyx_t_1); __pyx_t_1 = 0;
+    __Pyx_GOTREF(__pyx_t_2);
     __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
     __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
   } else
   #endif
   #if CYTHON_FAST_PYCCALL
   if (__Pyx_PyFastCFunction_Check(__pyx_t_10)) {
-    PyObject *__pyx_temp[6] = {__pyx_t_2, __pyx_t_8, Py_None, __pyx_v_outlayer, __pyx_int_0, __pyx_t_3};
-    __pyx_t_1 = __Pyx_PyCFunction_FastCall(__pyx_t_10, __pyx_temp+1-__pyx_t_6, 5+__pyx_t_6); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 101, __pyx_L1_error)
-    __Pyx_XDECREF(__pyx_t_2); __pyx_t_2 = 0;
-    __Pyx_GOTREF(__pyx_t_1);
+    PyObject *__pyx_temp[6] = {__pyx_t_1, __pyx_t_8, Py_None, __pyx_v_outlayer, __pyx_int_0, __pyx_t_3};
+    __pyx_t_2 = __Pyx_PyCFunction_FastCall(__pyx_t_10, __pyx_temp+1-__pyx_t_6, 5+__pyx_t_6); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 104, __pyx_L1_error)
+    __Pyx_XDECREF(__pyx_t_1); __pyx_t_1 = 0;
+    __Pyx_GOTREF(__pyx_t_2);
     __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
     __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
   } else
   #endif
   {
-    __pyx_t_11 = PyTuple_New(5+__pyx_t_6); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 101, __pyx_L1_error)
+    __pyx_t_11 = PyTuple_New(5+__pyx_t_6); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 104, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_11);
-    if (__pyx_t_2) {
-      __Pyx_GIVEREF(__pyx_t_2); PyTuple_SET_ITEM(__pyx_t_11, 0, __pyx_t_2); __pyx_t_2 = NULL;
+    if (__pyx_t_1) {
+      __Pyx_GIVEREF(__pyx_t_1); PyTuple_SET_ITEM(__pyx_t_11, 0, __pyx_t_1); __pyx_t_1 = NULL;
     }
     __Pyx_GIVEREF(__pyx_t_8);
     PyTuple_SET_ITEM(__pyx_t_11, 0+__pyx_t_6, __pyx_t_8);
@@ -3052,14 +3576,14 @@ static PyObject *__pyx_pf_8utils_cy_13DistanceStack_2filterStack(CYTHON_UNUSED P
     PyTuple_SET_ITEM(__pyx_t_11, 4+__pyx_t_6, __pyx_t_3);
     __pyx_t_8 = 0;
     __pyx_t_3 = 0;
-    __pyx_t_1 = __Pyx_PyObject_Call(__pyx_t_10, __pyx_t_11, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 101, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_1);
+    __pyx_t_2 = __Pyx_PyObject_Call(__pyx_t_10, __pyx_t_11, NULL); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 104, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_2);
     __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
   }
   __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
-  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
-  /* "utils_cy.pyx":102
+  /* "utils_cy.pyx":105
  * 
  *         gdal.Polygonize(output.GetRasterBand(1), None, outlayer, 0, []) #polygonize combined raster based on pixel values
  *         output = outfile = outlayer =  None #free variables             # <<<<<<<<<<<<<<
@@ -3073,21 +3597,21 @@ static PyObject *__pyx_pf_8utils_cy_13DistanceStack_2filterStack(CYTHON_UNUSED P
   __Pyx_INCREF(Py_None);
   __Pyx_DECREF_SET(__pyx_v_outlayer, Py_None);
 
-  /* "utils_cy.pyx":103
+  /* "utils_cy.pyx":106
  *         gdal.Polygonize(output.GetRasterBand(1), None, outlayer, 0, []) #polygonize combined raster based on pixel values
  *         output = outfile = outlayer =  None #free variables
  *         return self.uuid #return uuid of DistanceStack             # <<<<<<<<<<<<<<
  * 
- *     def filterResult(self):
+ *     '''
  */
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_uuid); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 103, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_1);
-  __pyx_r = __pyx_t_1;
-  __pyx_t_1 = 0;
+  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_uuid); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 106, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_2);
+  __pyx_r = __pyx_t_2;
+  __pyx_t_2 = 0;
   goto __pyx_L0;
 
-  /* "utils_cy.pyx":63
+  /* "utils_cy.pyx":65
  *     * parameters and which do not
  *     '''
  *     def filterStack(self, filterValues):             # <<<<<<<<<<<<<<
@@ -3125,32 +3649,34 @@ static PyObject *__pyx_pf_8utils_cy_13DistanceStack_2filterStack(CYTHON_UNUSED P
   return __pyx_r;
 }
 
-/* "utils_cy.pyx":105
- *         return self.uuid #return uuid of DistanceStack
- * 
+/* "utils_cy.pyx":112
+ *     * Description: Filters the resulting .geojson according to the DN values
+ *     '''
  *     def filterResult(self):             # <<<<<<<<<<<<<<
  *         with open('usr/src/backend/results/' + self.uuid + '.json') as f:
  *             data = json.load(f)
  */
 
 /* Python wrapper */
-static PyObject *__pyx_pw_8utils_cy_13DistanceStack_5filterResult(PyObject *__pyx_self, PyObject *__pyx_v_self); /*proto*/
-static PyMethodDef __pyx_mdef_8utils_cy_13DistanceStack_5filterResult = {"filterResult", (PyCFunction)__pyx_pw_8utils_cy_13DistanceStack_5filterResult, METH_O, 0};
-static PyObject *__pyx_pw_8utils_cy_13DistanceStack_5filterResult(PyObject *__pyx_self, PyObject *__pyx_v_self) {
+static PyObject *__pyx_pw_8utils_cy_13DistanceStack_9filterResult(PyObject *__pyx_self, PyObject *__pyx_v_self); /*proto*/
+static PyMethodDef __pyx_mdef_8utils_cy_13DistanceStack_9filterResult = {"filterResult", (PyCFunction)__pyx_pw_8utils_cy_13DistanceStack_9filterResult, METH_O, 0};
+static PyObject *__pyx_pw_8utils_cy_13DistanceStack_9filterResult(PyObject *__pyx_self, PyObject *__pyx_v_self) {
   PyObject *__pyx_r = 0;
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("filterResult (wrapper)", 0);
-  __pyx_r = __pyx_pf_8utils_cy_13DistanceStack_4filterResult(__pyx_self, ((PyObject *)__pyx_v_self));
+  __pyx_r = __pyx_pf_8utils_cy_13DistanceStack_8filterResult(__pyx_self, ((PyObject *)__pyx_v_self));
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_8utils_cy_13DistanceStack_4filterResult(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_self) {
+static PyObject *__pyx_pf_8utils_cy_13DistanceStack_8filterResult(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_self) {
   PyObject *__pyx_v_f = NULL;
   PyObject *__pyx_v_data = NULL;
-  PyObject *__pyx_v_feature = NULL;
+  PyObject *__pyx_v_validFeatures = NULL;
+  int __pyx_v_i;
+  PyObject *__pyx_v_result = NULL;
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
@@ -3165,34 +3691,36 @@ static PyObject *__pyx_pf_8utils_cy_13DistanceStack_4filterResult(CYTHON_UNUSED 
   int __pyx_t_10;
   int __pyx_t_11;
   Py_ssize_t __pyx_t_12;
-  PyObject *(*__pyx_t_13)(PyObject *);
+  Py_ssize_t __pyx_t_13;
+  int __pyx_t_14;
+  int __pyx_t_15;
   int __pyx_lineno = 0;
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("filterResult", 0);
 
-  /* "utils_cy.pyx":106
- * 
+  /* "utils_cy.pyx":113
+ *     '''
  *     def filterResult(self):
  *         with open('usr/src/backend/results/' + self.uuid + '.json') as f:             # <<<<<<<<<<<<<<
  *             data = json.load(f)
- *         for feature in data['features']:
+ *         validFeatures = []
  */
   /*with:*/ {
-    __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_uuid); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 106, __pyx_L1_error)
+    __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_uuid); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 113, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
-    __pyx_t_2 = PyNumber_Add(__pyx_kp_u_usr_src_backend_results, __pyx_t_1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 106, __pyx_L1_error)
+    __pyx_t_2 = PyNumber_Add(__pyx_kp_u_usr_src_backend_results, __pyx_t_1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 113, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-    __pyx_t_1 = PyNumber_Add(__pyx_t_2, __pyx_kp_u_json); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 106, __pyx_L1_error)
+    __pyx_t_1 = PyNumber_Add(__pyx_t_2, __pyx_kp_u_json); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 113, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-    __pyx_t_2 = __Pyx_PyObject_CallOneArg(__pyx_builtin_open, __pyx_t_1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 106, __pyx_L1_error)
+    __pyx_t_2 = __Pyx_PyObject_CallOneArg(__pyx_builtin_open, __pyx_t_1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 113, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-    __pyx_t_3 = __Pyx_PyObject_LookupSpecial(__pyx_t_2, __pyx_n_s_exit); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 106, __pyx_L1_error)
+    __pyx_t_3 = __Pyx_PyObject_LookupSpecial(__pyx_t_2, __pyx_n_s_exit); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 113, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_3);
-    __pyx_t_4 = __Pyx_PyObject_LookupSpecial(__pyx_t_2, __pyx_n_s_enter); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 106, __pyx_L3_error)
+    __pyx_t_4 = __Pyx_PyObject_LookupSpecial(__pyx_t_2, __pyx_n_s_enter); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 113, __pyx_L3_error)
     __Pyx_GOTREF(__pyx_t_4);
     __pyx_t_5 = NULL;
     if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_4))) {
@@ -3206,7 +3734,7 @@ static PyObject *__pyx_pf_8utils_cy_13DistanceStack_4filterResult(CYTHON_UNUSED 
     }
     __pyx_t_1 = (__pyx_t_5) ? __Pyx_PyObject_CallOneArg(__pyx_t_4, __pyx_t_5) : __Pyx_PyObject_CallNoArg(__pyx_t_4);
     __Pyx_XDECREF(__pyx_t_5); __pyx_t_5 = 0;
-    if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 106, __pyx_L3_error)
+    if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 113, __pyx_L3_error)
     __Pyx_GOTREF(__pyx_t_1);
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
     __pyx_t_4 = __pyx_t_1;
@@ -3224,16 +3752,16 @@ static PyObject *__pyx_pf_8utils_cy_13DistanceStack_4filterResult(CYTHON_UNUSED 
           __pyx_v_f = __pyx_t_4;
           __pyx_t_4 = 0;
 
-          /* "utils_cy.pyx":107
+          /* "utils_cy.pyx":114
  *     def filterResult(self):
  *         with open('usr/src/backend/results/' + self.uuid + '.json') as f:
  *             data = json.load(f)             # <<<<<<<<<<<<<<
- *         for feature in data['features']:
- *             if(feature['properties']['DN'] != 1):
+ *         validFeatures = []
+ *         cdef int i
  */
-          __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_n_s_json_2); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 107, __pyx_L7_error)
+          __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_n_s_json_2); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 114, __pyx_L7_error)
           __Pyx_GOTREF(__pyx_t_2);
-          __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_t_2, __pyx_n_s_load); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 107, __pyx_L7_error)
+          __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_t_2, __pyx_n_s_load); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 114, __pyx_L7_error)
           __Pyx_GOTREF(__pyx_t_1);
           __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
           __pyx_t_2 = NULL;
@@ -3248,18 +3776,18 @@ static PyObject *__pyx_pf_8utils_cy_13DistanceStack_4filterResult(CYTHON_UNUSED 
           }
           __pyx_t_4 = (__pyx_t_2) ? __Pyx_PyObject_Call2Args(__pyx_t_1, __pyx_t_2, __pyx_v_f) : __Pyx_PyObject_CallOneArg(__pyx_t_1, __pyx_v_f);
           __Pyx_XDECREF(__pyx_t_2); __pyx_t_2 = 0;
-          if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 107, __pyx_L7_error)
+          if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 114, __pyx_L7_error)
           __Pyx_GOTREF(__pyx_t_4);
           __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
           __pyx_v_data = __pyx_t_4;
           __pyx_t_4 = 0;
 
-          /* "utils_cy.pyx":106
- * 
+          /* "utils_cy.pyx":113
+ *     '''
  *     def filterResult(self):
  *         with open('usr/src/backend/results/' + self.uuid + '.json') as f:             # <<<<<<<<<<<<<<
  *             data = json.load(f)
- *         for feature in data['features']:
+ *         validFeatures = []
  */
         }
         __Pyx_XDECREF(__pyx_t_6); __pyx_t_6 = 0;
@@ -3273,20 +3801,20 @@ static PyObject *__pyx_pf_8utils_cy_13DistanceStack_4filterResult(CYTHON_UNUSED 
         __Pyx_XDECREF(__pyx_t_5); __pyx_t_5 = 0;
         /*except:*/ {
           __Pyx_AddTraceback("utils_cy.DistanceStack.filterResult", __pyx_clineno, __pyx_lineno, __pyx_filename);
-          if (__Pyx_GetException(&__pyx_t_4, &__pyx_t_1, &__pyx_t_2) < 0) __PYX_ERR(0, 106, __pyx_L9_except_error)
+          if (__Pyx_GetException(&__pyx_t_4, &__pyx_t_1, &__pyx_t_2) < 0) __PYX_ERR(0, 113, __pyx_L9_except_error)
           __Pyx_GOTREF(__pyx_t_4);
           __Pyx_GOTREF(__pyx_t_1);
           __Pyx_GOTREF(__pyx_t_2);
-          __pyx_t_5 = PyTuple_Pack(3, __pyx_t_4, __pyx_t_1, __pyx_t_2); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 106, __pyx_L9_except_error)
+          __pyx_t_5 = PyTuple_Pack(3, __pyx_t_4, __pyx_t_1, __pyx_t_2); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 113, __pyx_L9_except_error)
           __Pyx_GOTREF(__pyx_t_5);
           __pyx_t_9 = __Pyx_PyObject_Call(__pyx_t_3, __pyx_t_5, NULL);
           __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
           __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-          if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 106, __pyx_L9_except_error)
+          if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 113, __pyx_L9_except_error)
           __Pyx_GOTREF(__pyx_t_9);
           __pyx_t_10 = __Pyx_PyObject_IsTrue(__pyx_t_9);
           __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
-          if (__pyx_t_10 < 0) __PYX_ERR(0, 106, __pyx_L9_except_error)
+          if (__pyx_t_10 < 0) __PYX_ERR(0, 113, __pyx_L9_except_error)
           __pyx_t_11 = ((!(__pyx_t_10 != 0)) != 0);
           if (__pyx_t_11) {
             __Pyx_GIVEREF(__pyx_t_4);
@@ -3294,7 +3822,7 @@ static PyObject *__pyx_pf_8utils_cy_13DistanceStack_4filterResult(CYTHON_UNUSED 
             __Pyx_XGIVEREF(__pyx_t_2);
             __Pyx_ErrRestoreWithState(__pyx_t_4, __pyx_t_1, __pyx_t_2);
             __pyx_t_4 = 0; __pyx_t_1 = 0; __pyx_t_2 = 0; 
-            __PYX_ERR(0, 106, __pyx_L9_except_error)
+            __PYX_ERR(0, 113, __pyx_L9_except_error)
           }
           __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
           __Pyx_XDECREF(__pyx_t_1); __pyx_t_1 = 0;
@@ -3320,7 +3848,7 @@ static PyObject *__pyx_pf_8utils_cy_13DistanceStack_4filterResult(CYTHON_UNUSED 
         if (__pyx_t_3) {
           __pyx_t_8 = __Pyx_PyObject_Call(__pyx_t_3, __pyx_tuple__5, NULL);
           __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-          if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 106, __pyx_L1_error)
+          if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 113, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_8);
           __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
         }
@@ -3335,174 +3863,157 @@ static PyObject *__pyx_pf_8utils_cy_13DistanceStack_4filterResult(CYTHON_UNUSED 
     __pyx_L16:;
   }
 
-  /* "utils_cy.pyx":108
+  /* "utils_cy.pyx":115
  *         with open('usr/src/backend/results/' + self.uuid + '.json') as f:
  *             data = json.load(f)
- *         for feature in data['features']:             # <<<<<<<<<<<<<<
- *             if(feature['properties']['DN'] != 1):
- *                 data['features'].remove(feature)
+ *         validFeatures = []             # <<<<<<<<<<<<<<
+ *         cdef int i
+ *         for i in range(0, len(data['features'])):
  */
-  if (unlikely(!__pyx_v_data)) { __Pyx_RaiseUnboundLocalError("data"); __PYX_ERR(0, 108, __pyx_L1_error) }
-  __pyx_t_2 = __Pyx_PyObject_Dict_GetItem(__pyx_v_data, __pyx_n_u_features); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 108, __pyx_L1_error)
+  __pyx_t_2 = PyList_New(0); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 115, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  if (likely(PyList_CheckExact(__pyx_t_2)) || PyTuple_CheckExact(__pyx_t_2)) {
-    __pyx_t_1 = __pyx_t_2; __Pyx_INCREF(__pyx_t_1); __pyx_t_12 = 0;
-    __pyx_t_13 = NULL;
-  } else {
-    __pyx_t_12 = -1; __pyx_t_1 = PyObject_GetIter(__pyx_t_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 108, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_1);
-    __pyx_t_13 = Py_TYPE(__pyx_t_1)->tp_iternext; if (unlikely(!__pyx_t_13)) __PYX_ERR(0, 108, __pyx_L1_error)
-  }
-  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  for (;;) {
-    if (likely(!__pyx_t_13)) {
-      if (likely(PyList_CheckExact(__pyx_t_1))) {
-        if (__pyx_t_12 >= PyList_GET_SIZE(__pyx_t_1)) break;
-        #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
-        __pyx_t_2 = PyList_GET_ITEM(__pyx_t_1, __pyx_t_12); __Pyx_INCREF(__pyx_t_2); __pyx_t_12++; if (unlikely(0 < 0)) __PYX_ERR(0, 108, __pyx_L1_error)
-        #else
-        __pyx_t_2 = PySequence_ITEM(__pyx_t_1, __pyx_t_12); __pyx_t_12++; if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 108, __pyx_L1_error)
-        __Pyx_GOTREF(__pyx_t_2);
-        #endif
-      } else {
-        if (__pyx_t_12 >= PyTuple_GET_SIZE(__pyx_t_1)) break;
-        #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
-        __pyx_t_2 = PyTuple_GET_ITEM(__pyx_t_1, __pyx_t_12); __Pyx_INCREF(__pyx_t_2); __pyx_t_12++; if (unlikely(0 < 0)) __PYX_ERR(0, 108, __pyx_L1_error)
-        #else
-        __pyx_t_2 = PySequence_ITEM(__pyx_t_1, __pyx_t_12); __pyx_t_12++; if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 108, __pyx_L1_error)
-        __Pyx_GOTREF(__pyx_t_2);
-        #endif
-      }
-    } else {
-      __pyx_t_2 = __pyx_t_13(__pyx_t_1);
-      if (unlikely(!__pyx_t_2)) {
-        PyObject* exc_type = PyErr_Occurred();
-        if (exc_type) {
-          if (likely(__Pyx_PyErr_GivenExceptionMatches(exc_type, PyExc_StopIteration))) PyErr_Clear();
-          else __PYX_ERR(0, 108, __pyx_L1_error)
-        }
-        break;
-      }
-      __Pyx_GOTREF(__pyx_t_2);
-    }
-    __Pyx_XDECREF_SET(__pyx_v_feature, __pyx_t_2);
-    __pyx_t_2 = 0;
+  __pyx_v_validFeatures = ((PyObject*)__pyx_t_2);
+  __pyx_t_2 = 0;
 
-    /* "utils_cy.pyx":109
- *             data = json.load(f)
- *         for feature in data['features']:
- *             if(feature['properties']['DN'] != 1):             # <<<<<<<<<<<<<<
- *                 data['features'].remove(feature)
- *             feature['geometry']['coordinates'] = feature['geometry']['coordinates'][::-1]
+  /* "utils_cy.pyx":117
+ *         validFeatures = []
+ *         cdef int i
+ *         for i in range(0, len(data['features'])):             # <<<<<<<<<<<<<<
+ *             if(data[i]['properties']['DN'] == 0 or data[i]['properties']['DN'] == '0'):
+ *                 data[i]['geometry']['coordinates'] = data[i]['geometry']['coordinates'][::-1]
  */
-    __pyx_t_2 = __Pyx_PyObject_Dict_GetItem(__pyx_v_feature, __pyx_n_u_properties); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 109, __pyx_L1_error)
+  if (unlikely(!__pyx_v_data)) { __Pyx_RaiseUnboundLocalError("data"); __PYX_ERR(0, 117, __pyx_L1_error) }
+  __pyx_t_2 = __Pyx_PyObject_Dict_GetItem(__pyx_v_data, __pyx_n_u_features); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 117, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_2);
+  __pyx_t_12 = PyObject_Length(__pyx_t_2); if (unlikely(__pyx_t_12 == ((Py_ssize_t)-1))) __PYX_ERR(0, 117, __pyx_L1_error)
+  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+  __pyx_t_13 = __pyx_t_12;
+  for (__pyx_t_14 = 0; __pyx_t_14 < __pyx_t_13; __pyx_t_14+=1) {
+    __pyx_v_i = __pyx_t_14;
+
+    /* "utils_cy.pyx":118
+ *         cdef int i
+ *         for i in range(0, len(data['features'])):
+ *             if(data[i]['properties']['DN'] == 0 or data[i]['properties']['DN'] == '0'):             # <<<<<<<<<<<<<<
+ *                 data[i]['geometry']['coordinates'] = data[i]['geometry']['coordinates'][::-1]
+ *                 validFeatures.append(data[i])
+ */
+    if (unlikely(!__pyx_v_data)) { __Pyx_RaiseUnboundLocalError("data"); __PYX_ERR(0, 118, __pyx_L1_error) }
+    __pyx_t_2 = __Pyx_GetItemInt(__pyx_v_data, __pyx_v_i, int, 1, __Pyx_PyInt_From_int, 0, 1, 1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 118, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
-    __pyx_t_4 = __Pyx_PyObject_Dict_GetItem(__pyx_t_2, __pyx_n_u_DN); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 109, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_4);
+    __pyx_t_1 = __Pyx_PyObject_Dict_GetItem(__pyx_t_2, __pyx_n_u_properties); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 118, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_1);
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-    __pyx_t_2 = __Pyx_PyInt_NeObjC(__pyx_t_4, __pyx_int_1, 1, 0); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 109, __pyx_L1_error)
+    __pyx_t_2 = __Pyx_PyObject_Dict_GetItem(__pyx_t_1, __pyx_n_u_DN); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 118, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
-    __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-    __pyx_t_11 = __Pyx_PyObject_IsTrue(__pyx_t_2); if (unlikely(__pyx_t_11 < 0)) __PYX_ERR(0, 109, __pyx_L1_error)
+    __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+    __pyx_t_1 = __Pyx_PyInt_EqObjC(__pyx_t_2, __pyx_int_0, 0, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 118, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_1);
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+    __pyx_t_10 = __Pyx_PyObject_IsTrue(__pyx_t_1); if (unlikely(__pyx_t_10 < 0)) __PYX_ERR(0, 118, __pyx_L1_error)
+    __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+    if (!__pyx_t_10) {
+    } else {
+      __pyx_t_11 = __pyx_t_10;
+      goto __pyx_L20_bool_binop_done;
+    }
+    if (unlikely(!__pyx_v_data)) { __Pyx_RaiseUnboundLocalError("data"); __PYX_ERR(0, 118, __pyx_L1_error) }
+    __pyx_t_1 = __Pyx_GetItemInt(__pyx_v_data, __pyx_v_i, int, 1, __Pyx_PyInt_From_int, 0, 1, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 118, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_1);
+    __pyx_t_2 = __Pyx_PyObject_Dict_GetItem(__pyx_t_1, __pyx_n_u_properties); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 118, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_2);
+    __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+    __pyx_t_1 = __Pyx_PyObject_Dict_GetItem(__pyx_t_2, __pyx_n_u_DN); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 118, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_1);
+    __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+    __pyx_t_10 = (__Pyx_PyUnicode_Equals(__pyx_t_1, __pyx_kp_u_0, Py_EQ)); if (unlikely(__pyx_t_10 < 0)) __PYX_ERR(0, 118, __pyx_L1_error)
+    __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+    __pyx_t_11 = __pyx_t_10;
+    __pyx_L20_bool_binop_done:;
     if (__pyx_t_11) {
 
-      /* "utils_cy.pyx":110
- *         for feature in data['features']:
- *             if(feature['properties']['DN'] != 1):
- *                 data['features'].remove(feature)             # <<<<<<<<<<<<<<
- *             feature['geometry']['coordinates'] = feature['geometry']['coordinates'][::-1]
- *         data['crs'] = "WGS-84 - EPSG: 4326"
+      /* "utils_cy.pyx":119
+ *         for i in range(0, len(data['features'])):
+ *             if(data[i]['properties']['DN'] == 0 or data[i]['properties']['DN'] == '0'):
+ *                 data[i]['geometry']['coordinates'] = data[i]['geometry']['coordinates'][::-1]             # <<<<<<<<<<<<<<
+ *                 validFeatures.append(data[i])
+ *             #feature['geometry']['coordinates'][0] = ccc(rdp(feature['geometry']['coordinates'][0], epsilon=0.00025)) #smoothing off for now
  */
-      if (unlikely(!__pyx_v_data)) { __Pyx_RaiseUnboundLocalError("data"); __PYX_ERR(0, 110, __pyx_L1_error) }
-      __pyx_t_4 = __Pyx_PyObject_Dict_GetItem(__pyx_v_data, __pyx_n_u_features); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 110, __pyx_L1_error)
-      __Pyx_GOTREF(__pyx_t_4);
-      __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_t_4, __pyx_n_s_remove); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 110, __pyx_L1_error)
-      __Pyx_GOTREF(__pyx_t_5);
-      __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-      __pyx_t_4 = NULL;
-      if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_5))) {
-        __pyx_t_4 = PyMethod_GET_SELF(__pyx_t_5);
-        if (likely(__pyx_t_4)) {
-          PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_5);
-          __Pyx_INCREF(__pyx_t_4);
-          __Pyx_INCREF(function);
-          __Pyx_DECREF_SET(__pyx_t_5, function);
-        }
-      }
-      __pyx_t_2 = (__pyx_t_4) ? __Pyx_PyObject_Call2Args(__pyx_t_5, __pyx_t_4, __pyx_v_feature) : __Pyx_PyObject_CallOneArg(__pyx_t_5, __pyx_v_feature);
-      __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
-      if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 110, __pyx_L1_error)
+      if (unlikely(!__pyx_v_data)) { __Pyx_RaiseUnboundLocalError("data"); __PYX_ERR(0, 119, __pyx_L1_error) }
+      __pyx_t_1 = __Pyx_GetItemInt(__pyx_v_data, __pyx_v_i, int, 1, __Pyx_PyInt_From_int, 0, 1, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 119, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_1);
+      __pyx_t_2 = __Pyx_PyObject_Dict_GetItem(__pyx_t_1, __pyx_n_u_geometry); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 119, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_2);
-      __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
+      __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+      __pyx_t_1 = __Pyx_PyObject_Dict_GetItem(__pyx_t_2, __pyx_n_u_coordinates); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 119, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_1);
+      __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+      __pyx_t_2 = __Pyx_PyObject_GetItem(__pyx_t_1, __pyx_slice__6); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 119, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_2);
+      __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+      if (unlikely(!__pyx_v_data)) { __Pyx_RaiseUnboundLocalError("data"); __PYX_ERR(0, 119, __pyx_L1_error) }
+      __pyx_t_1 = __Pyx_GetItemInt(__pyx_v_data, __pyx_v_i, int, 1, __Pyx_PyInt_From_int, 0, 1, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 119, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_1);
+      __pyx_t_4 = __Pyx_PyObject_Dict_GetItem(__pyx_t_1, __pyx_n_u_geometry); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 119, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_4);
+      __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+      if (unlikely(PyObject_SetItem(__pyx_t_4, __pyx_n_u_coordinates, __pyx_t_2) < 0)) __PYX_ERR(0, 119, __pyx_L1_error)
+      __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
       __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
-      /* "utils_cy.pyx":109
- *             data = json.load(f)
- *         for feature in data['features']:
- *             if(feature['properties']['DN'] != 1):             # <<<<<<<<<<<<<<
- *                 data['features'].remove(feature)
- *             feature['geometry']['coordinates'] = feature['geometry']['coordinates'][::-1]
+      /* "utils_cy.pyx":120
+ *             if(data[i]['properties']['DN'] == 0 or data[i]['properties']['DN'] == '0'):
+ *                 data[i]['geometry']['coordinates'] = data[i]['geometry']['coordinates'][::-1]
+ *                 validFeatures.append(data[i])             # <<<<<<<<<<<<<<
+ *             #feature['geometry']['coordinates'][0] = ccc(rdp(feature['geometry']['coordinates'][0], epsilon=0.00025)) #smoothing off for now
+ *         result = {"type": "FeatureCollection", "crs": "WGS-84 - EPSG: 4326", "features": validFeatures}
+ */
+      if (unlikely(!__pyx_v_data)) { __Pyx_RaiseUnboundLocalError("data"); __PYX_ERR(0, 120, __pyx_L1_error) }
+      __pyx_t_2 = __Pyx_GetItemInt(__pyx_v_data, __pyx_v_i, int, 1, __Pyx_PyInt_From_int, 0, 1, 1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 120, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_2);
+      __pyx_t_15 = __Pyx_PyList_Append(__pyx_v_validFeatures, __pyx_t_2); if (unlikely(__pyx_t_15 == ((int)-1))) __PYX_ERR(0, 120, __pyx_L1_error)
+      __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+
+      /* "utils_cy.pyx":118
+ *         cdef int i
+ *         for i in range(0, len(data['features'])):
+ *             if(data[i]['properties']['DN'] == 0 or data[i]['properties']['DN'] == '0'):             # <<<<<<<<<<<<<<
+ *                 data[i]['geometry']['coordinates'] = data[i]['geometry']['coordinates'][::-1]
+ *                 validFeatures.append(data[i])
  */
     }
-
-    /* "utils_cy.pyx":111
- *             if(feature['properties']['DN'] != 1):
- *                 data['features'].remove(feature)
- *             feature['geometry']['coordinates'] = feature['geometry']['coordinates'][::-1]             # <<<<<<<<<<<<<<
- *         data['crs'] = "WGS-84 - EPSG: 4326"
- * 
- */
-    __pyx_t_2 = __Pyx_PyObject_Dict_GetItem(__pyx_v_feature, __pyx_n_u_geometry); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 111, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_2);
-    __pyx_t_5 = __Pyx_PyObject_Dict_GetItem(__pyx_t_2, __pyx_n_u_coordinates); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 111, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_5);
-    __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-    __pyx_t_2 = __Pyx_PyObject_GetItem(__pyx_t_5, __pyx_slice__6); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 111, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_2);
-    __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-    __pyx_t_5 = __Pyx_PyObject_Dict_GetItem(__pyx_v_feature, __pyx_n_u_geometry); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 111, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_5);
-    if (unlikely(PyObject_SetItem(__pyx_t_5, __pyx_n_u_coordinates, __pyx_t_2) < 0)) __PYX_ERR(0, 111, __pyx_L1_error)
-    __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-    __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-
-    /* "utils_cy.pyx":108
- *         with open('usr/src/backend/results/' + self.uuid + '.json') as f:
- *             data = json.load(f)
- *         for feature in data['features']:             # <<<<<<<<<<<<<<
- *             if(feature['properties']['DN'] != 1):
- *                 data['features'].remove(feature)
- */
   }
-  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "utils_cy.pyx":112
- *                 data['features'].remove(feature)
- *             feature['geometry']['coordinates'] = feature['geometry']['coordinates'][::-1]
- *         data['crs'] = "WGS-84 - EPSG: 4326"             # <<<<<<<<<<<<<<
+  /* "utils_cy.pyx":122
+ *                 validFeatures.append(data[i])
+ *             #feature['geometry']['coordinates'][0] = ccc(rdp(feature['geometry']['coordinates'][0], epsilon=0.00025)) #smoothing off for now
+ *         result = {"type": "FeatureCollection", "crs": "WGS-84 - EPSG: 4326", "features": validFeatures}             # <<<<<<<<<<<<<<
+ *         return result
  * 
- *         return data
  */
-  if (unlikely(!__pyx_v_data)) { __Pyx_RaiseUnboundLocalError("data"); __PYX_ERR(0, 112, __pyx_L1_error) }
-  if (unlikely(PyObject_SetItem(__pyx_v_data, __pyx_n_u_crs, __pyx_kp_u_WGS_84_EPSG_4326) < 0)) __PYX_ERR(0, 112, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyDict_NewPresized(3); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 122, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_2);
+  if (PyDict_SetItem(__pyx_t_2, __pyx_n_u_type, __pyx_n_u_FeatureCollection) < 0) __PYX_ERR(0, 122, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_2, __pyx_n_u_crs, __pyx_kp_u_WGS_84_EPSG_4326) < 0) __PYX_ERR(0, 122, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_2, __pyx_n_u_features, __pyx_v_validFeatures) < 0) __PYX_ERR(0, 122, __pyx_L1_error)
+  __pyx_v_result = ((PyObject*)__pyx_t_2);
+  __pyx_t_2 = 0;
 
-  /* "utils_cy.pyx":114
- *         data['crs'] = "WGS-84 - EPSG: 4326"
+  /* "utils_cy.pyx":123
+ *             #feature['geometry']['coordinates'][0] = ccc(rdp(feature['geometry']['coordinates'][0], epsilon=0.00025)) #smoothing off for now
+ *         result = {"type": "FeatureCollection", "crs": "WGS-84 - EPSG: 4326", "features": validFeatures}
+ *         return result             # <<<<<<<<<<<<<<
  * 
- *         return data             # <<<<<<<<<<<<<<
- * 
- * 
+ * '''
  */
   __Pyx_XDECREF(__pyx_r);
-  if (unlikely(!__pyx_v_data)) { __Pyx_RaiseUnboundLocalError("data"); __PYX_ERR(0, 114, __pyx_L1_error) }
-  __Pyx_INCREF(__pyx_v_data);
-  __pyx_r = __pyx_v_data;
+  __Pyx_INCREF(__pyx_v_result);
+  __pyx_r = __pyx_v_result;
   goto __pyx_L0;
 
-  /* "utils_cy.pyx":105
- *         return self.uuid #return uuid of DistanceStack
- * 
+  /* "utils_cy.pyx":112
+ *     * Description: Filters the resulting .geojson according to the DN values
+ *     '''
  *     def filterResult(self):             # <<<<<<<<<<<<<<
  *         with open('usr/src/backend/results/' + self.uuid + '.json') as f:
  *             data = json.load(f)
@@ -3519,7 +4030,363 @@ static PyObject *__pyx_pf_8utils_cy_13DistanceStack_4filterResult(CYTHON_UNUSED 
   __pyx_L0:;
   __Pyx_XDECREF(__pyx_v_f);
   __Pyx_XDECREF(__pyx_v_data);
-  __Pyx_XDECREF(__pyx_v_feature);
+  __Pyx_XDECREF(__pyx_v_validFeatures);
+  __Pyx_XDECREF(__pyx_v_result);
+  __Pyx_XGIVEREF(__pyx_r);
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+/* "utils_cy.pyx":129
+ * * Description: An implementation of chaikin's corner cutting
+ * '''
+ * def ccc(coords, refinements=2):             # <<<<<<<<<<<<<<
+ *     coords = np.array(coords)
+ * 
+ */
+
+/* Python wrapper */
+static PyObject *__pyx_pw_8utils_cy_1ccc(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
+static PyMethodDef __pyx_mdef_8utils_cy_1ccc = {"ccc", (PyCFunction)(void*)(PyCFunctionWithKeywords)__pyx_pw_8utils_cy_1ccc, METH_VARARGS|METH_KEYWORDS, 0};
+static PyObject *__pyx_pw_8utils_cy_1ccc(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
+  PyObject *__pyx_v_coords = 0;
+  PyObject *__pyx_v_refinements = 0;
+  int __pyx_lineno = 0;
+  const char *__pyx_filename = NULL;
+  int __pyx_clineno = 0;
+  PyObject *__pyx_r = 0;
+  __Pyx_RefNannyDeclarations
+  __Pyx_RefNannySetupContext("ccc (wrapper)", 0);
+  {
+    static PyObject **__pyx_pyargnames[] = {&__pyx_n_s_coords,&__pyx_n_s_refinements,0};
+    PyObject* values[2] = {0,0};
+    values[1] = ((PyObject *)__pyx_int_2);
+    if (unlikely(__pyx_kwds)) {
+      Py_ssize_t kw_args;
+      const Py_ssize_t pos_args = PyTuple_GET_SIZE(__pyx_args);
+      switch (pos_args) {
+        case  2: values[1] = PyTuple_GET_ITEM(__pyx_args, 1);
+        CYTHON_FALLTHROUGH;
+        case  1: values[0] = PyTuple_GET_ITEM(__pyx_args, 0);
+        CYTHON_FALLTHROUGH;
+        case  0: break;
+        default: goto __pyx_L5_argtuple_error;
+      }
+      kw_args = PyDict_Size(__pyx_kwds);
+      switch (pos_args) {
+        case  0:
+        if (likely((values[0] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_coords)) != 0)) kw_args--;
+        else goto __pyx_L5_argtuple_error;
+        CYTHON_FALLTHROUGH;
+        case  1:
+        if (kw_args > 0) {
+          PyObject* value = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_refinements);
+          if (value) { values[1] = value; kw_args--; }
+        }
+      }
+      if (unlikely(kw_args > 0)) {
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "ccc") < 0)) __PYX_ERR(0, 129, __pyx_L3_error)
+      }
+    } else {
+      switch (PyTuple_GET_SIZE(__pyx_args)) {
+        case  2: values[1] = PyTuple_GET_ITEM(__pyx_args, 1);
+        CYTHON_FALLTHROUGH;
+        case  1: values[0] = PyTuple_GET_ITEM(__pyx_args, 0);
+        break;
+        default: goto __pyx_L5_argtuple_error;
+      }
+    }
+    __pyx_v_coords = values[0];
+    __pyx_v_refinements = values[1];
+  }
+  goto __pyx_L4_argument_unpacking_done;
+  __pyx_L5_argtuple_error:;
+  __Pyx_RaiseArgtupleInvalid("ccc", 0, 1, 2, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 129, __pyx_L3_error)
+  __pyx_L3_error:;
+  __Pyx_AddTraceback("utils_cy.ccc", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_RefNannyFinishContext();
+  return NULL;
+  __pyx_L4_argument_unpacking_done:;
+  __pyx_r = __pyx_pf_8utils_cy_ccc(__pyx_self, __pyx_v_coords, __pyx_v_refinements);
+
+  /* function exit code */
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+static PyObject *__pyx_pf_8utils_cy_ccc(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_coords, PyObject *__pyx_v_refinements) {
+  CYTHON_UNUSED PyObject *__pyx_v__ = NULL;
+  PyObject *__pyx_v_L = NULL;
+  PyObject *__pyx_v_R = NULL;
+  PyObject *__pyx_r = NULL;
+  __Pyx_RefNannyDeclarations
+  PyObject *__pyx_t_1 = NULL;
+  PyObject *__pyx_t_2 = NULL;
+  PyObject *__pyx_t_3 = NULL;
+  Py_ssize_t __pyx_t_4;
+  PyObject *(*__pyx_t_5)(PyObject *);
+  PyObject *__pyx_t_6 = NULL;
+  int __pyx_lineno = 0;
+  const char *__pyx_filename = NULL;
+  int __pyx_clineno = 0;
+  __Pyx_RefNannySetupContext("ccc", 0);
+  __Pyx_INCREF(__pyx_v_coords);
+
+  /* "utils_cy.pyx":130
+ * '''
+ * def ccc(coords, refinements=2):
+ *     coords = np.array(coords)             # <<<<<<<<<<<<<<
+ * 
+ *     for _ in range(refinements):
+ */
+  __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_n_s_np); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 130, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_2);
+  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_t_2, __pyx_n_s_array); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 130, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_3);
+  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+  __pyx_t_2 = NULL;
+  if (CYTHON_UNPACK_METHODS && unlikely(PyMethod_Check(__pyx_t_3))) {
+    __pyx_t_2 = PyMethod_GET_SELF(__pyx_t_3);
+    if (likely(__pyx_t_2)) {
+      PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_3);
+      __Pyx_INCREF(__pyx_t_2);
+      __Pyx_INCREF(function);
+      __Pyx_DECREF_SET(__pyx_t_3, function);
+    }
+  }
+  __pyx_t_1 = (__pyx_t_2) ? __Pyx_PyObject_Call2Args(__pyx_t_3, __pyx_t_2, __pyx_v_coords) : __Pyx_PyObject_CallOneArg(__pyx_t_3, __pyx_v_coords);
+  __Pyx_XDECREF(__pyx_t_2); __pyx_t_2 = 0;
+  if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 130, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
+  __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+  __Pyx_DECREF_SET(__pyx_v_coords, __pyx_t_1);
+  __pyx_t_1 = 0;
+
+  /* "utils_cy.pyx":132
+ *     coords = np.array(coords)
+ * 
+ *     for _ in range(refinements):             # <<<<<<<<<<<<<<
+ *         L = coords.repeat(2, axis=0)
+ *         R = np.empty_like(L)
+ */
+  __pyx_t_1 = __Pyx_PyObject_CallOneArg(__pyx_builtin_range, __pyx_v_refinements); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 132, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
+  if (likely(PyList_CheckExact(__pyx_t_1)) || PyTuple_CheckExact(__pyx_t_1)) {
+    __pyx_t_3 = __pyx_t_1; __Pyx_INCREF(__pyx_t_3); __pyx_t_4 = 0;
+    __pyx_t_5 = NULL;
+  } else {
+    __pyx_t_4 = -1; __pyx_t_3 = PyObject_GetIter(__pyx_t_1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 132, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_3);
+    __pyx_t_5 = Py_TYPE(__pyx_t_3)->tp_iternext; if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 132, __pyx_L1_error)
+  }
+  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+  for (;;) {
+    if (likely(!__pyx_t_5)) {
+      if (likely(PyList_CheckExact(__pyx_t_3))) {
+        if (__pyx_t_4 >= PyList_GET_SIZE(__pyx_t_3)) break;
+        #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
+        __pyx_t_1 = PyList_GET_ITEM(__pyx_t_3, __pyx_t_4); __Pyx_INCREF(__pyx_t_1); __pyx_t_4++; if (unlikely(0 < 0)) __PYX_ERR(0, 132, __pyx_L1_error)
+        #else
+        __pyx_t_1 = PySequence_ITEM(__pyx_t_3, __pyx_t_4); __pyx_t_4++; if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 132, __pyx_L1_error)
+        __Pyx_GOTREF(__pyx_t_1);
+        #endif
+      } else {
+        if (__pyx_t_4 >= PyTuple_GET_SIZE(__pyx_t_3)) break;
+        #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
+        __pyx_t_1 = PyTuple_GET_ITEM(__pyx_t_3, __pyx_t_4); __Pyx_INCREF(__pyx_t_1); __pyx_t_4++; if (unlikely(0 < 0)) __PYX_ERR(0, 132, __pyx_L1_error)
+        #else
+        __pyx_t_1 = PySequence_ITEM(__pyx_t_3, __pyx_t_4); __pyx_t_4++; if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 132, __pyx_L1_error)
+        __Pyx_GOTREF(__pyx_t_1);
+        #endif
+      }
+    } else {
+      __pyx_t_1 = __pyx_t_5(__pyx_t_3);
+      if (unlikely(!__pyx_t_1)) {
+        PyObject* exc_type = PyErr_Occurred();
+        if (exc_type) {
+          if (likely(__Pyx_PyErr_GivenExceptionMatches(exc_type, PyExc_StopIteration))) PyErr_Clear();
+          else __PYX_ERR(0, 132, __pyx_L1_error)
+        }
+        break;
+      }
+      __Pyx_GOTREF(__pyx_t_1);
+    }
+    __Pyx_XDECREF_SET(__pyx_v__, __pyx_t_1);
+    __pyx_t_1 = 0;
+
+    /* "utils_cy.pyx":133
+ * 
+ *     for _ in range(refinements):
+ *         L = coords.repeat(2, axis=0)             # <<<<<<<<<<<<<<
+ *         R = np.empty_like(L)
+ *         R[0] = L[0]
+ */
+    __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_coords, __pyx_n_s_repeat); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 133, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_1);
+    __pyx_t_2 = __Pyx_PyDict_NewPresized(1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 133, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_2);
+    if (PyDict_SetItem(__pyx_t_2, __pyx_n_s_axis, __pyx_int_0) < 0) __PYX_ERR(0, 133, __pyx_L1_error)
+    __pyx_t_6 = __Pyx_PyObject_Call(__pyx_t_1, __pyx_tuple__7, __pyx_t_2); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 133, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_6);
+    __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+    __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+    __Pyx_XDECREF_SET(__pyx_v_L, __pyx_t_6);
+    __pyx_t_6 = 0;
+
+    /* "utils_cy.pyx":134
+ *     for _ in range(refinements):
+ *         L = coords.repeat(2, axis=0)
+ *         R = np.empty_like(L)             # <<<<<<<<<<<<<<
+ *         R[0] = L[0]
+ *         R[2::2] = L[1:-1:2]
+ */
+    __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_n_s_np); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 134, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_2);
+    __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_t_2, __pyx_n_s_empty_like); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 134, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_1);
+    __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+    __pyx_t_2 = NULL;
+    if (CYTHON_UNPACK_METHODS && unlikely(PyMethod_Check(__pyx_t_1))) {
+      __pyx_t_2 = PyMethod_GET_SELF(__pyx_t_1);
+      if (likely(__pyx_t_2)) {
+        PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_1);
+        __Pyx_INCREF(__pyx_t_2);
+        __Pyx_INCREF(function);
+        __Pyx_DECREF_SET(__pyx_t_1, function);
+      }
+    }
+    __pyx_t_6 = (__pyx_t_2) ? __Pyx_PyObject_Call2Args(__pyx_t_1, __pyx_t_2, __pyx_v_L) : __Pyx_PyObject_CallOneArg(__pyx_t_1, __pyx_v_L);
+    __Pyx_XDECREF(__pyx_t_2); __pyx_t_2 = 0;
+    if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 134, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_6);
+    __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+    __Pyx_XDECREF_SET(__pyx_v_R, __pyx_t_6);
+    __pyx_t_6 = 0;
+
+    /* "utils_cy.pyx":135
+ *         L = coords.repeat(2, axis=0)
+ *         R = np.empty_like(L)
+ *         R[0] = L[0]             # <<<<<<<<<<<<<<
+ *         R[2::2] = L[1:-1:2]
+ *         R[1:-1:2] = L[2::2]
+ */
+    __pyx_t_6 = __Pyx_GetItemInt(__pyx_v_L, 0, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 135, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_6);
+    if (unlikely(__Pyx_SetItemInt(__pyx_v_R, 0, __pyx_t_6, long, 1, __Pyx_PyInt_From_long, 0, 0, 1) < 0)) __PYX_ERR(0, 135, __pyx_L1_error)
+    __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
+
+    /* "utils_cy.pyx":136
+ *         R = np.empty_like(L)
+ *         R[0] = L[0]
+ *         R[2::2] = L[1:-1:2]             # <<<<<<<<<<<<<<
+ *         R[1:-1:2] = L[2::2]
+ *         R[-1] = L[-1]
+ */
+    __pyx_t_6 = __Pyx_PyObject_GetItem(__pyx_v_L, __pyx_slice__8); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 136, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_6);
+    if (unlikely(PyObject_SetItem(__pyx_v_R, __pyx_slice__9, __pyx_t_6) < 0)) __PYX_ERR(0, 136, __pyx_L1_error)
+    __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
+
+    /* "utils_cy.pyx":137
+ *         R[0] = L[0]
+ *         R[2::2] = L[1:-1:2]
+ *         R[1:-1:2] = L[2::2]             # <<<<<<<<<<<<<<
+ *         R[-1] = L[-1]
+ *         coords = L * 0.75 + R * 0.25
+ */
+    __pyx_t_6 = __Pyx_PyObject_GetItem(__pyx_v_L, __pyx_slice__9); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 137, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_6);
+    if (unlikely(PyObject_SetItem(__pyx_v_R, __pyx_slice__8, __pyx_t_6) < 0)) __PYX_ERR(0, 137, __pyx_L1_error)
+    __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
+
+    /* "utils_cy.pyx":138
+ *         R[2::2] = L[1:-1:2]
+ *         R[1:-1:2] = L[2::2]
+ *         R[-1] = L[-1]             # <<<<<<<<<<<<<<
+ *         coords = L * 0.75 + R * 0.25
+ * 
+ */
+    __pyx_t_6 = __Pyx_GetItemInt(__pyx_v_L, -1L, long, 1, __Pyx_PyInt_From_long, 0, 1, 1); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 138, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_6);
+    if (unlikely(__Pyx_SetItemInt(__pyx_v_R, -1L, __pyx_t_6, long, 1, __Pyx_PyInt_From_long, 0, 1, 1) < 0)) __PYX_ERR(0, 138, __pyx_L1_error)
+    __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
+
+    /* "utils_cy.pyx":139
+ *         R[1:-1:2] = L[2::2]
+ *         R[-1] = L[-1]
+ *         coords = L * 0.75 + R * 0.25             # <<<<<<<<<<<<<<
+ * 
+ *     return coords.tolist()
+ */
+    __pyx_t_6 = PyNumber_Multiply(__pyx_v_L, __pyx_float_0_75); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 139, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_6);
+    __pyx_t_1 = PyNumber_Multiply(__pyx_v_R, __pyx_float_0_25); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 139, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_1);
+    __pyx_t_2 = PyNumber_Add(__pyx_t_6, __pyx_t_1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 139, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_2);
+    __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
+    __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+    __Pyx_DECREF_SET(__pyx_v_coords, __pyx_t_2);
+    __pyx_t_2 = 0;
+
+    /* "utils_cy.pyx":132
+ *     coords = np.array(coords)
+ * 
+ *     for _ in range(refinements):             # <<<<<<<<<<<<<<
+ *         L = coords.repeat(2, axis=0)
+ *         R = np.empty_like(L)
+ */
+  }
+  __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+
+  /* "utils_cy.pyx":141
+ *         coords = L * 0.75 + R * 0.25
+ * 
+ *     return coords.tolist()             # <<<<<<<<<<<<<<
+ */
+  __Pyx_XDECREF(__pyx_r);
+  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_coords, __pyx_n_s_tolist); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 141, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_2);
+  __pyx_t_1 = NULL;
+  if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_2))) {
+    __pyx_t_1 = PyMethod_GET_SELF(__pyx_t_2);
+    if (likely(__pyx_t_1)) {
+      PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_2);
+      __Pyx_INCREF(__pyx_t_1);
+      __Pyx_INCREF(function);
+      __Pyx_DECREF_SET(__pyx_t_2, function);
+    }
+  }
+  __pyx_t_3 = (__pyx_t_1) ? __Pyx_PyObject_CallOneArg(__pyx_t_2, __pyx_t_1) : __Pyx_PyObject_CallNoArg(__pyx_t_2);
+  __Pyx_XDECREF(__pyx_t_1); __pyx_t_1 = 0;
+  if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 141, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_3);
+  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+  __pyx_r = __pyx_t_3;
+  __pyx_t_3 = 0;
+  goto __pyx_L0;
+
+  /* "utils_cy.pyx":129
+ * * Description: An implementation of chaikin's corner cutting
+ * '''
+ * def ccc(coords, refinements=2):             # <<<<<<<<<<<<<<
+ *     coords = np.array(coords)
+ * 
+ */
+
+  /* function exit code */
+  __pyx_L1_error:;
+  __Pyx_XDECREF(__pyx_t_1);
+  __Pyx_XDECREF(__pyx_t_2);
+  __Pyx_XDECREF(__pyx_t_3);
+  __Pyx_XDECREF(__pyx_t_6);
+  __Pyx_AddTraceback("utils_cy.ccc", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __pyx_r = NULL;
+  __pyx_L0:;
+  __Pyx_XDECREF(__pyx_v__);
+  __Pyx_XDECREF(__pyx_v_L);
+  __Pyx_XDECREF(__pyx_v_R);
+  __Pyx_XDECREF(__pyx_v_coords);
   __Pyx_XGIVEREF(__pyx_r);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
@@ -3571,6 +4438,9 @@ static struct PyModuleDef __pyx_moduledef = {
 #endif
 
 static __Pyx_StringTabEntry __pyx_string_tab[] = {
+  {&__pyx_kp_u_0, __pyx_k_0, sizeof(__pyx_k_0), 0, 1, 0, 0},
+  {&__pyx_kp_u_Band_count, __pyx_k_Band_count, sizeof(__pyx_k_Band_count), 0, 1, 0, 0},
+  {&__pyx_kp_u_Columns, __pyx_k_Columns, sizeof(__pyx_k_Columns), 0, 1, 0, 0},
   {&__pyx_n_s_ComputeStatistics, __pyx_k_ComputeStatistics, sizeof(__pyx_k_ComputeStatistics), 0, 0, 1, 1},
   {&__pyx_n_s_Create, __pyx_k_Create, sizeof(__pyx_k_Create), 0, 0, 1, 1},
   {&__pyx_n_s_CreateDataSource, __pyx_k_CreateDataSource, sizeof(__pyx_k_CreateDataSource), 0, 0, 1, 1},
@@ -3579,24 +4449,38 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {&__pyx_n_u_DN, __pyx_k_DN, sizeof(__pyx_k_DN), 0, 1, 0, 1},
   {&__pyx_n_s_DistanceStack, __pyx_k_DistanceStack, sizeof(__pyx_k_DistanceStack), 0, 0, 1, 1},
   {&__pyx_n_s_DistanceStack___init, __pyx_k_DistanceStack___init, sizeof(__pyx_k_DistanceStack___init), 0, 0, 1, 1},
+  {&__pyx_n_s_DistanceStack_distanceBandInfo, __pyx_k_DistanceStack_distanceBandInfo, sizeof(__pyx_k_DistanceStack_distanceBandInfo), 0, 0, 1, 1},
+  {&__pyx_n_s_DistanceStack_distanceStackInfo, __pyx_k_DistanceStack_distanceStackInfo, sizeof(__pyx_k_DistanceStack_distanceStackInfo), 0, 0, 1, 1},
   {&__pyx_n_s_DistanceStack_filterResult, __pyx_k_DistanceStack_filterResult, sizeof(__pyx_k_DistanceStack_filterResult), 0, 0, 1, 1},
   {&__pyx_n_s_DistanceStack_filterStack, __pyx_k_DistanceStack_filterStack, sizeof(__pyx_k_DistanceStack_filterStack), 0, 0, 1, 1},
   {&__pyx_n_s_ExportToWkt, __pyx_k_ExportToWkt, sizeof(__pyx_k_ExportToWkt), 0, 0, 1, 1},
+  {&__pyx_n_u_FeatureCollection, __pyx_k_FeatureCollection, sizeof(__pyx_k_FeatureCollection), 0, 1, 0, 1},
   {&__pyx_n_s_FieldDefn, __pyx_k_FieldDefn, sizeof(__pyx_k_FieldDefn), 0, 0, 1, 1},
-  {&__pyx_n_s_GDT_Byte, __pyx_k_GDT_Byte, sizeof(__pyx_k_GDT_Byte), 0, 0, 1, 1},
+  {&__pyx_n_s_GDT_Int16, __pyx_k_GDT_Int16, sizeof(__pyx_k_GDT_Int16), 0, 0, 1, 1},
   {&__pyx_n_u_GEOJSON, __pyx_k_GEOJSON, sizeof(__pyx_k_GEOJSON), 0, 1, 0, 1},
   {&__pyx_n_s_GetDriverByName, __pyx_k_GetDriverByName, sizeof(__pyx_k_GetDriverByName), 0, 0, 1, 1},
   {&__pyx_n_s_GetGeoTransform, __pyx_k_GetGeoTransform, sizeof(__pyx_k_GetGeoTransform), 0, 0, 1, 1},
+  {&__pyx_n_s_GetMaximum, __pyx_k_GetMaximum, sizeof(__pyx_k_GetMaximum), 0, 0, 1, 1},
+  {&__pyx_n_s_GetMinimum, __pyx_k_GetMinimum, sizeof(__pyx_k_GetMinimum), 0, 0, 1, 1},
+  {&__pyx_n_s_GetNoDataValue, __pyx_k_GetNoDataValue, sizeof(__pyx_k_GetNoDataValue), 0, 0, 1, 1},
+  {&__pyx_n_s_GetProjection, __pyx_k_GetProjection, sizeof(__pyx_k_GetProjection), 0, 0, 1, 1},
   {&__pyx_n_s_GetRasterBand, __pyx_k_GetRasterBand, sizeof(__pyx_k_GetRasterBand), 0, 0, 1, 1},
   {&__pyx_n_s_ImportFromEPSG, __pyx_k_ImportFromEPSG, sizeof(__pyx_k_ImportFromEPSG), 0, 0, 1, 1},
+  {&__pyx_n_s_L, __pyx_k_L, sizeof(__pyx_k_L), 0, 0, 1, 1},
   {&__pyx_n_u_MEM, __pyx_k_MEM, sizeof(__pyx_k_MEM), 0, 1, 0, 1},
-  {&__pyx_n_s_OFTReal, __pyx_k_OFTReal, sizeof(__pyx_k_OFTReal), 0, 0, 1, 1},
+  {&__pyx_kp_u_Maximum, __pyx_k_Maximum, sizeof(__pyx_k_Maximum), 0, 1, 0, 0},
+  {&__pyx_kp_u_Minimum, __pyx_k_Minimum, sizeof(__pyx_k_Minimum), 0, 1, 0, 0},
+  {&__pyx_kp_u_NoData_value, __pyx_k_NoData_value, sizeof(__pyx_k_NoData_value), 0, 1, 0, 0},
+  {&__pyx_n_s_OFTInteger, __pyx_k_OFTInteger, sizeof(__pyx_k_OFTInteger), 0, 0, 1, 1},
   {&__pyx_n_s_Open, __pyx_k_Open, sizeof(__pyx_k_Open), 0, 0, 1, 1},
   {&__pyx_n_s_Polygonize, __pyx_k_Polygonize, sizeof(__pyx_k_Polygonize), 0, 0, 1, 1},
+  {&__pyx_kp_u_Projection, __pyx_k_Projection, sizeof(__pyx_k_Projection), 0, 1, 0, 0},
+  {&__pyx_n_s_R, __pyx_k_R, sizeof(__pyx_k_R), 0, 0, 1, 1},
   {&__pyx_n_s_RasterCount, __pyx_k_RasterCount, sizeof(__pyx_k_RasterCount), 0, 0, 1, 1},
   {&__pyx_n_s_RasterXSize, __pyx_k_RasterXSize, sizeof(__pyx_k_RasterXSize), 0, 0, 1, 1},
   {&__pyx_n_s_RasterYSize, __pyx_k_RasterYSize, sizeof(__pyx_k_RasterYSize), 0, 0, 1, 1},
   {&__pyx_n_s_ReadAsArray, __pyx_k_ReadAsArray, sizeof(__pyx_k_ReadAsArray), 0, 0, 1, 1},
+  {&__pyx_kp_u_Rows, __pyx_k_Rows, sizeof(__pyx_k_Rows), 0, 1, 0, 0},
   {&__pyx_n_s_SetGeoTransform, __pyx_k_SetGeoTransform, sizeof(__pyx_k_SetGeoTransform), 0, 0, 1, 1},
   {&__pyx_n_s_SetNoDataValue, __pyx_k_SetNoDataValue, sizeof(__pyx_k_SetNoDataValue), 0, 0, 1, 1},
   {&__pyx_n_s_SetProjection, __pyx_k_SetProjection, sizeof(__pyx_k_SetProjection), 0, 0, 1, 1},
@@ -3604,24 +4488,30 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {&__pyx_kp_u_WGS_84_EPSG_4326, __pyx_k_WGS_84_EPSG_4326, sizeof(__pyx_k_WGS_84_EPSG_4326), 0, 1, 0, 0},
   {&__pyx_n_s_WriteArray, __pyx_k_WriteArray, sizeof(__pyx_k_WriteArray), 0, 0, 1, 1},
   {&__pyx_kp_u__2, __pyx_k__2, sizeof(__pyx_k__2), 0, 1, 0, 0},
+  {&__pyx_n_s__20, __pyx_k__20, sizeof(__pyx_k__20), 0, 0, 1, 1},
   {&__pyx_n_s_append, __pyx_k_append, sizeof(__pyx_k_append), 0, 0, 1, 1},
   {&__pyx_n_s_array, __pyx_k_array, sizeof(__pyx_k_array), 0, 0, 1, 1},
   {&__pyx_n_s_astype, __pyx_k_astype, sizeof(__pyx_k_astype), 0, 0, 1, 1},
+  {&__pyx_n_s_axis, __pyx_k_axis, sizeof(__pyx_k_axis), 0, 0, 1, 1},
   {&__pyx_n_s_band, __pyx_k_band, sizeof(__pyx_k_band), 0, 0, 1, 1},
   {&__pyx_n_s_bands, __pyx_k_bands, sizeof(__pyx_k_bands), 0, 0, 1, 1},
+  {&__pyx_n_s_ccc, __pyx_k_ccc, sizeof(__pyx_k_ccc), 0, 0, 1, 1},
   {&__pyx_n_s_cline_in_traceback, __pyx_k_cline_in_traceback, sizeof(__pyx_k_cline_in_traceback), 0, 0, 1, 1},
   {&__pyx_n_s_combinedArray, __pyx_k_combinedArray, sizeof(__pyx_k_combinedArray), 0, 0, 1, 1},
   {&__pyx_n_u_coordinates, __pyx_k_coordinates, sizeof(__pyx_k_coordinates), 0, 1, 0, 1},
+  {&__pyx_n_s_coords, __pyx_k_coords, sizeof(__pyx_k_coords), 0, 0, 1, 1},
   {&__pyx_n_u_crs, __pyx_k_crs, sizeof(__pyx_k_crs), 0, 1, 0, 1},
   {&__pyx_n_s_data, __pyx_k_data, sizeof(__pyx_k_data), 0, 0, 1, 1},
+  {&__pyx_n_s_distanceBandInfo, __pyx_k_distanceBandInfo, sizeof(__pyx_k_distanceBandInfo), 0, 0, 1, 1},
+  {&__pyx_n_s_distanceStackInfo, __pyx_k_distanceStackInfo, sizeof(__pyx_k_distanceStackInfo), 0, 0, 1, 1},
   {&__pyx_n_s_doc, __pyx_k_doc, sizeof(__pyx_k_doc), 0, 0, 1, 1},
   {&__pyx_n_s_driver, __pyx_k_driver, sizeof(__pyx_k_driver), 0, 0, 1, 1},
   {&__pyx_n_s_drv, __pyx_k_drv, sizeof(__pyx_k_drv), 0, 0, 1, 1},
   {&__pyx_n_s_eType, __pyx_k_eType, sizeof(__pyx_k_eType), 0, 0, 1, 1},
+  {&__pyx_n_s_empty_like, __pyx_k_empty_like, sizeof(__pyx_k_empty_like), 0, 0, 1, 1},
   {&__pyx_n_s_enter, __pyx_k_enter, sizeof(__pyx_k_enter), 0, 0, 1, 1},
   {&__pyx_n_s_exit, __pyx_k_exit, sizeof(__pyx_k_exit), 0, 0, 1, 1},
   {&__pyx_n_s_f, __pyx_k_f, sizeof(__pyx_k_f), 0, 0, 1, 1},
-  {&__pyx_n_s_feature, __pyx_k_feature, sizeof(__pyx_k_feature), 0, 0, 1, 1},
   {&__pyx_n_u_features, __pyx_k_features, sizeof(__pyx_k_features), 0, 1, 0, 1},
   {&__pyx_n_s_filterResult, __pyx_k_filterResult, sizeof(__pyx_k_filterResult), 0, 0, 1, 1},
   {&__pyx_n_s_filterStack, __pyx_k_filterStack, sizeof(__pyx_k_filterStack), 0, 0, 1, 1},
@@ -3644,6 +4534,8 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {&__pyx_n_s_module, __pyx_k_module, sizeof(__pyx_k_module), 0, 0, 1, 1},
   {&__pyx_n_s_name, __pyx_k_name, sizeof(__pyx_k_name), 0, 0, 1, 1},
   {&__pyx_n_s_newField, __pyx_k_newField, sizeof(__pyx_k_newField), 0, 0, 1, 1},
+  {&__pyx_n_s_np, __pyx_k_np, sizeof(__pyx_k_np), 0, 0, 1, 1},
+  {&__pyx_n_s_numpy, __pyx_k_numpy, sizeof(__pyx_k_numpy), 0, 0, 1, 1},
   {&__pyx_n_s_ogr, __pyx_k_ogr, sizeof(__pyx_k_ogr), 0, 0, 1, 1},
   {&__pyx_n_s_open, __pyx_k_open, sizeof(__pyx_k_open), 0, 0, 1, 1},
   {&__pyx_n_s_osgeo, __pyx_k_osgeo, sizeof(__pyx_k_osgeo), 0, 0, 1, 1},
@@ -3652,22 +4544,29 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {&__pyx_n_s_outlayer, __pyx_k_outlayer, sizeof(__pyx_k_outlayer), 0, 0, 1, 1},
   {&__pyx_n_s_output, __pyx_k_output, sizeof(__pyx_k_output), 0, 0, 1, 1},
   {&__pyx_n_s_prepare, __pyx_k_prepare, sizeof(__pyx_k_prepare), 0, 0, 1, 1},
+  {&__pyx_n_s_print, __pyx_k_print, sizeof(__pyx_k_print), 0, 0, 1, 1},
   {&__pyx_n_u_properties, __pyx_k_properties, sizeof(__pyx_k_properties), 0, 1, 0, 1},
   {&__pyx_n_s_qualname, __pyx_k_qualname, sizeof(__pyx_k_qualname), 0, 0, 1, 1},
   {&__pyx_n_s_range, __pyx_k_range, sizeof(__pyx_k_range), 0, 0, 1, 1},
   {&__pyx_n_s_raster, __pyx_k_raster, sizeof(__pyx_k_raster), 0, 0, 1, 1},
-  {&__pyx_n_s_remove, __pyx_k_remove, sizeof(__pyx_k_remove), 0, 0, 1, 1},
+  {&__pyx_n_s_rdp, __pyx_k_rdp, sizeof(__pyx_k_rdp), 0, 0, 1, 1},
+  {&__pyx_n_s_refinements, __pyx_k_refinements, sizeof(__pyx_k_refinements), 0, 0, 1, 1},
+  {&__pyx_n_s_repeat, __pyx_k_repeat, sizeof(__pyx_k_repeat), 0, 0, 1, 1},
+  {&__pyx_n_s_result, __pyx_k_result, sizeof(__pyx_k_result), 0, 0, 1, 1},
   {&__pyx_n_s_self, __pyx_k_self, sizeof(__pyx_k_self), 0, 0, 1, 1},
   {&__pyx_n_s_srs, __pyx_k_srs, sizeof(__pyx_k_srs), 0, 0, 1, 1},
   {&__pyx_n_u_test, __pyx_k_test, sizeof(__pyx_k_test), 0, 1, 0, 1},
   {&__pyx_n_s_test_2, __pyx_k_test_2, sizeof(__pyx_k_test_2), 0, 0, 1, 1},
+  {&__pyx_n_s_tolist, __pyx_k_tolist, sizeof(__pyx_k_tolist), 0, 0, 1, 1},
   {&__pyx_n_s_transform, __pyx_k_transform, sizeof(__pyx_k_transform), 0, 0, 1, 1},
+  {&__pyx_n_u_type, __pyx_k_type, sizeof(__pyx_k_type), 0, 1, 0, 1},
   {&__pyx_kp_u_usr_src_backend_data_composit10x, __pyx_k_usr_src_backend_data_composit10x, sizeof(__pyx_k_usr_src_backend_data_composit10x), 0, 1, 0, 0},
   {&__pyx_kp_u_usr_src_backend_results, __pyx_k_usr_src_backend_results, sizeof(__pyx_k_usr_src_backend_results), 0, 1, 0, 0},
   {&__pyx_n_s_utils_cy, __pyx_k_utils_cy, sizeof(__pyx_k_utils_cy), 0, 0, 1, 1},
   {&__pyx_kp_s_utils_cy_pyx, __pyx_k_utils_cy_pyx, sizeof(__pyx_k_utils_cy_pyx), 0, 0, 1, 0},
   {&__pyx_n_s_uuid, __pyx_k_uuid, sizeof(__pyx_k_uuid), 0, 0, 1, 1},
   {&__pyx_n_s_uuid4, __pyx_k_uuid4, sizeof(__pyx_k_uuid4), 0, 0, 1, 1},
+  {&__pyx_n_s_validFeatures, __pyx_k_validFeatures, sizeof(__pyx_k_validFeatures), 0, 0, 1, 1},
   {&__pyx_n_s_wkbPolygon, __pyx_k_wkbPolygon, sizeof(__pyx_k_wkbPolygon), 0, 0, 1, 1},
   {&__pyx_n_s_xsize, __pyx_k_xsize, sizeof(__pyx_k_xsize), 0, 0, 1, 1},
   {&__pyx_n_s_y, __pyx_k_y, sizeof(__pyx_k_y), 0, 0, 1, 1},
@@ -3675,8 +4574,9 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {0, 0, 0, 0, 0, 0, 0}
 };
 static CYTHON_SMALL_CODE int __Pyx_InitCachedBuiltins(void) {
-  __pyx_builtin_range = __Pyx_GetBuiltinName(__pyx_n_s_range); if (!__pyx_builtin_range) __PYX_ERR(0, 24, __pyx_L1_error)
-  __pyx_builtin_open = __Pyx_GetBuiltinName(__pyx_n_s_open); if (!__pyx_builtin_open) __PYX_ERR(0, 106, __pyx_L1_error)
+  __pyx_builtin_range = __Pyx_GetBuiltinName(__pyx_n_s_range); if (!__pyx_builtin_range) __PYX_ERR(0, 26, __pyx_L1_error)
+  __pyx_builtin_print = __Pyx_GetBuiltinName(__pyx_n_s_print); if (!__pyx_builtin_print) __PYX_ERR(0, 42, __pyx_L1_error)
+  __pyx_builtin_open = __Pyx_GetBuiltinName(__pyx_n_s_open); if (!__pyx_builtin_open) __PYX_ERR(0, 113, __pyx_L1_error)
   return 0;
   __pyx_L1_error:;
   return -1;
@@ -3686,96 +4586,157 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("__Pyx_InitCachedConstants", 0);
 
-  /* "utils_cy.pyx":19
+  /* "utils_cy.pyx":20
  *     #Constructor
  *     def __init__(self):
  *         raster = gdal.Open('usr/src/backend/data/composit10x10.tif', 0) #open composit distance raster file             # <<<<<<<<<<<<<<
  *         self.uuid = str(uuid.uuid4()) #generate unique identifier
  *         self.raster = raster #store raster
  */
-  __pyx_tuple_ = PyTuple_Pack(2, __pyx_kp_u_usr_src_backend_data_composit10x, __pyx_int_0); if (unlikely(!__pyx_tuple_)) __PYX_ERR(0, 19, __pyx_L1_error)
+  __pyx_tuple_ = PyTuple_Pack(2, __pyx_kp_u_usr_src_backend_data_composit10x, __pyx_int_0); if (unlikely(!__pyx_tuple_)) __PYX_ERR(0, 20, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple_);
   __Pyx_GIVEREF(__pyx_tuple_);
 
-  /* "utils_cy.pyx":89
+  /* "utils_cy.pyx":92
  * 
  *         driver = gdal.GetDriverByName('MEM') #initialize in memory driver
- *         output = driver.Create('', xsize=self.raster.RasterXSize, ysize=self.raster.RasterYSize, bands=1, eType=gdal.GDT_Byte) #create rater             # <<<<<<<<<<<<<<
+ *         output = driver.Create('', xsize=self.raster.RasterXSize, ysize=self.raster.RasterYSize, bands=1, eType=gdal.GDT_Int16) #create rater             # <<<<<<<<<<<<<<
  *         output.SetGeoTransform(self.transform) #set geotransform of output image
  *         output.SetProjection(srs.ExportToWkt()) #set projection of output image
  */
-  __pyx_tuple__3 = PyTuple_Pack(1, __pyx_kp_u__2); if (unlikely(!__pyx_tuple__3)) __PYX_ERR(0, 89, __pyx_L1_error)
+  __pyx_tuple__3 = PyTuple_Pack(1, __pyx_kp_u__2); if (unlikely(!__pyx_tuple__3)) __PYX_ERR(0, 92, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__3);
   __Pyx_GIVEREF(__pyx_tuple__3);
 
-  /* "utils_cy.pyx":97
+  /* "utils_cy.pyx":100
  *         drv = ogr.GetDriverByName('GEOJSON') #initialize GEOJSON driver
  *         outfile = drv.CreateDataSource("usr/src/backend/results/" + self.uuid + ".json") #create GEOJSON
  *         outlayer = outfile.CreateLayer('test', srs=srs, geom_type=ogr.wkbPolygon) #add layer to GEOJSON             # <<<<<<<<<<<<<<
- *         newField = ogr.FieldDefn('DN', ogr.OFTReal) #create field
+ *         newField = ogr.FieldDefn('DN', ogr.OFTInteger) #create field
  *         outlayer.CreateField(newField) #add field to GEOJSON
  */
-  __pyx_tuple__4 = PyTuple_Pack(1, __pyx_n_u_test); if (unlikely(!__pyx_tuple__4)) __PYX_ERR(0, 97, __pyx_L1_error)
+  __pyx_tuple__4 = PyTuple_Pack(1, __pyx_n_u_test); if (unlikely(!__pyx_tuple__4)) __PYX_ERR(0, 100, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__4);
   __Pyx_GIVEREF(__pyx_tuple__4);
 
-  /* "utils_cy.pyx":106
- * 
+  /* "utils_cy.pyx":113
+ *     '''
  *     def filterResult(self):
  *         with open('usr/src/backend/results/' + self.uuid + '.json') as f:             # <<<<<<<<<<<<<<
  *             data = json.load(f)
- *         for feature in data['features']:
+ *         validFeatures = []
  */
-  __pyx_tuple__5 = PyTuple_Pack(3, Py_None, Py_None, Py_None); if (unlikely(!__pyx_tuple__5)) __PYX_ERR(0, 106, __pyx_L1_error)
+  __pyx_tuple__5 = PyTuple_Pack(3, Py_None, Py_None, Py_None); if (unlikely(!__pyx_tuple__5)) __PYX_ERR(0, 113, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__5);
   __Pyx_GIVEREF(__pyx_tuple__5);
 
-  /* "utils_cy.pyx":111
- *             if(feature['properties']['DN'] != 1):
- *                 data['features'].remove(feature)
- *             feature['geometry']['coordinates'] = feature['geometry']['coordinates'][::-1]             # <<<<<<<<<<<<<<
- *         data['crs'] = "WGS-84 - EPSG: 4326"
- * 
+  /* "utils_cy.pyx":119
+ *         for i in range(0, len(data['features'])):
+ *             if(data[i]['properties']['DN'] == 0 or data[i]['properties']['DN'] == '0'):
+ *                 data[i]['geometry']['coordinates'] = data[i]['geometry']['coordinates'][::-1]             # <<<<<<<<<<<<<<
+ *                 validFeatures.append(data[i])
+ *             #feature['geometry']['coordinates'][0] = ccc(rdp(feature['geometry']['coordinates'][0], epsilon=0.00025)) #smoothing off for now
  */
-  __pyx_slice__6 = PySlice_New(Py_None, Py_None, __pyx_int_neg_1); if (unlikely(!__pyx_slice__6)) __PYX_ERR(0, 111, __pyx_L1_error)
+  __pyx_slice__6 = PySlice_New(Py_None, Py_None, __pyx_int_neg_1); if (unlikely(!__pyx_slice__6)) __PYX_ERR(0, 119, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_slice__6);
   __Pyx_GIVEREF(__pyx_slice__6);
 
-  /* "utils_cy.pyx":18
+  /* "utils_cy.pyx":133
+ * 
+ *     for _ in range(refinements):
+ *         L = coords.repeat(2, axis=0)             # <<<<<<<<<<<<<<
+ *         R = np.empty_like(L)
+ *         R[0] = L[0]
+ */
+  __pyx_tuple__7 = PyTuple_Pack(1, __pyx_int_2); if (unlikely(!__pyx_tuple__7)) __PYX_ERR(0, 133, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__7);
+  __Pyx_GIVEREF(__pyx_tuple__7);
+
+  /* "utils_cy.pyx":136
+ *         R = np.empty_like(L)
+ *         R[0] = L[0]
+ *         R[2::2] = L[1:-1:2]             # <<<<<<<<<<<<<<
+ *         R[1:-1:2] = L[2::2]
+ *         R[-1] = L[-1]
+ */
+  __pyx_slice__8 = PySlice_New(__pyx_int_1, __pyx_int_neg_1, __pyx_int_2); if (unlikely(!__pyx_slice__8)) __PYX_ERR(0, 136, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_slice__8);
+  __Pyx_GIVEREF(__pyx_slice__8);
+  __pyx_slice__9 = PySlice_New(__pyx_int_2, Py_None, __pyx_int_2); if (unlikely(!__pyx_slice__9)) __PYX_ERR(0, 136, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_slice__9);
+  __Pyx_GIVEREF(__pyx_slice__9);
+
+  /* "utils_cy.pyx":19
  * class DistanceStack:
  *     #Constructor
  *     def __init__(self):             # <<<<<<<<<<<<<<
  *         raster = gdal.Open('usr/src/backend/data/composit10x10.tif', 0) #open composit distance raster file
  *         self.uuid = str(uuid.uuid4()) #generate unique identifier
  */
-  __pyx_tuple__7 = PyTuple_Pack(4, __pyx_n_s_self, __pyx_n_s_raster, __pyx_n_s_i, __pyx_n_s_band); if (unlikely(!__pyx_tuple__7)) __PYX_ERR(0, 18, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__7);
-  __Pyx_GIVEREF(__pyx_tuple__7);
-  __pyx_codeobj__8 = (PyObject*)__Pyx_PyCode_New(1, 0, 4, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__7, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_utils_cy_pyx, __pyx_n_s_init, 18, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__8)) __PYX_ERR(0, 18, __pyx_L1_error)
+  __pyx_tuple__10 = PyTuple_Pack(4, __pyx_n_s_self, __pyx_n_s_raster, __pyx_n_s_i, __pyx_n_s_band); if (unlikely(!__pyx_tuple__10)) __PYX_ERR(0, 19, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__10);
+  __Pyx_GIVEREF(__pyx_tuple__10);
+  __pyx_codeobj__11 = (PyObject*)__Pyx_PyCode_New(1, 0, 4, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__10, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_utils_cy_pyx, __pyx_n_s_init, 19, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__11)) __PYX_ERR(0, 19, __pyx_L1_error)
 
-  /* "utils_cy.pyx":63
+  /* "utils_cy.pyx":41
+ *     * Description: Outputs some key values of the raster
+ *     '''
+ *     def distanceStackInfo(self):             # <<<<<<<<<<<<<<
+ *         print("==> Projection: ", self.raster.GetProjection())  # get projection
+ *         print("==> Columns:", self.raster.RasterXSize)  # number of columns
+ */
+  __pyx_tuple__12 = PyTuple_Pack(1, __pyx_n_s_self); if (unlikely(!__pyx_tuple__12)) __PYX_ERR(0, 41, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__12);
+  __Pyx_GIVEREF(__pyx_tuple__12);
+  __pyx_codeobj__13 = (PyObject*)__Pyx_PyCode_New(1, 0, 1, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__12, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_utils_cy_pyx, __pyx_n_s_distanceStackInfo, 41, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__13)) __PYX_ERR(0, 41, __pyx_L1_error)
+
+  /* "utils_cy.pyx":52
+ *     * Parameters: A band number of the underlying raster
+ *     '''
+ *     def distanceBandInfo(self, band):             # <<<<<<<<<<<<<<
+ *         print("==> Minimum:", self.bands[band].GetMinimum())
+ *         print("==> Maximum:", self.bands[band].GetMaximum())
+ */
+  __pyx_tuple__14 = PyTuple_Pack(2, __pyx_n_s_self, __pyx_n_s_band); if (unlikely(!__pyx_tuple__14)) __PYX_ERR(0, 52, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__14);
+  __Pyx_GIVEREF(__pyx_tuple__14);
+  __pyx_codeobj__15 = (PyObject*)__Pyx_PyCode_New(2, 0, 2, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__14, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_utils_cy_pyx, __pyx_n_s_distanceBandInfo, 52, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__15)) __PYX_ERR(0, 52, __pyx_L1_error)
+
+  /* "utils_cy.pyx":65
  *     * parameters and which do not
  *     '''
  *     def filterStack(self, filterValues):             # <<<<<<<<<<<<<<
  *         srs = ogr.osr.SpatialReference()
  *         srs.ImportFromEPSG(4326)
  */
-  __pyx_tuple__9 = PyTuple_Pack(17, __pyx_n_s_self, __pyx_n_s_filterValues, __pyx_n_s_srs, __pyx_n_s_filteredArrays, __pyx_n_s_i, __pyx_n_s_array, __pyx_n_s_filteredArray, __pyx_n_s_filteredArrayA, __pyx_n_s_filteredArrayB, __pyx_n_s_combinedArray, __pyx_n_s_y, __pyx_n_s_driver, __pyx_n_s_output, __pyx_n_s_drv, __pyx_n_s_outfile, __pyx_n_s_outlayer, __pyx_n_s_newField); if (unlikely(!__pyx_tuple__9)) __PYX_ERR(0, 63, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__9);
-  __Pyx_GIVEREF(__pyx_tuple__9);
-  __pyx_codeobj__10 = (PyObject*)__Pyx_PyCode_New(2, 0, 17, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__9, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_utils_cy_pyx, __pyx_n_s_filterStack, 63, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__10)) __PYX_ERR(0, 63, __pyx_L1_error)
+  __pyx_tuple__16 = PyTuple_Pack(17, __pyx_n_s_self, __pyx_n_s_filterValues, __pyx_n_s_srs, __pyx_n_s_filteredArrays, __pyx_n_s_i, __pyx_n_s_array, __pyx_n_s_filteredArray, __pyx_n_s_filteredArrayA, __pyx_n_s_filteredArrayB, __pyx_n_s_combinedArray, __pyx_n_s_y, __pyx_n_s_driver, __pyx_n_s_output, __pyx_n_s_drv, __pyx_n_s_outfile, __pyx_n_s_outlayer, __pyx_n_s_newField); if (unlikely(!__pyx_tuple__16)) __PYX_ERR(0, 65, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__16);
+  __Pyx_GIVEREF(__pyx_tuple__16);
+  __pyx_codeobj__17 = (PyObject*)__Pyx_PyCode_New(2, 0, 17, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__16, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_utils_cy_pyx, __pyx_n_s_filterStack, 65, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__17)) __PYX_ERR(0, 65, __pyx_L1_error)
 
-  /* "utils_cy.pyx":105
- *         return self.uuid #return uuid of DistanceStack
- * 
+  /* "utils_cy.pyx":112
+ *     * Description: Filters the resulting .geojson according to the DN values
+ *     '''
  *     def filterResult(self):             # <<<<<<<<<<<<<<
  *         with open('usr/src/backend/results/' + self.uuid + '.json') as f:
  *             data = json.load(f)
  */
-  __pyx_tuple__11 = PyTuple_Pack(4, __pyx_n_s_self, __pyx_n_s_f, __pyx_n_s_data, __pyx_n_s_feature); if (unlikely(!__pyx_tuple__11)) __PYX_ERR(0, 105, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__11);
-  __Pyx_GIVEREF(__pyx_tuple__11);
-  __pyx_codeobj__12 = (PyObject*)__Pyx_PyCode_New(1, 0, 4, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__11, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_utils_cy_pyx, __pyx_n_s_filterResult, 105, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__12)) __PYX_ERR(0, 105, __pyx_L1_error)
+  __pyx_tuple__18 = PyTuple_Pack(6, __pyx_n_s_self, __pyx_n_s_f, __pyx_n_s_data, __pyx_n_s_validFeatures, __pyx_n_s_i, __pyx_n_s_result); if (unlikely(!__pyx_tuple__18)) __PYX_ERR(0, 112, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__18);
+  __Pyx_GIVEREF(__pyx_tuple__18);
+  __pyx_codeobj__19 = (PyObject*)__Pyx_PyCode_New(1, 0, 6, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__18, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_utils_cy_pyx, __pyx_n_s_filterResult, 112, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__19)) __PYX_ERR(0, 112, __pyx_L1_error)
+
+  /* "utils_cy.pyx":129
+ * * Description: An implementation of chaikin's corner cutting
+ * '''
+ * def ccc(coords, refinements=2):             # <<<<<<<<<<<<<<
+ *     coords = np.array(coords)
+ * 
+ */
+  __pyx_tuple__21 = PyTuple_Pack(5, __pyx_n_s_coords, __pyx_n_s_refinements, __pyx_n_s__20, __pyx_n_s_L, __pyx_n_s_R); if (unlikely(!__pyx_tuple__21)) __PYX_ERR(0, 129, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__21);
+  __Pyx_GIVEREF(__pyx_tuple__21);
+  __pyx_codeobj__22 = (PyObject*)__Pyx_PyCode_New(2, 0, 5, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__21, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_utils_cy_pyx, __pyx_n_s_ccc, 129, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__22)) __PYX_ERR(0, 129, __pyx_L1_error)
   __Pyx_RefNannyFinishContext();
   return 0;
   __pyx_L1_error:;
@@ -3785,8 +4746,11 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
 
 static CYTHON_SMALL_CODE int __Pyx_InitGlobals(void) {
   if (__Pyx_InitStrings(__pyx_string_tab) < 0) __PYX_ERR(0, 1, __pyx_L1_error);
+  __pyx_float_0_25 = PyFloat_FromDouble(0.25); if (unlikely(!__pyx_float_0_25)) __PYX_ERR(0, 1, __pyx_L1_error)
+  __pyx_float_0_75 = PyFloat_FromDouble(0.75); if (unlikely(!__pyx_float_0_75)) __PYX_ERR(0, 1, __pyx_L1_error)
   __pyx_int_0 = PyInt_FromLong(0); if (unlikely(!__pyx_int_0)) __PYX_ERR(0, 1, __pyx_L1_error)
   __pyx_int_1 = PyInt_FromLong(1); if (unlikely(!__pyx_int_1)) __PYX_ERR(0, 1, __pyx_L1_error)
+  __pyx_int_2 = PyInt_FromLong(2); if (unlikely(!__pyx_int_2)) __PYX_ERR(0, 1, __pyx_L1_error)
   __pyx_int_10 = PyInt_FromLong(10); if (unlikely(!__pyx_int_10)) __PYX_ERR(0, 1, __pyx_L1_error)
   __pyx_int_4326 = PyInt_FromLong(4326); if (unlikely(!__pyx_int_4326)) __PYX_ERR(0, 1, __pyx_L1_error)
   __pyx_int_neg_1 = PyInt_FromLong(-1); if (unlikely(!__pyx_int_neg_1)) __PYX_ERR(0, 1, __pyx_L1_error)
@@ -4064,44 +5028,37 @@ if (!__Pyx_RefNanny) {
   /* "utils_cy.pyx":7
  * @author: Alexander Pilz
  * """
- * from osgeo import gdal, osr, ogr             # <<<<<<<<<<<<<<
+ * from osgeo import ogr, gdal             # <<<<<<<<<<<<<<
  * import json
  * import uuid
  */
-  __pyx_t_1 = PyList_New(3); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 7, __pyx_L1_error)
+  __pyx_t_1 = PyList_New(2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 7, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __Pyx_INCREF(__pyx_n_s_gdal);
-  __Pyx_GIVEREF(__pyx_n_s_gdal);
-  PyList_SET_ITEM(__pyx_t_1, 0, __pyx_n_s_gdal);
-  __Pyx_INCREF(__pyx_n_s_osr);
-  __Pyx_GIVEREF(__pyx_n_s_osr);
-  PyList_SET_ITEM(__pyx_t_1, 1, __pyx_n_s_osr);
   __Pyx_INCREF(__pyx_n_s_ogr);
   __Pyx_GIVEREF(__pyx_n_s_ogr);
-  PyList_SET_ITEM(__pyx_t_1, 2, __pyx_n_s_ogr);
+  PyList_SET_ITEM(__pyx_t_1, 0, __pyx_n_s_ogr);
+  __Pyx_INCREF(__pyx_n_s_gdal);
+  __Pyx_GIVEREF(__pyx_n_s_gdal);
+  PyList_SET_ITEM(__pyx_t_1, 1, __pyx_n_s_gdal);
   __pyx_t_2 = __Pyx_Import(__pyx_n_s_osgeo, __pyx_t_1, 0); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 7, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-  __pyx_t_1 = __Pyx_ImportFrom(__pyx_t_2, __pyx_n_s_gdal); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 7, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_1);
-  if (PyDict_SetItem(__pyx_d, __pyx_n_s_gdal, __pyx_t_1) < 0) __PYX_ERR(0, 7, __pyx_L1_error)
-  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-  __pyx_t_1 = __Pyx_ImportFrom(__pyx_t_2, __pyx_n_s_osr); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 7, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_1);
-  if (PyDict_SetItem(__pyx_d, __pyx_n_s_osr, __pyx_t_1) < 0) __PYX_ERR(0, 7, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   __pyx_t_1 = __Pyx_ImportFrom(__pyx_t_2, __pyx_n_s_ogr); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 7, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   if (PyDict_SetItem(__pyx_d, __pyx_n_s_ogr, __pyx_t_1) < 0) __PYX_ERR(0, 7, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+  __pyx_t_1 = __Pyx_ImportFrom(__pyx_t_2, __pyx_n_s_gdal); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 7, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_gdal, __pyx_t_1) < 0) __PYX_ERR(0, 7, __pyx_L1_error)
+  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
   /* "utils_cy.pyx":8
  * """
- * from osgeo import gdal, osr, ogr
+ * from osgeo import ogr, gdal
  * import json             # <<<<<<<<<<<<<<
  * import uuid
- * 
+ * import numpy as np
  */
   __pyx_t_2 = __Pyx_Import(__pyx_n_s_json_2, 0, 0); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 8, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
@@ -4109,85 +5066,154 @@ if (!__Pyx_RefNanny) {
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
   /* "utils_cy.pyx":9
- * from osgeo import gdal, osr, ogr
+ * from osgeo import ogr, gdal
  * import json
  * import uuid             # <<<<<<<<<<<<<<
- * 
- * '''
+ * import numpy as np
+ * from rdp import rdp
  */
   __pyx_t_2 = __Pyx_Import(__pyx_n_s_uuid, 0, 0); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 9, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   if (PyDict_SetItem(__pyx_d, __pyx_n_s_uuid, __pyx_t_2) < 0) __PYX_ERR(0, 9, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
-  /* "utils_cy.pyx":16
+  /* "utils_cy.pyx":10
+ * import json
+ * import uuid
+ * import numpy as np             # <<<<<<<<<<<<<<
+ * from rdp import rdp
+ * '''
+ */
+  __pyx_t_2 = __Pyx_Import(__pyx_n_s_numpy, 0, 0); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 10, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_2);
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_np, __pyx_t_2) < 0) __PYX_ERR(0, 10, __pyx_L1_error)
+  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+
+  /* "utils_cy.pyx":11
+ * import uuid
+ * import numpy as np
+ * from rdp import rdp             # <<<<<<<<<<<<<<
+ * '''
+ * * Title: DistanceStack
+ */
+  __pyx_t_2 = PyList_New(1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 11, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_2);
+  __Pyx_INCREF(__pyx_n_s_rdp);
+  __Pyx_GIVEREF(__pyx_n_s_rdp);
+  PyList_SET_ITEM(__pyx_t_2, 0, __pyx_n_s_rdp);
+  __pyx_t_1 = __Pyx_Import(__pyx_n_s_rdp, __pyx_t_2, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 11, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
+  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+  __pyx_t_2 = __Pyx_ImportFrom(__pyx_t_1, __pyx_n_s_rdp); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 11, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_2);
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_rdp, __pyx_t_2) < 0) __PYX_ERR(0, 11, __pyx_L1_error)
+  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+
+  /* "utils_cy.pyx":17
  * * raster is handled and computation on it are realized
  * '''
  * class DistanceStack:             # <<<<<<<<<<<<<<
  *     #Constructor
  *     def __init__(self):
  */
-  __pyx_t_2 = __Pyx_Py3MetaclassPrepare((PyObject *) NULL, __pyx_empty_tuple, __pyx_n_s_DistanceStack, __pyx_n_s_DistanceStack, (PyObject *) NULL, __pyx_n_s_utils_cy, (PyObject *) NULL); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 16, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_2);
+  __pyx_t_1 = __Pyx_Py3MetaclassPrepare((PyObject *) NULL, __pyx_empty_tuple, __pyx_n_s_DistanceStack, __pyx_n_s_DistanceStack, (PyObject *) NULL, __pyx_n_s_utils_cy, (PyObject *) NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 17, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
 
-  /* "utils_cy.pyx":18
+  /* "utils_cy.pyx":19
  * class DistanceStack:
  *     #Constructor
  *     def __init__(self):             # <<<<<<<<<<<<<<
  *         raster = gdal.Open('usr/src/backend/data/composit10x10.tif', 0) #open composit distance raster file
  *         self.uuid = str(uuid.uuid4()) #generate unique identifier
  */
-  __pyx_t_1 = __Pyx_CyFunction_New(&__pyx_mdef_8utils_cy_13DistanceStack_1__init__, 0, __pyx_n_s_DistanceStack___init, NULL, __pyx_n_s_utils_cy, __pyx_d, ((PyObject *)__pyx_codeobj__8)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 18, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_1);
-  if (__Pyx_SetNameInClass(__pyx_t_2, __pyx_n_s_init, __pyx_t_1) < 0) __PYX_ERR(0, 18, __pyx_L1_error)
-  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+  __pyx_t_2 = __Pyx_CyFunction_New(&__pyx_mdef_8utils_cy_13DistanceStack_1__init__, 0, __pyx_n_s_DistanceStack___init, NULL, __pyx_n_s_utils_cy, __pyx_d, ((PyObject *)__pyx_codeobj__11)); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 19, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_2);
+  if (__Pyx_SetNameInClass(__pyx_t_1, __pyx_n_s_init, __pyx_t_2) < 0) __PYX_ERR(0, 19, __pyx_L1_error)
+  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
-  /* "utils_cy.pyx":63
+  /* "utils_cy.pyx":41
+ *     * Description: Outputs some key values of the raster
+ *     '''
+ *     def distanceStackInfo(self):             # <<<<<<<<<<<<<<
+ *         print("==> Projection: ", self.raster.GetProjection())  # get projection
+ *         print("==> Columns:", self.raster.RasterXSize)  # number of columns
+ */
+  __pyx_t_2 = __Pyx_CyFunction_New(&__pyx_mdef_8utils_cy_13DistanceStack_3distanceStackInfo, 0, __pyx_n_s_DistanceStack_distanceStackInfo, NULL, __pyx_n_s_utils_cy, __pyx_d, ((PyObject *)__pyx_codeobj__13)); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 41, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_2);
+  if (__Pyx_SetNameInClass(__pyx_t_1, __pyx_n_s_distanceStackInfo, __pyx_t_2) < 0) __PYX_ERR(0, 41, __pyx_L1_error)
+  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+
+  /* "utils_cy.pyx":52
+ *     * Parameters: A band number of the underlying raster
+ *     '''
+ *     def distanceBandInfo(self, band):             # <<<<<<<<<<<<<<
+ *         print("==> Minimum:", self.bands[band].GetMinimum())
+ *         print("==> Maximum:", self.bands[band].GetMaximum())
+ */
+  __pyx_t_2 = __Pyx_CyFunction_New(&__pyx_mdef_8utils_cy_13DistanceStack_5distanceBandInfo, 0, __pyx_n_s_DistanceStack_distanceBandInfo, NULL, __pyx_n_s_utils_cy, __pyx_d, ((PyObject *)__pyx_codeobj__15)); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 52, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_2);
+  if (__Pyx_SetNameInClass(__pyx_t_1, __pyx_n_s_distanceBandInfo, __pyx_t_2) < 0) __PYX_ERR(0, 52, __pyx_L1_error)
+  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+
+  /* "utils_cy.pyx":65
  *     * parameters and which do not
  *     '''
  *     def filterStack(self, filterValues):             # <<<<<<<<<<<<<<
  *         srs = ogr.osr.SpatialReference()
  *         srs.ImportFromEPSG(4326)
  */
-  __pyx_t_1 = __Pyx_CyFunction_New(&__pyx_mdef_8utils_cy_13DistanceStack_3filterStack, 0, __pyx_n_s_DistanceStack_filterStack, NULL, __pyx_n_s_utils_cy, __pyx_d, ((PyObject *)__pyx_codeobj__10)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 63, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_1);
-  if (__Pyx_SetNameInClass(__pyx_t_2, __pyx_n_s_filterStack, __pyx_t_1) < 0) __PYX_ERR(0, 63, __pyx_L1_error)
-  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+  __pyx_t_2 = __Pyx_CyFunction_New(&__pyx_mdef_8utils_cy_13DistanceStack_7filterStack, 0, __pyx_n_s_DistanceStack_filterStack, NULL, __pyx_n_s_utils_cy, __pyx_d, ((PyObject *)__pyx_codeobj__17)); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 65, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_2);
+  if (__Pyx_SetNameInClass(__pyx_t_1, __pyx_n_s_filterStack, __pyx_t_2) < 0) __PYX_ERR(0, 65, __pyx_L1_error)
+  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
-  /* "utils_cy.pyx":105
- *         return self.uuid #return uuid of DistanceStack
- * 
+  /* "utils_cy.pyx":112
+ *     * Description: Filters the resulting .geojson according to the DN values
+ *     '''
  *     def filterResult(self):             # <<<<<<<<<<<<<<
  *         with open('usr/src/backend/results/' + self.uuid + '.json') as f:
  *             data = json.load(f)
  */
-  __pyx_t_1 = __Pyx_CyFunction_New(&__pyx_mdef_8utils_cy_13DistanceStack_5filterResult, 0, __pyx_n_s_DistanceStack_filterResult, NULL, __pyx_n_s_utils_cy, __pyx_d, ((PyObject *)__pyx_codeobj__12)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 105, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_1);
-  if (__Pyx_SetNameInClass(__pyx_t_2, __pyx_n_s_filterResult, __pyx_t_1) < 0) __PYX_ERR(0, 105, __pyx_L1_error)
-  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+  __pyx_t_2 = __Pyx_CyFunction_New(&__pyx_mdef_8utils_cy_13DistanceStack_9filterResult, 0, __pyx_n_s_DistanceStack_filterResult, NULL, __pyx_n_s_utils_cy, __pyx_d, ((PyObject *)__pyx_codeobj__19)); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 112, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_2);
+  if (__Pyx_SetNameInClass(__pyx_t_1, __pyx_n_s_filterResult, __pyx_t_2) < 0) __PYX_ERR(0, 112, __pyx_L1_error)
+  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
-  /* "utils_cy.pyx":16
+  /* "utils_cy.pyx":17
  * * raster is handled and computation on it are realized
  * '''
  * class DistanceStack:             # <<<<<<<<<<<<<<
  *     #Constructor
  *     def __init__(self):
  */
-  __pyx_t_1 = __Pyx_Py3ClassCreate(((PyObject*)&__Pyx_DefaultClassType), __pyx_n_s_DistanceStack, __pyx_empty_tuple, __pyx_t_2, NULL, 0, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 16, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_1);
-  if (PyDict_SetItem(__pyx_d, __pyx_n_s_DistanceStack, __pyx_t_1) < 0) __PYX_ERR(0, 16, __pyx_L1_error)
-  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+  __pyx_t_2 = __Pyx_Py3ClassCreate(((PyObject*)&__Pyx_DefaultClassType), __pyx_n_s_DistanceStack, __pyx_empty_tuple, __pyx_t_1, NULL, 0, 0); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 17, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_2);
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_DistanceStack, __pyx_t_2) < 0) __PYX_ERR(0, 17, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+
+  /* "utils_cy.pyx":129
+ * * Description: An implementation of chaikin's corner cutting
+ * '''
+ * def ccc(coords, refinements=2):             # <<<<<<<<<<<<<<
+ *     coords = np.array(coords)
+ * 
+ */
+  __pyx_t_1 = PyCFunction_NewEx(&__pyx_mdef_8utils_cy_1ccc, NULL, __pyx_n_s_utils_cy); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 129, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_ccc, __pyx_t_1) < 0) __PYX_ERR(0, 129, __pyx_L1_error)
+  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
   /* "utils_cy.pyx":1
  * # -*- coding: utf-8 -*-             # <<<<<<<<<<<<<<
  * """
  * Created on Wed Nov 23 16:08:13 2022
  */
-  __pyx_t_2 = __Pyx_PyDict_NewPresized(0); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 1, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_2);
-  if (PyDict_SetItem(__pyx_d, __pyx_n_s_test_2, __pyx_t_2) < 0) __PYX_ERR(0, 1, __pyx_L1_error)
-  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+  __pyx_t_1 = __Pyx_PyDict_NewPresized(0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 1, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_test_2, __pyx_t_1) < 0) __PYX_ERR(0, 1, __pyx_L1_error)
+  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
   /*--- Wrapped vars code ---*/
 
@@ -5217,6 +6243,65 @@ static PyObject* __Pyx_PyInt_TrueDivideObjC(PyObject *op1, PyObject *op2, CYTHON
 }
 #endif
 
+/* SliceTupleAndList */
+#if CYTHON_COMPILING_IN_CPYTHON
+static CYTHON_INLINE void __Pyx_crop_slice(Py_ssize_t* _start, Py_ssize_t* _stop, Py_ssize_t* _length) {
+    Py_ssize_t start = *_start, stop = *_stop, length = *_length;
+    if (start < 0) {
+        start += length;
+        if (start < 0)
+            start = 0;
+    }
+    if (stop < 0)
+        stop += length;
+    else if (stop > length)
+        stop = length;
+    *_length = stop - start;
+    *_start = start;
+    *_stop = stop;
+}
+static CYTHON_INLINE void __Pyx_copy_object_array(PyObject** CYTHON_RESTRICT src, PyObject** CYTHON_RESTRICT dest, Py_ssize_t length) {
+    PyObject *v;
+    Py_ssize_t i;
+    for (i = 0; i < length; i++) {
+        v = dest[i] = src[i];
+        Py_INCREF(v);
+    }
+}
+static CYTHON_INLINE PyObject* __Pyx_PyList_GetSlice(
+            PyObject* src, Py_ssize_t start, Py_ssize_t stop) {
+    PyObject* dest;
+    Py_ssize_t length = PyList_GET_SIZE(src);
+    __Pyx_crop_slice(&start, &stop, &length);
+    if (unlikely(length <= 0))
+        return PyList_New(0);
+    dest = PyList_New(length);
+    if (unlikely(!dest))
+        return NULL;
+    __Pyx_copy_object_array(
+        ((PyListObject*)src)->ob_item + start,
+        ((PyListObject*)dest)->ob_item,
+        length);
+    return dest;
+}
+static CYTHON_INLINE PyObject* __Pyx_PyTuple_GetSlice(
+            PyObject* src, Py_ssize_t start, Py_ssize_t stop) {
+    PyObject* dest;
+    Py_ssize_t length = PyTuple_GET_SIZE(src);
+    __Pyx_crop_slice(&start, &stop, &length);
+    if (unlikely(length <= 0))
+        return PyTuple_New(0);
+    dest = PyTuple_New(length);
+    if (unlikely(!dest))
+        return NULL;
+    __Pyx_copy_object_array(
+        ((PyTupleObject*)src)->ob_item + start,
+        ((PyTupleObject*)dest)->ob_item,
+        length);
+    return dest;
+}
+#endif
+
 /* GetTopmostException */
 #if CYTHON_USE_EXC_INFO_STACK
 static _PyErr_StackItem *
@@ -5401,15 +6486,15 @@ static PyObject *__Pyx_PyDict_GetItem(PyObject *d, PyObject* key) {
 #endif
 
 /* PyIntCompare */
-static CYTHON_INLINE PyObject* __Pyx_PyInt_NeObjC(PyObject *op1, PyObject *op2, CYTHON_UNUSED long intval, CYTHON_UNUSED long inplace) {
+static CYTHON_INLINE PyObject* __Pyx_PyInt_EqObjC(PyObject *op1, PyObject *op2, CYTHON_UNUSED long intval, CYTHON_UNUSED long inplace) {
     if (op1 == op2) {
-        Py_RETURN_FALSE;
+        Py_RETURN_TRUE;
     }
     #if PY_MAJOR_VERSION < 3
     if (likely(PyInt_CheckExact(op1))) {
         const long b = intval;
         long a = PyInt_AS_LONG(op1);
-        if (a != b) Py_RETURN_TRUE; else Py_RETURN_FALSE;
+        if (a == b) Py_RETURN_TRUE; else Py_RETURN_FALSE;
     }
     #endif
     #if CYTHON_USE_PYLONG_INTERNALS
@@ -5419,15 +6504,15 @@ static CYTHON_INLINE PyObject* __Pyx_PyInt_NeObjC(PyObject *op1, PyObject *op2, 
         Py_ssize_t size = Py_SIZE(op1);
         const digit* digits = ((PyLongObject*)op1)->ob_digit;
         if (intval == 0) {
-            if (size != 0) Py_RETURN_TRUE; else Py_RETURN_FALSE;
+            if (size == 0) Py_RETURN_TRUE; else Py_RETURN_FALSE;
         } else if (intval < 0) {
             if (size >= 0)
-                Py_RETURN_TRUE;
+                Py_RETURN_FALSE;
             intval = -intval;
             size = -size;
         } else {
             if (size <= 0)
-                Py_RETURN_TRUE;
+                Py_RETURN_FALSE;
         }
         uintval = (unsigned long) intval;
 #if PyLong_SHIFT * 4 < SIZEOF_LONG*8
@@ -5455,16 +6540,214 @@ static CYTHON_INLINE PyObject* __Pyx_PyInt_NeObjC(PyObject *op1, PyObject *op2, 
         } else
 #endif
             unequal = (size != 1) || (((unsigned long) digits[0]) != (uintval & (unsigned long) PyLong_MASK));
-        if (unequal != 0) Py_RETURN_TRUE; else Py_RETURN_FALSE;
+        if (unequal == 0) Py_RETURN_TRUE; else Py_RETURN_FALSE;
     }
     #endif
     if (PyFloat_CheckExact(op1)) {
         const long b = intval;
         double a = PyFloat_AS_DOUBLE(op1);
-        if ((double)a != (double)b) Py_RETURN_TRUE; else Py_RETURN_FALSE;
+        if ((double)a == (double)b) Py_RETURN_TRUE; else Py_RETURN_FALSE;
     }
     return (
-        PyObject_RichCompare(op1, op2, Py_NE));
+        PyObject_RichCompare(op1, op2, Py_EQ));
+}
+
+/* BytesEquals */
+static CYTHON_INLINE int __Pyx_PyBytes_Equals(PyObject* s1, PyObject* s2, int equals) {
+#if CYTHON_COMPILING_IN_PYPY
+    return PyObject_RichCompareBool(s1, s2, equals);
+#else
+    if (s1 == s2) {
+        return (equals == Py_EQ);
+    } else if (PyBytes_CheckExact(s1) & PyBytes_CheckExact(s2)) {
+        const char *ps1, *ps2;
+        Py_ssize_t length = PyBytes_GET_SIZE(s1);
+        if (length != PyBytes_GET_SIZE(s2))
+            return (equals == Py_NE);
+        ps1 = PyBytes_AS_STRING(s1);
+        ps2 = PyBytes_AS_STRING(s2);
+        if (ps1[0] != ps2[0]) {
+            return (equals == Py_NE);
+        } else if (length == 1) {
+            return (equals == Py_EQ);
+        } else {
+            int result;
+#if CYTHON_USE_UNICODE_INTERNALS && (PY_VERSION_HEX < 0x030B0000)
+            Py_hash_t hash1, hash2;
+            hash1 = ((PyBytesObject*)s1)->ob_shash;
+            hash2 = ((PyBytesObject*)s2)->ob_shash;
+            if (hash1 != hash2 && hash1 != -1 && hash2 != -1) {
+                return (equals == Py_NE);
+            }
+#endif
+            result = memcmp(ps1, ps2, (size_t)length);
+            return (equals == Py_EQ) ? (result == 0) : (result != 0);
+        }
+    } else if ((s1 == Py_None) & PyBytes_CheckExact(s2)) {
+        return (equals == Py_NE);
+    } else if ((s2 == Py_None) & PyBytes_CheckExact(s1)) {
+        return (equals == Py_NE);
+    } else {
+        int result;
+        PyObject* py_result = PyObject_RichCompare(s1, s2, equals);
+        if (!py_result)
+            return -1;
+        result = __Pyx_PyObject_IsTrue(py_result);
+        Py_DECREF(py_result);
+        return result;
+    }
+#endif
+}
+
+/* UnicodeEquals */
+static CYTHON_INLINE int __Pyx_PyUnicode_Equals(PyObject* s1, PyObject* s2, int equals) {
+#if CYTHON_COMPILING_IN_PYPY
+    return PyObject_RichCompareBool(s1, s2, equals);
+#else
+#if PY_MAJOR_VERSION < 3
+    PyObject* owned_ref = NULL;
+#endif
+    int s1_is_unicode, s2_is_unicode;
+    if (s1 == s2) {
+        goto return_eq;
+    }
+    s1_is_unicode = PyUnicode_CheckExact(s1);
+    s2_is_unicode = PyUnicode_CheckExact(s2);
+#if PY_MAJOR_VERSION < 3
+    if ((s1_is_unicode & (!s2_is_unicode)) && PyString_CheckExact(s2)) {
+        owned_ref = PyUnicode_FromObject(s2);
+        if (unlikely(!owned_ref))
+            return -1;
+        s2 = owned_ref;
+        s2_is_unicode = 1;
+    } else if ((s2_is_unicode & (!s1_is_unicode)) && PyString_CheckExact(s1)) {
+        owned_ref = PyUnicode_FromObject(s1);
+        if (unlikely(!owned_ref))
+            return -1;
+        s1 = owned_ref;
+        s1_is_unicode = 1;
+    } else if (((!s2_is_unicode) & (!s1_is_unicode))) {
+        return __Pyx_PyBytes_Equals(s1, s2, equals);
+    }
+#endif
+    if (s1_is_unicode & s2_is_unicode) {
+        Py_ssize_t length;
+        int kind;
+        void *data1, *data2;
+        if (unlikely(__Pyx_PyUnicode_READY(s1) < 0) || unlikely(__Pyx_PyUnicode_READY(s2) < 0))
+            return -1;
+        length = __Pyx_PyUnicode_GET_LENGTH(s1);
+        if (length != __Pyx_PyUnicode_GET_LENGTH(s2)) {
+            goto return_ne;
+        }
+#if CYTHON_USE_UNICODE_INTERNALS
+        {
+            Py_hash_t hash1, hash2;
+        #if CYTHON_PEP393_ENABLED
+            hash1 = ((PyASCIIObject*)s1)->hash;
+            hash2 = ((PyASCIIObject*)s2)->hash;
+        #else
+            hash1 = ((PyUnicodeObject*)s1)->hash;
+            hash2 = ((PyUnicodeObject*)s2)->hash;
+        #endif
+            if (hash1 != hash2 && hash1 != -1 && hash2 != -1) {
+                goto return_ne;
+            }
+        }
+#endif
+        kind = __Pyx_PyUnicode_KIND(s1);
+        if (kind != __Pyx_PyUnicode_KIND(s2)) {
+            goto return_ne;
+        }
+        data1 = __Pyx_PyUnicode_DATA(s1);
+        data2 = __Pyx_PyUnicode_DATA(s2);
+        if (__Pyx_PyUnicode_READ(kind, data1, 0) != __Pyx_PyUnicode_READ(kind, data2, 0)) {
+            goto return_ne;
+        } else if (length == 1) {
+            goto return_eq;
+        } else {
+            int result = memcmp(data1, data2, (size_t)(length * kind));
+            #if PY_MAJOR_VERSION < 3
+            Py_XDECREF(owned_ref);
+            #endif
+            return (equals == Py_EQ) ? (result == 0) : (result != 0);
+        }
+    } else if ((s1 == Py_None) & s2_is_unicode) {
+        goto return_ne;
+    } else if ((s2 == Py_None) & s1_is_unicode) {
+        goto return_ne;
+    } else {
+        int result;
+        PyObject* py_result = PyObject_RichCompare(s1, s2, equals);
+        #if PY_MAJOR_VERSION < 3
+        Py_XDECREF(owned_ref);
+        #endif
+        if (!py_result)
+            return -1;
+        result = __Pyx_PyObject_IsTrue(py_result);
+        Py_DECREF(py_result);
+        return result;
+    }
+return_eq:
+    #if PY_MAJOR_VERSION < 3
+    Py_XDECREF(owned_ref);
+    #endif
+    return (equals == Py_EQ);
+return_ne:
+    #if PY_MAJOR_VERSION < 3
+    Py_XDECREF(owned_ref);
+    #endif
+    return (equals == Py_NE);
+#endif
+}
+
+/* SetItemInt */
+static int __Pyx_SetItemInt_Generic(PyObject *o, PyObject *j, PyObject *v) {
+    int r;
+    if (!j) return -1;
+    r = PyObject_SetItem(o, j, v);
+    Py_DECREF(j);
+    return r;
+}
+static CYTHON_INLINE int __Pyx_SetItemInt_Fast(PyObject *o, Py_ssize_t i, PyObject *v, int is_list,
+                                               CYTHON_NCP_UNUSED int wraparound, CYTHON_NCP_UNUSED int boundscheck) {
+#if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS && CYTHON_USE_TYPE_SLOTS
+    if (is_list || PyList_CheckExact(o)) {
+        Py_ssize_t n = (!wraparound) ? i : ((likely(i >= 0)) ? i : i + PyList_GET_SIZE(o));
+        if ((!boundscheck) || likely(__Pyx_is_valid_index(n, PyList_GET_SIZE(o)))) {
+            PyObject* old = PyList_GET_ITEM(o, n);
+            Py_INCREF(v);
+            PyList_SET_ITEM(o, n, v);
+            Py_DECREF(old);
+            return 1;
+        }
+    } else {
+        PySequenceMethods *m = Py_TYPE(o)->tp_as_sequence;
+        if (likely(m && m->sq_ass_item)) {
+            if (wraparound && unlikely(i < 0) && likely(m->sq_length)) {
+                Py_ssize_t l = m->sq_length(o);
+                if (likely(l >= 0)) {
+                    i += l;
+                } else {
+                    if (!PyErr_ExceptionMatches(PyExc_OverflowError))
+                        return -1;
+                    PyErr_Clear();
+                }
+            }
+            return m->sq_ass_item(o, i, v);
+        }
+    }
+#else
+#if CYTHON_COMPILING_IN_PYPY
+    if (is_list || (PySequence_Check(o) && !PyDict_Check(o)))
+#else
+    if (is_list || PySequence_Check(o))
+#endif
+    {
+        return PySequence_SetItem(o, i, v);
+    }
+#endif
+    return __Pyx_SetItemInt_Generic(o, PyInt_FromSsize_t(i), v);
 }
 
 /* Import */
