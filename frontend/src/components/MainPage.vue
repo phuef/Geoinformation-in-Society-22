@@ -118,16 +118,25 @@ export default {
         },
         {
           target: '[data-v-step="4"]',
+          header: {
+            title: "Min or max distance",
+          },
           content:
             "Here you can decide if the choosen distance should be understood as <b>at least or less than</b>.  ",
         },
         {
           target: '[data-v-step="1"]',
+          header: {
+            title: "Examples",
+          },
           content:
             "Here are some <strong>examples</strong> to get an idea about the results.",
         },
         {
           target: '[data-v-step="2"]',
+          header: {
+            title: "Map",
+          },
           content:
             "In the map you can see the <br><strong>visualised results</strong>.",
           params: {
@@ -136,6 +145,9 @@ export default {
         },
         {
           target: '[data-v-step="2"]',
+          header: {
+            title: "Add location",
+          },
           content:
             "Here you can add a <strong>marker</strong> to the map. <br> E.g. to mark a certain position.",
           params: {
@@ -144,6 +156,9 @@ export default {
         },
         {
           target: '[data-v-step="3"]',
+          header: {
+            title: "Hide and elapse",
+          },
           content:
             "With this button you can <b>hide the menu</b> or elapse it, if it's hidden.",
           params: {
