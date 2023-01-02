@@ -25,8 +25,8 @@
       elevation="0"
       class="py-2 px-2 mb-0"
     >
-      Your search query didn't get any results. Adjust your search query to see
-      results.
+      There is no spot that matches the current query. Adjust the sliders to
+      find one.
     </v-alert>
     <br />
     <v-row v-for="slider in sliders" :key="slider.label" class="py-3 px-3">
