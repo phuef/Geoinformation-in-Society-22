@@ -67,7 +67,7 @@
               margin-bottom: 12px;
             "
           >
-            <v-tooltip right z-index="1000">
+            <v-tooltip top z-index="1000">
               <template v-slot:activator="{ on, attrs }">
                 <v-btn
                   elevation="0"
