@@ -51,6 +51,17 @@
             <v-icon v-show="!showMenu">mdi-menu-right</v-icon>
           </div>
           <div
+            data-v-step="6"
+            style="
+              position: absolute;
+              z-index: 9999;
+              right: 0;
+              margin-right: 50px;
+            "
+          >
+            <v-icon>mdi-menu-left</v-icon>
+          </div>
+          <!--<div
             data-v-step="5"
             style="
               z-index: 9999;
@@ -61,8 +72,8 @@
             "
           >
             <v-tooltip right z-index="1000">
-              <template v-slot:activator="{ on, attrs }">
-                <!--<v-checkbox
+              <template v-slot:activator="{ on, attrs }">-->
+          <!--<v-checkbox
                   color="purple"
                   off-icon="mdi-bus-stop"
                   on-icon="mdi-bus-stop"
@@ -71,7 +82,7 @@
                   v-model="showBusses"
                 >
                 </v-checkbox>-->
-                <!--<v-switch
+          <!--<v-switch
                   inset
                   append-icon="mdi-bus-stop"
                   color="primary"
@@ -82,7 +93,7 @@
                   style="background-color: rgb(120, 120, 120)"
                 >
                 </v-switch>-->
-                <v-btn
+          <!--<v-btn
                   elevation="0"
                   style="
                     border-radius: 2px;
@@ -105,7 +116,7 @@
                 !showBusses ? "Add bus stops" : "Remove bus stops"
               }}</span>
             </v-tooltip>
-          </div>
+          </div>-->
           <MapView
             ref="map"
             :center="mapCenterPoint"
@@ -225,6 +236,17 @@ export default {
             placement: "left-start", // Any valid Popper.js placement. See https://popper.js.org/popper-documentation.html#Popper.placements
           },
         },
+        /*{
+          target: '[data-v-step="6"]',
+          header: {
+            title: "Layer control",
+          },
+          content:
+            "Here it's possible to switch to a <b>colorblind baselayer</b>. You can also switch on an overlay of the towns <b>bus stations</b>.",
+          params: {
+            placement: "left-start", // Any valid Popper.js placement. See https://popper.js.org/popper-documentation.html#Popper.placements
+          },
+        },*/
         {
           target: '[data-v-step="3"]',
           header: {

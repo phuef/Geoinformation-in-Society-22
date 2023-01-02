@@ -34,6 +34,7 @@ export default {
       busLayer: null,
       busLayerMarkerCluster: null,
       drawLayer: new L.FeatureGroup(),
+      layerControl: null,
     };
   },
   props: {
@@ -104,7 +105,7 @@ export default {
 
       this.resultLayer = L.geoJSON().addTo(this.map);
 
-      L.control.layers(basemaps).addTo(this.map);
+      this.layerControl = L.control.layers(basemaps).addTo(this.map);
 
       L.control
         .zoom({
@@ -197,6 +198,10 @@ export default {
             fillOpacity: 0.2, // opacity inside polygon
           },
         }).addLayer(this.busLayer);
+        this.layerControl.addOverlay(
+          this.busLayerMarkerCluster,
+          "Bus stations"
+        );
       } else {
         //pass
       }
@@ -236,11 +241,12 @@ export default {
     },
   },
   mounted() {
+    this.loadBusStations(this.busGeojson);
+
     this.initMap();
     if (this.resultGeoJson) {
       this.updateResultLayer(this.resultGeoJson);
     }
-    this.loadBusStations(this.busGeojson);
   },
 };
 </script>
