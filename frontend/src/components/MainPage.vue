@@ -283,5 +283,6 @@ export default {
   z-index: 1200;
   display: grid;
   place-content: center;
+  cursor: pointer;
 }
 </style>
