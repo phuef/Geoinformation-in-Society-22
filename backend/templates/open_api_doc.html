@@ -207,11 +207,13 @@
   </ul>
   <h4><a href="#RequestGET">RequestGET</a></h4>
   <ul>
+  <li><a href="#requestFeatures"><code><span class="http-method">get</span> /features/{features}</code></a></li>
   <li><a href="#requestRaster"><code><span class="http-method">get</span> /request/{requestParams}</code></a></li>
   </ul>
   <h4><a href="#RequestOPTIONS">RequestOPTIONS</a></h4>
   <ul>
-  <li><a href="#preflight"><code><span class="http-method">options</span> /request/</code></a></li>
+  <li><a href="#preflightFeatures"><code><span class="http-method">options</span> /features/</code></a></li>
+  <li><a href="#preflightRaster"><code><span class="http-method">options</span> /request/</code></a></li>
   </ul>
 
   <h1><a name="BrewCoffee">BrewCoffee</a></h1>
@@ -328,6 +330,56 @@
   </div> <!-- method -->
   <hr/>
   <h1><a name="RequestGET">RequestGET</a></h1>
+  <div class="method"><a name="requestFeatures"></a>
+    <div class="method-path">
+    <a class="up" href="#__Methods">Up</a>
+    <pre class="get"><code class="huge"><span class="http-method">get</span> /features/{features}</code></pre></div>
+    <div class="method-summary"> (<span class="nickname">requestFeatures</span>)</div>
+    <div class="method-notes">Returns a .geojson which corresponds to the given input parameters</div>
+
+    <h3 class="field-label">Path parameters</h3>
+    <div class="field-items">
+      <div class="param">features (required)</div>
+      
+            <div class="param-desc"><span class="param-type">Path Parameter</span> &mdash; String representing the feature class </div>    </div>  <!-- field-items -->
+
+
+
+
+
+
+    <h3 class="field-label">Return type</h3>
+    <div class="return-type">
+      
+      String
+    </div>
+
+    <!--Todo: process Response Object and its headers, schema, examples -->
+
+    <h3 class="field-label">Example data</h3>
+    <div class="example-data-content-type">Content-Type: application/json</div>
+    <pre class="example"><code>""</code></pre>
+
+    <h3 class="field-label">Produces</h3>
+    This API call produces the following media types according to the <span class="header">Accept</span> request header;
+    the media type will be conveyed by the <span class="header">Content-Type</span> response header.
+    <ul>
+      <li><code>application/json</code></li>
+      <li><code>text/html</code></li>
+    </ul>
+
+    <h3 class="field-label">Responses</h3>
+    <h4 class="field-label">200</h4>
+    search results matching criteria
+        <a href="#String">String</a>
+    <h4 class="field-label">400</h4>
+    Bad Request
+        <a href="#String">String</a>
+    <h4 class="field-label">500</h4>
+    Internal Server Error
+        <a href="#String">String</a>
+  </div> <!-- method -->
+  <hr/>
   <div class="method"><a name="requestRaster"></a>
     <div class="method-path">
     <a class="up" href="#__Methods">Up</a>
@@ -379,11 +431,44 @@
   </div> <!-- method -->
   <hr/>
   <h1><a name="RequestOPTIONS">RequestOPTIONS</a></h1>
-  <div class="method"><a name="preflight"></a>
+  <div class="method"><a name="preflightFeatures"></a>
+    <div class="method-path">
+    <a class="up" href="#__Methods">Up</a>
+    <pre class="options"><code class="huge"><span class="http-method">options</span> /features/</code></pre></div>
+    <div class="method-summary">a preflight request route (<span class="nickname">preflightFeatures</span>)</div>
+    <div class="method-notes">Returns headers needed by a preflight request when CORS is enabled</div>
+
+
+
+
+
+
+
+
+    <!--Todo: process Response Object and its headers, schema, examples -->
+
+
+    <h3 class="field-label">Produces</h3>
+    This API call produces the following media types according to the <span class="header">Accept</span> request header;
+    the media type will be conveyed by the <span class="header">Content-Type</span> response header.
+    <ul>
+      <li><code>text/html</code></li>
+    </ul>
+
+    <h3 class="field-label">Responses</h3>
+    <h4 class="field-label">204</h4>
+    Headers corresponding to Access-Control and Referrer-Policy
+        <a href="#"></a>
+    <h4 class="field-label">500</h4>
+    Internal Server Error
+        <a href="#String">String</a>
+  </div> <!-- method -->
+  <hr/>
+  <div class="method"><a name="preflightRaster"></a>
     <div class="method-path">
     <a class="up" href="#__Methods">Up</a>
     <pre class="options"><code class="huge"><span class="http-method">options</span> /request/</code></pre></div>
-    <div class="method-summary">a preflight request route (<span class="nickname">preflight</span>)</div>
+    <div class="method-summary">a preflight request route (<span class="nickname">preflightRaster</span>)</div>
     <div class="method-notes">Returns headers needed by a preflight request when CORS is enabled</div>
 
 
