@@ -101,7 +101,11 @@ class DistanceStack:
         gdal.Polygonize(output.GetRasterBand(1), None, outlayer, 0, []) #polygonize combined raster based on pixel values
         output = outfile = outlayer =  None #free variables
         return self.uuid #return uuid of DistanceStack
-    
+
+    '''
+    * Title: filterResult
+    * Description: Filters the resulting .geojson according to the DN values
+    '''
     def filterResult(self):
         with open('usr/src/backend/results/' + self.uuid + '.json') as f:
             data = json.load(f)
@@ -113,7 +117,11 @@ class DistanceStack:
             #feature['geometry']['coordinates'][0] = ccc(rdp(feature['geometry']['coordinates'][0], epsilon=0.00025))
         result = {"type": "FeatureCollection", "crs": "WGS-84 - EPSG: 4326", "features": validFeatures}
         return result
-    
+
+'''
+* Title: ccc - chaikin's corner cutting
+* Description: An implementation of chaikin's corner cutting
+'''    
 def ccc(coords, refinements=2):
     coords = np.array(coords)
 
