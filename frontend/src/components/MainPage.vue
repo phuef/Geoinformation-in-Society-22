@@ -55,7 +55,8 @@
             style="
               z-index: 9999;
               position: absolute;
-              margin-left: 55px;
+              right: 0;
+              margin-right: 69px;
               margin-top: 12px;
             "
           >
