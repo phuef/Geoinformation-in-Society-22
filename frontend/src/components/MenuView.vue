@@ -1,19 +1,20 @@
 <template>
   <div class="pa-4 pt-8">
-    <v-select
-      v-model="activeSliders"
-      :items="sliders"
-      item-text="name"
-      item-value="name"
-      deletable-chips
-      chips
-      label="Selected layers:"
-      multiple
-      dense
-      @input="changeActiveState()"
-      data-v-step="0"
-    >
-    </v-select>
+    <div data-v-step="0">
+      <v-select
+        v-model="activeSliders"
+        :items="sliders"
+        item-text="name"
+        item-value="name"
+        deletable-chips
+        chips
+        label="Selected layers:"
+        multiple
+        dense
+        @input="changeActiveState()"
+      >
+      </v-select>
+    </div>
     <p class="text pt-2 mb-0" style="color: #000000de" dense>Distance to ...</p>
     <br />
     <v-row v-for="slider in sliders" :key="slider.label" class="py-3 px-3">
@@ -54,6 +55,7 @@
               </v-col>
               <v-col cols="3">
                 <v-btn
+                  data-v-step="4"
                   elevation="0"
                   dense
                   small
