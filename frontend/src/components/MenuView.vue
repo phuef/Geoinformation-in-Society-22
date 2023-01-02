@@ -14,7 +14,20 @@
       data-v-step="0"
     >
     </v-select>
-    <p class="text pt-2 mb-0" style="color: #000000de" dense>Distance to ...</p>
+    <p class="text-capitalize pt-2 mb-0" style="color: #000000de" dense>
+      Distance to ...
+    </p>
+    <v-alert
+      v-if="isResponseEmpty"
+      text
+      color="rgb(25,118,210)"
+      colored-border
+      type="info"
+      class="py-2 px-2 mb-0 mt-3"
+    >
+      There is no spot that matches the current query. Adjust the sliders to
+      find one.
+    </v-alert>
     <br />
     <v-row v-for="slider in sliders" :key="slider.label" class="py-3 px-3">
       <v-col class="lessPadding">
@@ -54,6 +67,7 @@
               </v-col>
               <v-col cols="3">
                 <v-btn
+                  data-v-step="4"
                   elevation="0"
                   dense
                   small
@@ -340,6 +354,11 @@ export default {
   mounted() {
     // do request at mount with the initial configuration
     this.doRequest();
+  },
+  computed: {
+    isResponseEmpty() {
+      return this.response.features == "" ? true : false;
+    },
   },
 };
 </script>

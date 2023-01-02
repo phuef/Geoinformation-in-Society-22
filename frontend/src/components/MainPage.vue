@@ -39,8 +39,9 @@
         :xl="showMenu ? 9 : 12"
         :style="{ height: menuHeight }"
       >
-        <div id="mapViewContainer">
+        <div id="mapViewContainer" data-v-step="2">
           <div
+            data-v-step="3"
             id="menuButton"
             class="d-sm-flex align-items-center"
             @click="toggleMenu"
@@ -149,17 +150,56 @@ export default {
           header: {
             title: "Switch Layers",
           },
-          content: `Click her to change the <strong>selected layers </strong>`,
+          content:
+            "Click here to change the <strong>selected layers </strong>.",
+        },
+        {
+          target: '[data-v-step="4"]',
+          header: {
+            title: "Min or max distance",
+          },
+          content:
+            "Here you can decide if the choosen distance should be understood as <b>at least or less than</b>.  ",
         },
         {
           target: '[data-v-step="1"]',
-          content: "Here are preconfigurations which you can choose from",
+          header: {
+            title: "Examples",
+          },
+          content:
+            "Here are some <strong>examples</strong> to get an idea about the results.",
         },
         {
           target: '[data-v-step="2"]',
-          content: "In the map you can see the visualised results ",
+          header: {
+            title: "Map",
+          },
+          content:
+            "In the map you can see the <br><strong>visualised results</strong>.",
           params: {
             placement: "left", // Any valid Popper.js placement. See https://popper.js.org/popper-documentation.html#Popper.placements
+          },
+        },
+        {
+          target: '[data-v-step="2"]',
+          header: {
+            title: "Add location",
+          },
+          content:
+            "Here you can add a <strong>marker</strong> to the map. <br> E.g. to mark a certain position.",
+          params: {
+            placement: "left-start", // Any valid Popper.js placement. See https://popper.js.org/popper-documentation.html#Popper.placements
+          },
+        },
+        {
+          target: '[data-v-step="3"]',
+          header: {
+            title: "Hide and elapse",
+          },
+          content:
+            "With this button you can <b>hide the menu</b> or elapse it, if it's hidden.",
+          params: {
+            placement: "right", // Any valid Popper.js placement. See https://popper.js.org/popper-documentation.html#Popper.placements
           },
         },
       ],
@@ -176,9 +216,6 @@ export default {
         }
       }
     },
-    startTour() {
-      this.$tours["myTour"].start();
-    },
     toggleMenu: function () {
       const menuDim = [
         this.$refs.menuContainer.clientWidth,
@@ -186,6 +223,7 @@ export default {
       ];
       // Change menu visibility
       this.showMenu = !this.showMenu;
+      this.stopTour();
       this.$nextTick(() => {
         // When the menu visibility has changed, calculate the change in size
         const menuDimChange = [
@@ -212,6 +250,12 @@ export default {
     },
     onResize() {
       this.$refs.map.updateOnResize();
+    },
+    startTour() {
+      this.$tours["myTour"].start();
+    },
+    stopTour() {
+      this.$tours["myTour"].stop();
     },
     debounce(func, timeout = 200) {
       let timer;
@@ -268,6 +312,9 @@ export default {
 #mapViewContainer {
   height: 100%;
   overflow: hidden;
+}
+.v-step[data-v-54f9a632] {
+  background-color: #5b7683;
 }
 
 #menuButton {
