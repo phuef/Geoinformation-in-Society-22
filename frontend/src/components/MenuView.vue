@@ -1,7 +1,14 @@
 <template>
   <div class="pa-4 pt-8">
-    <div class="body-1 text-xs-body-2">
-      <p>
+    <div id="intro-text" class="body-1 text-xs-body-2">
+      <p
+        style="
+          font-size: 14px;
+          line-height: 150%;
+          font-family: 'Avenir', Helvetica, Arial, sans-serif;
+          color: #000000de;
+        "
+      >
         Do you have the desire to
         <span class="highlight-gray">Find your Spot</span>?<br /><br />
         With this application you can search for a location that meets your
@@ -11,7 +18,7 @@
         location, and that`s it, congrats, you just found your Spot.<br /><br />
         <span class="highlight-gray">Need help?</span> For detailed information
         of the functionalities, use this demo button.
-        <a @click="startTour()">test</a>
+        <a @click="startTour()">test </a>
       </p>
     </div>
     <v-divider></v-divider>
@@ -30,7 +37,9 @@
       data-v-step="0"
     >
     </v-select>
-    <p class="text pt-2 mb-0" style="color: #000000de" dense>Distance to ...</p>
+    <p class="text pt-2 mb-0" style="color: #000000de; font-size: 14px" dense>
+      Distance to ...
+    </p>
     <br />
     <v-row v-for="slider in sliders" :key="slider.label" class="py-3 px-3">
       <v-col class="lessPadding">

@@ -21,7 +21,7 @@
           fluid
           style="height: 100%"
         >
-          <v-btn class="ms-3" @click="startTour()"> Start Demo </v-btn>
+          <v-btn class="ms-3 mt-3" @click="startTour()"> Start Demo </v-btn>
           <MenuView
             ref="menu"
             @newRequest="processNewRequest"
@@ -160,7 +160,7 @@ export default {
           },
         },
         {
-          target: '[data-v-step="2"]',
+          target: '[data-v-step="3"]',
           content: "Click here to see your current location on the map",
           params: {
             placement: "right", // Any valid Popper.js placement. See https://popper.js.org/popper-documentation.html#Popper.placements
