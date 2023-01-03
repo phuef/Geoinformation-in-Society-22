@@ -7,6 +7,7 @@
           line-height: 150%;
           font-family: 'Avenir', Helvetica, Arial, sans-serif;
           color: #000000de;
+          text-align: center;
         "
       >
         Do you have the desire to

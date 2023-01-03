@@ -21,7 +21,13 @@
           fluid
           style="height: 100%"
         >
-          <v-btn class="ms-3 mt-3" @click="startTour()"> Start Demo </v-btn>
+          <v-btn
+            class="ms-3 mt-3"
+            style="position: relative; left: 140px; top: 8px"
+            @click="startTour()"
+          >
+            Start Demo
+          </v-btn>
           <MenuView
             ref="menu"
             @newRequest="processNewRequest"
