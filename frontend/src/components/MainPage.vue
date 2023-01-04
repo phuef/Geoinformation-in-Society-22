@@ -46,7 +46,7 @@
             ref="map"
             :center="mapCenterPoint"
             :zoom="mapZoom"
-            :result-geo-json="requestResponse"
+            :result-geo-json="result"
           />
         </div>
       </v-col>
@@ -56,6 +56,9 @@
 </template>
 
 <script>
+import polygonSmooth from "@turf/polygon-smooth";
+import simplify from "@turf/simplify";
+
 import MapView from "./MapView.vue";
 import MenuView from "./MenuView.vue";
 
@@ -68,7 +71,7 @@ export default {
   data() {
     return {
       showMenu: true,
-      requestResponse: null,
+      result: null,
       sliders: [
         // All availabe sliders
         // TODO: add new layers to this list, when new layers are added to the backend.
@@ -162,7 +165,12 @@ export default {
   },
   methods: {
     processNewRequest: function (response) {
-      this.requestResponse = response;
+      simplify(response, {
+        tolerance: 0.0004,
+        highQuality: false,
+        mutate: true,
+      });
+      this.result = polygonSmooth(response, { iterations: 3 });
     },
     changeSlidersIsMinState: function (sliderName) {
       for (const i in this.sliders) {
