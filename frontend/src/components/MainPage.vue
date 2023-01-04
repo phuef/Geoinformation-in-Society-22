@@ -28,7 +28,7 @@
             @isMinOfSliderHasChanged="changeSlidersIsMinState"
             @clearMap="processNewRequest"
             @busSlider="busStateChangesFromMenu"
-            :showBussesMenu="showBussesMain"
+            :showBussesMenuSentFromMenu="showBussesMain"
             :sliders="sliders"
           />
         </div>
@@ -256,6 +256,10 @@ export default {
           func.apply(this, args);
         }, timeout);
       };
+    },
+    busStateChangesFromMenu() {
+      this.showBussesMain = !this.showBussesMain;
+      console.log("Main:", this.showBussesMain);
     },
     busStateChanges() {
       this.showBussesMain = !this.showBussesMain;
