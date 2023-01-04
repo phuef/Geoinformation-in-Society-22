@@ -27,6 +27,7 @@
             @newRequest="processNewRequest"
             @isMinOfSliderHasChanged="changeSlidersIsMinState"
             @clearMap="processNewRequest"
+            @busSlider="showBusses = !showBusses"
             :sliders="sliders"
           />
         </div>
@@ -59,9 +60,7 @@
               margin-right: 60px;
               height: 70px;
             "
-          >
-            <v-icon></v-icon>
-          </div>
+          ></div>
           <!--<div
             data-v-step="5"
             style="
