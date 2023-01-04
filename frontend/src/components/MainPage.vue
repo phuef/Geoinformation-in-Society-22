@@ -12,6 +12,7 @@
           height: menuHeight,
           maxHeight: menuHeight,
           overflowY: 'auto',
+          scrollbarWidth: 'thin',
         }"
       >
         <div
