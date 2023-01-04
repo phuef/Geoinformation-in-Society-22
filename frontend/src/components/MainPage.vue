@@ -166,8 +166,8 @@ export default {
   methods: {
     processNewRequest: function (response) {
       simplify(response, {
-        tolerance: 0.0004,
-        highQuality: false,
+        tolerance: 0.0002,
+        highQuality: true,
         mutate: true,
       });
       this.result = polygonSmooth(response, { iterations: 3 });
