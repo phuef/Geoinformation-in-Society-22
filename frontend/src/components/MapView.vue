@@ -203,7 +203,7 @@ export default {
           "Bus stations"
         );
         this.map.on("overlayadd", this.changeBusState);
-        this.map.on("overlayremove", this.changeBusState);
+        //this.map.on("overlayremove", this.changeBusState);
       } else {
         //pass
       }
