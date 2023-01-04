@@ -42,7 +42,12 @@
           <div tile class="d-flex paddingTop">
             <v-row>
               <v-col cols="4">
-                <p color="black" class="text-capitalize mb-0" dense>
+                <p
+                  color="black"
+                  class="text-capitalize mb-0 d-flex"
+                  dense
+                  style="align-items: center"
+                >
                   {{ slider.name }}
 
                   <v-tooltip right z-index="1000">
@@ -140,9 +145,35 @@
         >
         </v-switch>
       </v-col>
-      <v-col cols="10" class="pl-0" style="color: #000000de"
-        >Add bus stops</v-col
-      >
+      <v-col
+        cols="10"
+        class="pl-0"
+        style="color: #000000de; align-items: center; display: flex"
+        >Add bus stops
+        <v-tooltip right z-index="1201">
+          <template v-slot:activator="{ on, attrs }">
+            <v-btn
+              dense
+              small
+              color="white"
+              elevation="0"
+              v-bind="attrs"
+              v-on="on"
+              class="bNoPadding"
+            >
+              <v-icon small style="color: #000000de"
+                >mdi-information-outline</v-icon
+              >
+            </v-btn>
+          </template>
+          <span
+            class="d-flex"
+            style="align-items: center; justify-content: center"
+            v-html="
+              'Here you can add the </br><b>cities bus stations</b></br> to the map'
+            "
+          ></span> </v-tooltip
+      ></v-col>
     </v-row>
 
     <br />
