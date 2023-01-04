@@ -27,8 +27,8 @@
             @newRequest="processNewRequest"
             @isMinOfSliderHasChanged="changeSlidersIsMinState"
             @clearMap="processNewRequest"
-            @busSlider="busStateChanges"
-            :showBussesMenu="showBussesMain"
+            @busSlider="busStateChangesFromMenu"
+            :showBussesMenuSentFromMenu="showBussesMain"
             :sliders="sliders"
           />
         </div>
