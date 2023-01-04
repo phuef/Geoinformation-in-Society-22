@@ -33,7 +33,7 @@
         :style="{ height: menuHeight }"
       >
         <div id="mapViewContainer" data-v-step="2">
-          <div
+          <button
             id="menuButton"
             data-v-step="3"
             @click="toggleMenu"
@@ -41,7 +41,7 @@
           >
             <v-icon v-show="showMenu">mdi-menu-left</v-icon>
             <v-icon v-show="!showMenu">mdi-menu-right</v-icon>
-          </div>
+          </button>
           <MapView
             ref="map"
             :center="mapCenterPoint"
@@ -280,8 +280,18 @@ export default {
   border: 2px solid lightgrey;
   border-left: 0;
   z-index: 1200;
-  display: flex;
+  display: grid;
   place-content: center;
+  overflow: hidden;
   cursor: pointer;
+  transition: background-color 200ms;
+}
+
+#menuButton .v-icon {
+  font-size: 28px;
+}
+
+#menuButton:hover {
+  background-color: #EEEEEE;
 }
 </style>
