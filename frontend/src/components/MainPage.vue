@@ -27,8 +27,9 @@
             @newRequest="processNewRequest"
             @isMinOfSliderHasChanged="changeSlidersIsMinState"
             @clearMap="processNewRequest"
-            @busSlider="showBusses = !showBusses"
+            @busSlider="showBussesMain = !showBussesMain"
             :sliders="sliders"
+            :switchSignalFromMapToMenu="switchSignalFromMap"
           />
         </div>
       </v-col>
@@ -66,8 +67,9 @@
             :center="mapCenterPoint"
             :zoom="mapZoom"
             :busGeojsonMap="busGeojsonMain"
-            :showBussesMap="showBusses"
+            :showBussesMap="showBussesMain"
             :result-geo-json="requestResponse"
+            @busControlOn="switchSignalFromMap = !switchSignalFromMap"
           />
         </div>
       </v-col>
@@ -121,7 +123,8 @@ export default {
       mapCenterPoint: [51.96229626341511, 7.6256090207326395],
       mapZoom: 10,
       busGeojsonMain: null,
-      showBusses: false,
+      showBussesMain: false,
+      switchSignalFromMap: false,
       steps: [
         {
           target: '[data-v-step="0"]', // We're using document.querySelector() under the hood

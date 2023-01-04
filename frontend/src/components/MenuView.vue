@@ -224,6 +224,9 @@ export default {
     sliders: {
       type: Array,
     },
+    switchSignalFromMapToMenu: {
+      type: Boolean,
+    },
   },
   methods: {
     /**
@@ -362,6 +365,11 @@ export default {
     },
     async changeBusSwitch() {
       this.$emit("busSlider", null);
+    },
+  },
+  watch: {
+    switchSignalFromMapToMenu: function (value) {
+      this.busSwitchModel = value; //!this.busSwitchModel;
     },
   },
   mounted() {
