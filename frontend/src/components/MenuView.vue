@@ -129,15 +129,22 @@
         </v-card>
       </v-col>
     </v-row>
-    <v-switch
-      color="primary"
-      hide-details
-      v-model="busSwitchModel"
-      @click="changeBusSwitch"
-      style=""
-      label="Bus stops on map"
-    >
-    </v-switch>
+    <v-row align="center">
+      <v-col cols="2" class="d-flex justify-center">
+        <v-switch
+          class="mt-0 pt-0"
+          color="primary"
+          v-model="busSwitchModel"
+          hide-details
+          @click="changeBusSwitch"
+        >
+        </v-switch>
+      </v-col>
+      <v-col cols="10" class="pl-0" style="color: #000000de"
+        >Add bus stops</v-col
+      >
+    </v-row>
+
     <br />
     <v-divider style="border-color: rgba(127, 127, 127)"></v-divider>
     <br />
