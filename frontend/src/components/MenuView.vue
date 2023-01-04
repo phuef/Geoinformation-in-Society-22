@@ -132,6 +132,7 @@
     <v-switch
       color="primary"
       hide-details
+      v-model="busSwitchModel"
       @click="changeBusSwitch"
       style=""
       label="Bus stops on map"
@@ -215,6 +216,7 @@ export default {
         },
       ],
       response: "",
+      busSwitchModel: null,
     };
   },
   props: {
