@@ -61,62 +61,6 @@
               height: 70px;
             "
           ></div>
-          <!--<div
-            data-v-step="5"
-            style="
-              z-index: 9999;
-              position: absolute;
-              right: 0;
-              margin-right: 69px;
-              margin-top: 12px;
-            "
-          >
-            <v-tooltip right z-index="1000">
-              <template v-slot:activator="{ on, attrs }">-->
-          <!--<v-checkbox
-                  color="purple"
-                  off-icon="mdi-bus-stop"
-                  on-icon="mdi-bus-stop"
-                  v-bind="attrs"
-                  v-on="on"
-                  v-model="showBusses"
-                >
-                </v-checkbox>-->
-          <!--<v-switch
-                  inset
-                  append-icon="mdi-bus-stop"
-                  color="primary"
-                  hide-details
-                  v-bind="attrs"
-                  v-on="on"
-                  v-model="showBusses"
-                  style="background-color: rgb(120, 120, 120)"
-                >
-                </v-switch>-->
-          <!--<v-btn
-                  elevation="0"
-                  style="
-                    border-radius: 2px;
-                    background-color: white;
-                    outline: 2px solid rgba(0, 0, 0, 0.2);
-                    min-width: 30px;
-                    height: 30px;
-                    padding: 0px;
-                  "
-                  v-bind="attrs"
-                  v-on="on"
-                  @click="showBusses = !showBusses"
-                >
-                  <v-icon :color="!showBusses ? 'rgb(70, 70, 70)' : 'primary'">
-                    mdi-bus-stop
-                  </v-icon>
-                </v-btn>
-              </template>
-              <span>{{
-                !showBusses ? "Add bus stops" : "Remove bus stops"
-              }}</span>
-            </v-tooltip>
-          </div>-->
           <MapView
             ref="map"
             :center="mapCenterPoint"

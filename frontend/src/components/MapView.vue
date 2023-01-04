@@ -35,6 +35,8 @@ export default {
       busLayerMarkerCluster: null,
       drawLayer: new L.FeatureGroup(),
       layerControl: null,
+      busLayerAdded: null,
+      busLayerRemoved: null,
     };
   },
   props: {
@@ -202,6 +204,8 @@ export default {
           this.busLayerMarkerCluster,
           "Bus stations"
         );
+        this.map.on("overlayadd", (this.busLayerAdded = true));
+        this.map.on("overlayremove", (this.busLayerRemoved = true));
       } else {
         //pass
       }
