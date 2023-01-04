@@ -129,14 +129,21 @@
         </v-card>
       </v-col>
     </v-row>
-    <v-switch
-      color="primary"
-      hide-details
-      @click="changeBusSwitch"
-      style=""
-      label="Bus stops on map"
-    >
-    </v-switch>
+    <v-row align="center">
+      <v-col cols="2" class="d-flex justify-center">
+        <v-switch
+          class="mt-0 pt-0"
+          color="primary"
+          v-model="busSwitch"
+          hide-details
+          @click="changeBusSwitch"
+        >
+        </v-switch>
+      </v-col>
+      <v-col cols="10" class="pl-0" style="color: #000000de"
+        >Add bus stops</v-col
+      >
+    </v-row>
     <br />
     <v-divider style="border-color: rgba(127, 127, 127)"></v-divider>
     <br />
@@ -215,12 +222,17 @@ export default {
         },
       ],
       response: "",
+      busSwitch: null,
     };
   },
   props: {
     /* eslint-disable */
     sliders: {
       type: Array,
+    },
+    showBussesMenu: {
+      required: true,
+      type: Boolean,
     },
   },
   methods: {
@@ -359,7 +371,22 @@ export default {
       this.$emit("clearMap", null);
     },
     async changeBusSwitch() {
-      this.$emit("busSlider", null);
+      // fine
+      console.log("changeBusSwitch called in Menu");
+      this.$emit("busSlider", this.busSwitch);
+    },
+    showBussesMenuChanged: function () {
+      console.log("showBussesMenu in MenuView:", this.showBussesMenu);
+      if (this.showBussesMenu == true) {
+        this.busSwitch = true;
+      } else {
+        this.busSwitch = false;
+      }
+    },
+  },
+  watch: {
+    showBussesMenu: function () {
+      this.showBussesMenuChanged();
     },
   },
   mounted() {
