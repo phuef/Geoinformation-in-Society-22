@@ -11,16 +11,9 @@
         :style="{
           height: menuHeight,
           maxHeight: menuHeight,
-          overflowY: 'auto',
         }"
       >
-        <div
-          id="menuContainer"
-          ref="menuContainer"
-          fill-height
-          fluid
-          style="height: 100%"
-        >
+        <div id="menuContainer" ref="menuContainer" fill-height fluid>
           <v-btn class="ms-3" @click="startTour()"> Start Demo </v-btn>
           <MenuView
             ref="menu"
@@ -44,16 +37,15 @@
         :style="{ height: menuHeight }"
       >
         <div id="mapViewContainer" data-v-step="2">
-          <div
-            data-v-step="3"
+          <button
             id="menuButton"
-            class="d-sm-flex align-items-center"
+            data-v-step="3"
             @click="toggleMenu"
             :style="menuButtonStyle"
           >
             <v-icon v-show="showMenu">mdi-menu-left</v-icon>
             <v-icon v-show="!showMenu">mdi-menu-right</v-icon>
-          </div>
+          </button>
           <div
             data-v-step="6"
             style="
@@ -212,8 +204,8 @@ export default {
     },
     toggleMenu: function () {
       const menuDim = [
-        this.$refs.menuContainer.clientWidth,
-        this.$refs.menuContainer.clientHeight,
+        this.$refs.menuContainer.offsetWidth,
+        this.$refs.menuContainer.offsetHeight,
       ];
       // Change menu visibility
       this.showMenu = !this.showMenu;
@@ -221,8 +213,8 @@ export default {
       this.$nextTick(() => {
         // When the menu visibility has changed, calculate the change in size
         const menuDimChange = [
-          this.$refs.menuContainer.clientWidth - menuDim[0],
-          this.$refs.menuContainer.clientHeight - menuDim[1],
+          this.$refs.menuContainer.offsetWidth - menuDim[0],
+          this.$refs.menuContainer.offsetHeight - menuDim[1],
         ];
         // Get offset depending on menu position
         const requiredOffset = this.getMenuOffset(menuDimChange);
@@ -307,8 +299,15 @@ export default {
   height: 100%;
   overflow: hidden;
 }
+
 .v-step[data-v-54f9a632] {
   background-color: #5b7683;
+}
+
+#menuContainer {
+  overflow-y: auto;
+  scrollbar-width: thin;
+  height: 100%;
 }
 
 #menuButton {
@@ -324,6 +323,16 @@ export default {
   z-index: 1200;
   display: grid;
   place-content: center;
+  overflow: hidden;
   cursor: pointer;
+  transition: background-color 200ms;
+}
+
+#menuButton .v-icon {
+  font-size: 28px;
+}
+
+#menuButton:hover {
+  background-color: #eeeeee;
 }
 </style>
