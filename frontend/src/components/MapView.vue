@@ -202,14 +202,9 @@ export default {
           this.busLayerMarkerCluster,
           "Bus stations"
         );
-        this.map.on("overlayadd", this.changeBusState);
-        this.map.on("overlayremove", this.changeBusState);
       } else {
         //pass
       }
-    },
-    async changeBusState() {
-      this.$emit("busLayerChange", null);
     },
     showBusStations: async function () {
       if (this.showBussesMap == true) {
@@ -242,7 +237,6 @@ export default {
       this.loadBusStations(newBusGeojson);
     },
     showBussesMap: function () {
-      console.log("showBusses changed in MAP:", this.showBussesMap);
       this.showBusStations();
     },
   },
