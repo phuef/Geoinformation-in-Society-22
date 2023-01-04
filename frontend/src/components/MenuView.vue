@@ -132,6 +132,7 @@
     <v-switch
       color="primary"
       hide-details
+      v-model="busSwitchModel"
       @click="changeBusSwitch"
       style=""
       label="Bus stops on map"
@@ -215,12 +216,16 @@ export default {
         },
       ],
       response: "",
+      busSwitchModel: null,
     };
   },
   props: {
     /* eslint-disable */
     sliders: {
       type: Array,
+    },
+    switchSignalFromMapToMenu: {
+      type: Boolean,
     },
   },
   methods: {
@@ -360,6 +365,11 @@ export default {
     },
     async changeBusSwitch() {
       this.$emit("busSlider", null);
+    },
+  },
+  watch: {
+    switchSignalFromMapToMenu: function (value) {
+      this.busSwitchModel = value; //!this.busSwitchModel;
     },
   },
   mounted() {
