@@ -167,8 +167,6 @@
             </v-btn>
           </template>
           <span
-            class="d-flex"
-            style="align-items: center; justify-content: center"
             v-html="
               'Here you can add the </br><b>cities bus stations</b></br> to the map'
             "
