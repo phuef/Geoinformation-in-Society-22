@@ -27,7 +27,9 @@
             @newRequest="processNewRequest"
             @isMinOfSliderHasChanged="changeSlidersIsMinState"
             @clearMap="processNewRequest"
-            @busSlider="showBussesMain = !showBussesMain"
+            @busSliderSignalToMain="
+              showBussesMainFromMap = !showBussesMainFromMap
+            "
             :sliders="sliders"
             :switchSignalFromMapToMenu="switchSignalFromMap"
           />
@@ -67,9 +69,9 @@
             :center="mapCenterPoint"
             :zoom="mapZoom"
             :busGeojsonMap="busGeojsonMain"
-            :showBussesMap="showBussesMain"
             :result-geo-json="requestResponse"
-            @busControlOn="switchSignalFromMap = !switchSignalFromMap"
+            :showBussesMapFromMap="showBussesMainFromMap"
+            @busControlOnMapView="switchSignalFromMap = !switchSignalFromMap"
           />
         </div>
       </v-col>
@@ -123,7 +125,7 @@ export default {
       mapCenterPoint: [51.96229626341511, 7.6256090207326395],
       mapZoom: 10,
       busGeojsonMain: null,
-      showBussesMain: false,
+      showBussesMainFromMap: false,
       switchSignalFromMap: false,
       steps: [
         {

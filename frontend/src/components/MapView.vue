@@ -58,7 +58,7 @@ export default {
         };
       },
     },
-    showBussesMap: {
+    showBussesMapFromMap: {
       required: true,
       type: Boolean,
     },
@@ -202,17 +202,17 @@ export default {
           this.busLayerMarkerCluster,
           "Bus stations"
         );
-        this.map.on("overlayadd", this.sendBusSignal); //(this.busLayerAdded = true));
-        this.map.on("overlayremove", this.sendBusSignal); //(this.busLayerRemoved = true));
+        this.map.on("overlayadd", this.sendBusSignalToMenu); //(this.busLayerAdded = true));
+        this.map.on("overlayremove", this.sendBusSignalToMenu); //(this.busLayerRemoved = true));
       } else {
         //pass
       }
     },
-    async sendBusSignal() {
-      this.$emit("busControlOn", null);
+    async sendBusSignalToMenu() {
+      this.$emit("busControlOnMapView", null);
     },
     showBusStations: async function () {
-      if (this.showBussesMap == true) {
+      if (this.showBussesMapFromMap == true) {
         if (this.busLayerMarkerCluster != null) {
           this.busLayerMarkerCluster.addTo(this.map);
         } else {
@@ -241,7 +241,7 @@ export default {
     busGeojsonMap: function (newBusGeojson) {
       this.loadBusStations(newBusGeojson);
     },
-    showBussesMap: function () {
+    showBussesMapFromMap: function () {
       this.showBusStations();
     },
   },

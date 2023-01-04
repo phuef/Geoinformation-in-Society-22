@@ -364,12 +364,12 @@ export default {
       this.$emit("clearMap", null);
     },
     async changeBusSwitch() {
-      this.$emit("busSlider", null);
+      this.$emit("busSliderSignalToMain", null);
     },
   },
   watch: {
     switchSignalFromMapToMenu: function (value) {
-      this.busSwitchModel = value; //!this.busSwitchModel;
+      this.busSwitchModel = value;
     },
   },
   mounted() {
