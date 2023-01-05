@@ -51,7 +51,7 @@
         </div>
       </v-col>
     </v-row>
-    <v-tour name="myTour" :steps="steps"></v-tour>
+    <v-tour z-index="1500" name="myTour" :steps="steps"></v-tour>
   </v-container>
 </template>
 
@@ -292,6 +292,6 @@ export default {
 }
 
 #menuButton:hover {
-  background-color: #EEEEEE;
+  background-color: #eeeeee;
 }
 </style>
