@@ -41,22 +41,6 @@
         >
           <div tile class="d-flex paddingTop">
             <v-row style="height: 50px">
-              <v-col cols="1">
-                <v-tooltip top z-index="1000">
-                  <template v-slot:activator="{ on }">
-                    <v-simple-checkbox
-                      color="primary"
-                      v-model="simpleCheckbox"
-                      v-on="on"
-                    ></v-simple-checkbox>
-                  </template>
-                  <span
-                    v-html="
-                      'Click here to visualize <br>the features from this layer.'
-                    "
-                  ></span>
-                </v-tooltip>
-              </v-col>
               <v-col cols="4">
                 <p color="black" class="text-capitalize mb-0 ml-2" dense>
                   {{ slider.name }}
@@ -97,6 +81,24 @@
                 </v-btn>
               </v-col>
               <v-col cols="3"> {{ slider.value }} m </v-col>
+              <v-col cols="1">
+                <div class="d-flex center-align justify-center">
+                  <v-tooltip top z-index="1000">
+                    <template v-slot:activator="{ on }">
+                      <v-simple-checkbox
+                        color="primary"
+                        v-model="simpleCheckbox"
+                        v-on="on"
+                      ></v-simple-checkbox>
+                    </template>
+                    <span
+                      v-html="
+                        'Click here to <b>visualize <br>the features</b> from this layer.'
+                      "
+                    ></span>
+                  </v-tooltip>
+                </div>
+              </v-col>
               <v-col cols="1">
                 <div class="d-flex center-align justify-center bNoPadding">
                   <v-tooltip left z-index="1000">
