@@ -127,14 +127,11 @@ export default {
           circle: false,
           rectangle: false,
           circlemarker: false,
-          polygon: {
-            shapeOptions: {
-              color: "#00ffdd",
-            },
-          },
+          polygon: false,
         },
         edit: {
           featureGroup: this.drawLayer,
+          edit: false,
         },
       });
       this.map.addControl(drawControl);

@@ -11,7 +11,6 @@
         :style="{
           height: menuHeight,
           maxHeight: menuHeight,
-          overflowY: 'auto',
         }"
       >
         <div
@@ -40,16 +39,15 @@
         :style="{ height: menuHeight }"
       >
         <div id="mapViewContainer" data-v-step="2">
-          <div
-            data-v-step="3"
+          <button
             id="menuButton"
-            class="d-sm-flex align-items-center"
+            data-v-step="3"
             @click="toggleMenu"
             :style="menuButtonStyle"
           >
             <v-icon v-show="showMenu">mdi-menu-left</v-icon>
             <v-icon v-show="!showMenu">mdi-menu-right</v-icon>
-          </div>
+          </button>
           <MapView
             ref="map"
             :center="mapCenterPoint"
@@ -59,7 +57,7 @@
         </div>
       </v-col>
     </v-row>
-    <v-tour name="myTour" :steps="steps"></v-tour>
+    <v-tour z-index="1500" name="myTour" :steps="steps"></v-tour>
   </v-container>
 </template>
 
@@ -132,11 +130,17 @@ export default {
         },
         {
           target: '[data-v-step="1"]',
+          header: {
+            title: "Examples",
+          },
           content:
             "Here are some <strong>examples</strong> to get an idea about the results.",
         },
         {
           target: '[data-v-step="2"]',
+          header: {
+            title: "Map",
+          },
           content:
             "In the map you can see the <br><strong>results</strong> of your search.",
           params: {
@@ -145,6 +149,9 @@ export default {
         },
         {
           target: '[data-v-step="2"]',
+          header: {
+            title: "Add location",
+          },
           content:
             "Here you can add a <strong>marker</strong> to the map. <br> E.g. to mark a certain position.",
           params: {
@@ -153,6 +160,9 @@ export default {
         },
         {
           target: '[data-v-step="3"]',
+          header: {
+            title: "Hide and elapse",
+          },
           content:
             "With this button you can <b>hide the menu</b> or elapse it, if it's hidden.",
           params: {
@@ -182,8 +192,8 @@ export default {
     },
     toggleMenu: function () {
       const menuDim = [
-        this.$refs.menuContainer.clientWidth,
-        this.$refs.menuContainer.clientHeight,
+        this.$refs.menuContainer.offsetWidth,
+        this.$refs.menuContainer.offsetHeight,
       ];
       // Change menu visibility
       this.showMenu = !this.showMenu;
@@ -191,8 +201,8 @@ export default {
       this.$nextTick(() => {
         // When the menu visibility has changed, calculate the change in size
         const menuDimChange = [
-          this.$refs.menuContainer.clientWidth - menuDim[0],
-          this.$refs.menuContainer.clientHeight - menuDim[1],
+          this.$refs.menuContainer.offsetWidth - menuDim[0],
+          this.$refs.menuContainer.offsetHeight - menuDim[1],
         ];
         // Get offset depending on menu position
         const requiredOffset = this.getMenuOffset(menuDimChange);
@@ -267,8 +277,15 @@ export default {
   height: 100%;
   overflow: hidden;
 }
+
 .v-step[data-v-54f9a632] {
   background-color: #5b7683;
+}
+
+#menuContainer {
+  overflow-y: auto;
+  scrollbar-width: thin;
+  height: 100%;
 }
 
 #menuButton {
@@ -284,5 +301,16 @@ export default {
   z-index: 1200;
   display: grid;
   place-content: center;
+  overflow: hidden;
+  cursor: pointer;
+  transition: background-color 200ms;
+}
+
+#menuButton .v-icon {
+  font-size: 28px;
+}
+
+#menuButton:hover {
+  background-color: #eeeeee;
 }
 </style>
