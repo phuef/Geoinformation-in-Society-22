@@ -150,7 +150,7 @@
     <v-expansion-panels flat data-v-step="1">
       <v-expansion-panel>
         <v-expansion-panel-header
-          style="color: #000000de; padding-left: 0px; font-size: 16px"
+          style="color: #000000de; padding-left: 0px; font-size: inherit"
           dense
         >
           Pre-configurated examples:
@@ -383,7 +383,8 @@ export default {
 .v-expansion-panel-content > .v-expansion-panel-content__wrap {
   padding: 0 !important;
 }
-======= <style scoped > div {
+
+.div {
   text-align: justify;
 }
 .highlight-gray {
@@ -392,7 +393,7 @@ export default {
   padding: 3px 6px;
 }
 
->>>>>>>fe-introduction-top-of-sliders .bNoPadding {
+.bNoPadding {
   padding-left: 2px !important;
   padding-right: 2px !important;
   min-width: 0px !important;
