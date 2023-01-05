@@ -40,7 +40,10 @@
           cols="12"
         >
           <div tile class="d-flex paddingTop">
-            <v-row>
+            <v-row style="height: 60px">
+              <v-col cols="1">
+                <v-checkbox></v-checkbox>
+              </v-col>
               <v-col cols="4">
                 <p color="black" class="text-capitalize mb-0" dense>
                   {{ slider.name }}
@@ -80,7 +83,7 @@
                   {{ slider.isMin ? "at least" : "less than" }}
                 </v-btn>
               </v-col>
-              <v-col cols="4"> {{ slider.value }} m </v-col>
+              <v-col cols="3"> {{ slider.value }} m </v-col>
               <v-col cols="1">
                 <div class="d-flex center-align justify-center bNoPadding">
                   <v-tooltip left z-index="1000">
@@ -366,6 +369,11 @@ export default {
 <style scoped>
 .v-expansion-panel-content > .v-expansion-panel-content__wrap {
   padding: 0 !important;
+}
+
+.v-input--selection-controls {
+  padding-top: 0px;
+  margin-top: 0px;
 }
 
 .bNoPadding {
