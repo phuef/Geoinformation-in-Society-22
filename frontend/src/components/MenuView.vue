@@ -18,7 +18,7 @@
       Distance to ...
     </p>
     <v-alert
-      v-if="isResponseEmpty"
+      v-if="resultAreasEmpty"
       text
       color="rgb(25,118,210)"
       colored-border
@@ -27,6 +27,16 @@
     >
       There is no spot that matches the current query. Adjust the sliders to
       find one.
+    </v-alert>
+    <v-alert
+      v-if="resultAreasRequestFailed"
+      text
+      color="rgb(25,118,210)"
+      colored-border
+      type="info"
+      class="py-2 px-2 mb-0 mt-3"
+    >
+      Request to the server failed.
     </v-alert>
     <br />
     <v-row v-for="slider in sliders" :key="slider.label" class="py-3 px-3">
@@ -73,7 +83,8 @@
                   small
                   outlined
                   @click="
-                    $emit('isMinOfSliderHasChanged', slider.name), doRequest()
+                    $emit('isMinOfSliderHasChanged', slider.name),
+                      doResultAreasRequest()
                   "
                   class="text-lowercase bNoPadding"
                 >
@@ -123,7 +134,7 @@
               :thumb-size="30"
               max="2000"
               dense
-              @end="doRequest"
+              @end="doResultAreasRequest"
             ></v-slider>
           </div>
         </v-card>
@@ -185,7 +196,7 @@
 <script>
 export default {
   name: "MenuView",
-  emits: ["newRequest", "isMinOfSliderHasChanged"],
+  emits: ["requestResultAreas", "clearResultAreas", "isMinOfSliderHasChanged"],
   data() {
     return {
       activeSliders: ["Museums", "Theaters"], //The currently active Sliders
@@ -206,13 +217,18 @@ export default {
           isMin: false,
         },
       ],
-      response: "",
     };
   },
   props: {
     /* eslint-disable */
     sliders: {
       type: Array,
+    },
+    resultAreasEmpty: {
+      type: Boolean,
+    },
+    resultAreasRequestFailed: {
+      type: Boolean,
     },
   },
   methods: {
@@ -230,7 +246,7 @@ export default {
           }
         }
       }
-      this.doRequest();
+      this.doResultAreasRequest();
     },
     /**
      * Removes a layer with a given name
@@ -242,61 +258,10 @@ export default {
         }
       }
       if (this.activeSliders.length != 0) {
-        this.doRequest();
+        this.doResultAreasRequest();
       } else {
-        this.clearMap();
+        this.$emit("clearResultAreas");
       }
-    },
-    // returns a string in the following form:
-    // "(bandId, sliderValue)"
-
-    /**
-     * @returns String
-     */
-    getTupelForRequest(band, value, isMin) {
-      var tupel = "(" + band + ",";
-      if (isMin) {
-        tupel += value + ",None)";
-      } else {
-        tupel += "0," + value + ")";
-      }
-      return tupel;
-    },
-    /**
-     * @returns String in the following form:"[(bandId, sliderValue), (bandId, sliderValue)]"
-     * this String can be put together with <serverUrl>/request/<this string> to make the request to the backend
-     */
-    requestString() {
-      // outcome should look like this: [(0, 1000),(1,1500)]
-      var a = [];
-      a = this.getBandValueArray(); //returns an array with the bandIds and the corresponding values
-      var b = "[";
-      for (var i in a) {
-        if (i > 0) {
-          b += ",";
-        }
-        b += this.getTupelForRequest(a[i].band, a[i].value, a[i].isMin);
-      }
-      b += "]";
-      return b;
-    },
-    /**
-     * Gathers the bandId and current value for each active layer
-     * @returns Array in the following form: [{band:0,value:50},{band:1,value:100}]
-     */
-    getBandValueArray() {
-      // for each active layer add the bandId and its current value in an array
-      var helpArray = [];
-      for (var i in this.sliders) {
-        if (this.sliders[i].active) {
-          helpArray.push({
-            band: this.sliders[i].band,
-            value: this.sliders[i].value,
-            isMin: this.sliders[i].isMin,
-          });
-        }
-      }
-      return helpArray;
     },
     /**
      * Adjusts the shown layers according to a given configuration
@@ -316,7 +281,7 @@ export default {
         }
       }
       this.removeNotActiveLayers();
-      this.doRequest();
+      this.doResultAreasRequest();
     },
     /**
      * Removes all layers that are currently not active
@@ -333,32 +298,41 @@ export default {
       }
     },
     /**
-     * sends a request to the backend with the current parameters (e.g. http://localhost:5050/request/[(0,0),(1,50)])
-     * @emits response of the server to the parent component (MainPage), so it can be added to the map component
+     * @returns String
      */
-    async doRequest() {
-      // the request to the backend to retrieve the areas that meet the current conditions (configured by the user)
-      const response = await fetch(
-        "http://localhost:5050/request/" + this.requestString()
-      );
-      const geojson = await response.json();
-      this.response = geojson;
-
-      // sends an event, that the parent component (in this case Mainpage) can listen to
-      this.$emit("newRequest", this.response);
+    getSliderTuple(band, value, isMin) {
+      let tupel = "(" + band + ",";
+      if (isMin) {
+        tupel += value + ",None)";
+      } else {
+        tupel += "0," + value + ")";
+      }
+      return tupel;
     },
-    async clearMap() {
-      this.$emit("clearMap", null);
+    /**
+     * Sends the query string for a request to the backend (e.g. [(0,250,None),(1,0,1000)])
+     * @emits requestString to the parent component (MainPage)
+     */
+    doResultAreasRequest() {
+      const requestTuples = [];
+      for (const slider of this.sliders) {
+        if (slider.active) {
+          requestTuples.push(
+            this.getSliderTuple(slider.band, slider.value, slider.isMin)
+          );
+        }
+      }
+      if (requestTuples.length < 1) {
+        this.$emit("clearResultAreas");
+        return;
+      }
+      const requestString = "[" + requestTuples.join() + "]";
+      this.$emit("requestResultAreas", requestString);
     },
   },
   mounted() {
     // do request at mount with the initial configuration
-    this.doRequest();
-  },
-  computed: {
-    isResponseEmpty() {
-      return this.response.features == "" ? true : false;
-    },
+    this.doResultAreasRequest();
   },
 };
 </script>

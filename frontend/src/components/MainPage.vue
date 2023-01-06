@@ -17,10 +17,12 @@
           <v-btn class="ms-3" @click="startTour()"> Start Demo </v-btn>
           <MenuView
             ref="menu"
-            @newRequest="processNewRequest"
-            @isMinOfSliderHasChanged="changeSlidersIsMinState"
-            @clearMap="processNewRequest"
+            :resultAreasEmpty="resultAreasEmpty"
+            :resultAreasRequestFailed="resultAreasRequestFailed"
             :sliders="sliders"
+            @requestResultAreas="requestResultAreas"
+            @clearResultAreas="clearResultAreas"
+            @isMinOfSliderHasChanged="changeSlidersIsMinState"
           />
         </div>
       </v-col>
@@ -46,7 +48,7 @@
             ref="map"
             :center="mapCenterPoint"
             :zoom="mapZoom"
-            :result-geo-json="requestResponse"
+            :resultAreas="resultAreas"
           />
         </div>
       </v-col>
@@ -71,7 +73,11 @@ export default {
   data() {
     return {
       showMenu: true,
-      requestResponse: null,
+      resultAreas: null,
+      resultAreasEmpty: false,
+      resultAreasRequestFailed: false,
+      mapCenterPoint: [51.96229626341511, 7.6256090207326395],
+      mapZoom: 10,
       sliders: [
         // All availabe sliders
         // TODO: add new layers to this list, when new layers are added to the backend.
@@ -84,7 +90,7 @@ export default {
           active: true, // wether the layer is currently selected by the user
           // the text that shall be displayed when the user hovers over the info button
           infoLabel:
-            "Move the slider to remove all areas <br/>that have a certain <b>distance to museums</b>.",
+            "Move the slider to remove all Areas <br/>that have a certain <b>distance to museums</b>.",
           icon: "mdi-bank",
           isMin: true,
         },
@@ -95,13 +101,11 @@ export default {
           band: 1,
           active: true,
           infoLabel:
-            "Move the slider to remove all areas <br/>that have a certain <b>distance to theaters</b>.",
+            "Move the slider to remove all Areas <br/>that have a certain <b>distance to theaters</b>.",
           icon: "mdi-drama-masks",
           isMin: false,
         },
       ],
-      mapCenterPoint: [51.96229626341511, 7.6256090207326395],
-      mapZoom: 10,
       steps: [
         {
           target: '[data-v-step="0"]', // We're using document.querySelector() under the hood
@@ -164,13 +168,35 @@ export default {
     };
   },
   methods: {
-    processNewRequest: function (response) {
-      simplify(response, {
-        tolerance: 0.0002,
-        highQuality: true,
-        mutate: true,
-      });
-      this.requestResponse = polygonSmooth(response, { iterations: 3 });
+    requestResultAreas: async function (requestString) {
+      // Request to the backend to retrieve areas that meet the current conditions
+      // (e.g. http://localhost:5050/request/[(0,250,None),(1,0,1000)])
+      try {
+        const response = await fetch(
+          "http://localhost:5050/request/" + requestString
+        );
+        const result = await response.json();
+        // Smoothing
+        simplify(result, {
+          tolerance: 0.0002,
+          highQuality: true,
+          mutate: true,
+        });
+        this.resultAreas = polygonSmooth(result, { iterations: 3 });
+        // Check if areas are empty
+        this.resultAreasEmpty =
+          Array.isArray(result.features) && result.features.length < 1;
+        // Request successful
+        this.resultAreasRequestFailed = false;
+      } catch {
+        this.resultAreas = null;
+        this.resultAreasEmpty = false;
+        this.resultAreasRequestFailed = true;
+      }
+    },
+    clearResultAreas: function () {
+      this.resultAreas = null;
+      this.resultAreasEmpty = true;
     },
     changeSlidersIsMinState: function (sliderName) {
       for (const i in this.sliders) {

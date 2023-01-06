@@ -8,7 +8,7 @@ import "leaflet/dist/leaflet.css";
 import "leaflet-draw";
 import "leaflet-draw/dist/leaflet.draw.css";
 import { GeoSearchControl, OpenStreetMapProvider } from "leaflet-geosearch";
-import "leaflet-geosearch/dist/geosearch.css"
+import "leaflet-geosearch/dist/geosearch.css";
 import "leaflet.locatecontrol";
 import "leaflet.locatecontrol/dist/L.Control.Locate.min.css";
 
@@ -39,7 +39,7 @@ export default {
       required: true,
       type: Number,
     },
-    resultGeoJson: {
+    resultAreas: {
       type: Object,
     },
   },
@@ -104,19 +104,21 @@ export default {
       this.map.on("geosearch/showlocation", (event) => {
         const marker = event.marker;
         marker.on("move", () => {
-          marker.off()  // remove address popup when marker is moved
+          marker.off(); // remove address popup when marker is moved
         });
         marker.addTo(this.drawLayer);
       });
 
-      L.control.locate({
-        position: "topright",
-        initialZoomLevel: 16,
-        showPopup: false,
-        strings: {
-          title: "Show your location"
-        }
-      }).addTo(this.map);
+      L.control
+        .locate({
+          position: "topright",
+          initialZoomLevel: 16,
+          showPopup: false,
+          strings: {
+            title: "Show your location",
+          },
+        })
+        .addTo(this.map);
 
       this.map.addLayer(this.drawLayer);
       const drawControl = new L.Control.Draw({
@@ -160,14 +162,18 @@ export default {
     },
   },
   watch: {
-    resultGeoJson: function (newGeoJson) {
-      this.updateResultLayer(newGeoJson);
+    resultAreas: function (value) {
+      if (value) {
+        this.updateResultLayer(value);
+      } else {
+        this.resultLayer.clearLayers();
+      }
     },
   },
   mounted() {
     this.initMap();
-    if (this.resultGeoJson) {
-      this.updateResultLayer(this.resultGeoJson);
+    if (this.resultAreas) {
+      this.updateResultLayer(this.resultAreas);
     }
   },
 };
