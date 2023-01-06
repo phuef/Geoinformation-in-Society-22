@@ -170,7 +170,7 @@ export default {
         highQuality: true,
         mutate: true,
       });
-      this.result = polygonSmooth(response, { iterations: 3 });
+      this.requestResponse = polygonSmooth(response, { iterations: 3 });
     },
     changeSlidersIsMinState: function (sliderName) {
       for (const i in this.sliders) {
@@ -300,6 +300,6 @@ export default {
 }
 
 #menuButton:hover {
-  background-color: #EEEEEE;
+  background-color: #eeeeee;
 }
 </style>
