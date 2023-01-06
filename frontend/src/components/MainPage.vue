@@ -116,6 +116,9 @@ export default {
         },
         {
           target: '[data-v-step="4"]',
+          header: {
+            title: "Min or Max distance",
+          },
           content:
             "Here you can decide if the choosen distance should be undertood as <b>at least or less than</b>.  ",
         },
