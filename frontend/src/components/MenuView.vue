@@ -205,7 +205,7 @@
             ></v-col>
             <v-col class="d-flex justify-center" cols="5">
               <v-btn
-                color="rgb(72,72,72)"
+                color="rgb(70,77,93)"
                 class="white--text text-capitalize"
                 elevation="0"
                 height="50px"
