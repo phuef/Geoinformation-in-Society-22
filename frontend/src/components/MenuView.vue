@@ -18,7 +18,7 @@
         <span class="highlight-gray">specify the distance</span> to your target
         location, and that`s it, congrats, you just found your Spot.<br /><br />
         <span class="highlight-gray">Need help?</span> Click
-        <a class="start-demo-link" @click="startTour()">here</a> you can find
+        <a class="start-demo-link" @click="startTour()">here</a> to find
         detailed information of the functionalities.
       </p>
     </div>
