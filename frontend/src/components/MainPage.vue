@@ -56,6 +56,9 @@
 </template>
 
 <script>
+import polygonSmooth from "@turf/polygon-smooth";
+import simplify from "@turf/simplify";
+
 import MapView from "./MapView.vue";
 import MenuView from "./MenuView.vue";
 
@@ -162,7 +165,12 @@ export default {
   },
   methods: {
     processNewRequest: function (response) {
-      this.requestResponse = response;
+      simplify(response, {
+        tolerance: 0.0002,
+        highQuality: true,
+        mutate: true,
+      });
+      this.requestResponse = polygonSmooth(response, { iterations: 3 });
     },
     changeSlidersIsMinState: function (sliderName) {
       for (const i in this.sliders) {
