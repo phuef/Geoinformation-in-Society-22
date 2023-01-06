@@ -17,9 +17,9 @@
         <span class="highlight-gray">Add the layers</span> that you want,
         <span class="highlight-gray">specify the distance</span> to your target
         location, and that`s it, congrats, you just found your Spot.<br /><br />
-        <span class="highlight-gray">Need help?</span> For detailed information
-        of the functionalities, click <a @click="startTour()"> here</a> or use
-        the start demo button above.
+        <span class="highlight-gray">Need help?</span> Click
+        <a class="start-demo-link" @click="startTour()">here</a> you can find
+        detailed information of the functionalities.
       </p>
     </div>
     <v-divider></v-divider>
@@ -417,5 +417,10 @@ export default {
 
 .paddingTop {
   padding-top: 2px !important;
+}
+
+.start-demo-link:hover {
+  text-decoration: underline;
+  font-weight: bold;
 }
 </style>
