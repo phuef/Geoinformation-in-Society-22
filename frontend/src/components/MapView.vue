@@ -34,6 +34,7 @@ export default {
       colorblindLayer: null,
       busLayer: null,
       busLayerMarkerCluster: null,
+      resultLayer: null,
       drawLayer: new L.FeatureGroup(),
       layerControl: null,
     };
@@ -162,12 +163,6 @@ export default {
       } catch (error) {
         console.warn(error);
       }
-    },
-    getMapBounds: function () {
-      return this.map.getBounds();
-    },
-    getMapZoom: function () {
-      return this.map.getZoom();
     },
     addBusLayer: function () {
       const busIcon = L.icon({
