@@ -201,8 +201,6 @@ export default {
         );
         this.map.on("overlayadd", this.sendBusSignalToMenu); //(this.busLayerAdded = true));
         this.map.on("overlayremove", this.sendBusSignalToMenu); //(this.busLayerRemoved = true));
-      } else {
-        //pass
       }
     },
     async sendBusSignalToMenu() {
