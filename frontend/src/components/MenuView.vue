@@ -296,7 +296,7 @@ export default {
      */
     applyConfiguration(configuration) {
       const { activeSliders, values, isMin } = configuration;
-      this.activeSliders = activeSliders;
+      this.activeSliders = Array.from(activeSliders);
       for (let i = 0; i < activeSliders.length; i++) {
         this.$emit("updateSliderValue", activeSliders[i], values[i]);
         this.$emit("updateSliderIsMin", activeSliders[i], isMin[i]);
