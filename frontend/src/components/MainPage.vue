@@ -92,7 +92,7 @@ export default {
           active: true, // wether the layer is currently selected by the user
           // the text that shall be displayed when the user hovers over the info button
           infoLabel:
-            "Move the slider to remove all Areas <br/>that have a certain <b>distance to museums</b>.",
+            "Move the slider to remove all areas <br/>that have a certain <b>distance to museums</b>.",
           icon: "mdi-bank",
           isMin: true,
         },
@@ -103,7 +103,7 @@ export default {
           band: 1,
           active: true,
           infoLabel:
-            "Move the slider to remove all Areas <br/>that have a certain <b>distance to theaters</b>.",
+            "Move the slider to remove all areas <br/>that have a certain <b>distance to theaters</b>.",
           icon: "mdi-drama-masks",
           isMin: false,
         },

@@ -31,7 +31,7 @@
       text
       color="rgb(25,118,210)"
       colored-border
-      type="info"
+      type="error"
       class="py-2 px-2 mb-0 mt-3"
     >
       Request to the server failed.
