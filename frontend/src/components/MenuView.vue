@@ -139,9 +139,9 @@
         <v-switch
           class="mt-0 pt-0"
           color="primary"
-          v-model="busSwitchModel"
+          v-model="state_showBusStations"
           hide-details
-          @click="changeBusSwitch"
+          @change="$emit('setBusStationsVisibility', !showBusStations)"
         >
         </v-switch>
       </v-col>
@@ -230,7 +230,7 @@
 <script>
 export default {
   name: "MenuView",
-  emits: ["newRequest", "isMinOfSliderHasChanged"],
+  emits: ["newRequest", "isMinOfSliderHasChanged", "setBusStationsVisibility"],
   data() {
     return {
       activeSliders: ["Museums", "Theaters"], //The currently active Sliders
@@ -252,7 +252,7 @@ export default {
         },
       ],
       response: "",
-      busSwitchModel: null,
+      state_showBusStations: this.showBusStations,
     };
   },
   props: {
@@ -260,7 +260,8 @@ export default {
     sliders: {
       type: Array,
     },
-    switchSignalFromMapToMenu: {
+    showBusStations: {
+      required: true,
       type: Boolean,
     },
   },
@@ -399,13 +400,11 @@ export default {
     async clearMap() {
       this.$emit("clearMap", null);
     },
-    async changeBusSwitch() {
-      this.$emit("busSliderSignalToMain", null);
-    },
   },
   watch: {
-    switchSignalFromMapToMenu: function (value) {
-      this.busSwitchModel = value;
+    showBusStations: function (value) {
+      // Updates the state for the bus stations switch in the menu
+      this.state_showBusStations = value;
     },
   },
   mounted() {

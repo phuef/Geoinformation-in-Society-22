@@ -20,11 +20,9 @@
             @newRequest="processNewRequest"
             @isMinOfSliderHasChanged="changeSlidersIsMinState"
             @clearMap="processNewRequest"
-            @busSliderSignalToMain="
-              showBussesMainFromMap = !showBussesMainFromMap
-            "
             :sliders="sliders"
-            :switchSignalFromMapToMenu="switchSignalFromMap"
+            :showBusStations="showBusStations"
+            @setBusStationsVisibility="setBusStationsVisibility"
           />
         </div>
       </v-col>
@@ -60,10 +58,10 @@
             ref="map"
             :center="mapCenterPoint"
             :zoom="mapZoom"
-            :busGeojsonMap="busGeojsonMain"
+            :busStations="busStations"
             :result-geo-json="requestResponse"
-            :showBussesMapFromMap="showBussesMainFromMap"
-            @busControlOnMapView="switchSignalFromMap = !switchSignalFromMap"
+            :showBusStations="showBusStations"
+            @setBusStationsVisibility="setBusStationsVisibility"
           />
         </div>
       </v-col>
@@ -119,9 +117,8 @@ export default {
       ],
       mapCenterPoint: [51.96229626341511, 7.6256090207326395],
       mapZoom: 10,
-      busGeojsonMain: null,
-      showBussesMainFromMap: false,
-      switchSignalFromMap: false,
+      busStations: null,
+      showBusStations: false,
       steps: [
         {
           target: '[data-v-step="0"]', // We're using document.querySelector() under the hood
@@ -210,6 +207,9 @@ export default {
         }
       }
     },
+    setBusStationsVisibility: function (value) {
+      this.showBusStations = value;
+    },
     toggleMenu: function () {
       const menuDim = [
         this.$refs.menuContainer.offsetWidth,
@@ -265,7 +265,7 @@ export default {
       const busResponse = await fetch(
         "https://rest.busradar.conterra.de/prod/haltestellen"
       );
-      this.busGeojsonMain = await busResponse.json();
+      this.busStations = await busResponse.json();
     },
   },
   computed: {
@@ -285,8 +285,7 @@ export default {
     },
   },
   async mounted() {
-    await this.doBusRequest();
-    this.$refs.map.loadBusStations();
+    this.doBusRequest();
 
     // Update map size when resizing window
     window.addEventListener("resize", this.debounce(this.onResize, 500), {

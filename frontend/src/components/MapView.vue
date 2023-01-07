@@ -26,6 +26,7 @@ import busMarker from "@/assets/alpha-b-circle-outline-dark-grey.png";
 
 export default {
   name: "MapView",
+  emits: ["setBusStationsVisibility"],
   data() {
     return {
       map: null,
@@ -49,16 +50,10 @@ export default {
     resultGeoJson: {
       type: Object,
     },
-    busGeojsonMap: {
+    busStations: {
       type: Object,
-      default() {
-        return {
-          features: [],
-          type: "FeatureCollection",
-        };
-      },
     },
-    showBussesMapFromMap: {
+    showBusStations: {
       required: true,
       type: Boolean,
     },
@@ -174,53 +169,43 @@ export default {
     getMapZoom: function () {
       return this.map.getZoom();
     },
-    loadBusStations: function (geojsonString) {
+    addBusLayer: function () {
       const busIcon = L.icon({
         iconUrl: busMarker,
         iconSize: [15, 15],
       });
-      if (geojsonString != undefined) {
-        this.busGeojsonParsed = JSON.parse(JSON.stringify(geojsonString));
-        this.busLayer = L.geoJSON(this.busGeojsonParsed, {
-          pointToLayer: function (_feature, latlng) {
-            return L.marker(latlng, { icon: busIcon });
-          },
-        });
-        this.busLayerMarkerCluster = L.markerClusterGroup({
-          polygonOptions: {
-            fillColor: "#245fb3", // polygon color
-            color: "#245fb3", // line color
-            opacity: 1, // opacity of line
-            weight: 3, // line thickness
-            fillOpacity: 0.2, // opacity inside polygon
-          },
-        }).addLayer(this.busLayer);
-        this.layerControl.addOverlay(
-          this.busLayerMarkerCluster,
-          "Bus stations"
-        );
-        this.map.on("overlayadd", this.sendBusSignalToMenu); //(this.busLayerAdded = true));
-        this.map.on("overlayremove", this.sendBusSignalToMenu); //(this.busLayerRemoved = true));
-      }
+      this.busLayer = L.geoJSON(undefined, {
+        pointToLayer: function (_feature, latlng) {
+          return L.marker(latlng, { icon: busIcon });
+        },
+      });
+      this.busLayerMarkerCluster = L.markerClusterGroup({
+        polygonOptions: {
+          fillColor: "#245fb3", // polygon color
+          color: "#245fb3", // line color
+          opacity: 1, // opacity of line
+          weight: 3, // line thickness
+          fillOpacity: 0.2, // opacity inside polygon
+        },
+      }).addLayer(this.busLayer);
+      this.layerControl.addOverlay(this.busLayerMarkerCluster, "Bus stations");
+      this.map.on("overlayadd", (event) => {
+        if (event.name === "Bus stations")
+          this.$emit("setBusStationsVisibility", true);
+      });
+      this.map.on("overlayremove", (event) => {
+        if (event.name === "Bus stations")
+          this.$emit("setBusStationsVisibility", false);
+      });
     },
-    async sendBusSignalToMenu() {
-      this.$emit("busControlOnMapView", null);
-    },
-    showBusStations: async function () {
-      if (this.showBussesMapFromMap == true) {
-        if (this.busLayerMarkerCluster != null) {
-          this.busLayerMarkerCluster.addTo(this.map);
-        } else {
-          await this.loadBusStations();
-          this.busLayerMarkerCluster.addTo(this.map); // PROBLEM
-        }
-      } else {
-        try {
-          this.map.removeLayer(this.busLayerMarkerCluster);
-        } catch (error) {
-          //pass
-        }
-      }
+    updateBusLayer: function (newGeoJson) {
+      // Refresh bus layer
+      newGeoJson = JSON.parse(JSON.stringify(newGeoJson));
+      this.busLayer.clearLayers();
+      this.busLayer.addData(newGeoJson);
+      // Refresh marker cluster layer
+      this.busLayerMarkerCluster.clearLayers();
+      this.busLayerMarkerCluster.addLayer(this.busLayer);
     },
     updateOnResize: function (pixelOffset = [0, 0]) {
       // Move the map so that it stays in the same place on the screen
@@ -233,17 +218,26 @@ export default {
     resultGeoJson: function (newGeoJson) {
       this.updateResultLayer(newGeoJson);
     },
-    busGeojsonMap: function (newBusGeojson) {
-      this.loadBusStations(newBusGeojson);
+    busStations: function (newBusGeoJson) {
+      if (newBusGeoJson) {
+        this.updateBusLayer(newBusGeoJson);
+      }
     },
-    showBussesMapFromMap: function () {
-      this.showBusStations();
+    showBusStations: function (value) {
+      if (value) {
+        if (!this.map.hasLayer(this.busLayerMarkerCluster))
+          this.map.addLayer(this.busLayerMarkerCluster);
+      } else {
+        if (this.map.hasLayer(this.busLayerMarkerCluster))
+          this.map.removeLayer(this.busLayerMarkerCluster);
+      }
     },
   },
   mounted() {
-    this.loadBusStations(this.busGeojson);
-
+    // Initialization
     this.initMap();
+    this.addBusLayer();
+
     if (this.resultGeoJson) {
       this.updateResultLayer(this.resultGeoJson);
     }
