@@ -8,9 +8,12 @@ import "leaflet/dist/leaflet.css";
 import "leaflet-draw";
 import "leaflet-draw/dist/leaflet.draw.css";
 import { GeoSearchControl, OpenStreetMapProvider } from "leaflet-geosearch";
-import "leaflet-geosearch/dist/geosearch.css"
+import "leaflet-geosearch/dist/geosearch.css";
 import "leaflet.locatecontrol";
 import "leaflet.locatecontrol/dist/L.Control.Locate.min.css";
+import "leaflet.markercluster/dist/leaflet.markercluster.js";
+import "leaflet.markercluster/dist/MarkerCluster.css";
+import "leaflet.markercluster/dist/MarkerCluster.Default.css";
 
 // Make marker icons available (icon itself and shadow)
 delete L.Icon.Default.prototype._getIconUrl;
@@ -19,6 +22,7 @@ L.Icon.Default.mergeOptions({
   iconUrl: require("leaflet/dist/images/marker-icon.png"),
   shadowUrl: require("leaflet/dist/images/marker-shadow.png"),
 });
+import busMarker from "@/assets/alpha-b-circle-outline-dark-grey.png";
 
 export default {
   name: "MapView",
@@ -27,7 +31,10 @@ export default {
       map: null,
       tileLayer: null,
       colorblindLayer: null,
+      busLayer: null,
+      busLayerMarkerCluster: null,
       drawLayer: new L.FeatureGroup(),
+      layerControl: null,
     };
   },
   props: {
@@ -41,6 +48,19 @@ export default {
     },
     resultGeoJson: {
       type: Object,
+    },
+    busGeojsonMap: {
+      type: Object,
+      default() {
+        return {
+          features: [],
+          type: "FeatureCollection",
+        };
+      },
+    },
+    showBussesMapFromMap: {
+      required: true,
+      type: Boolean,
     },
   },
   methods: {
@@ -85,7 +105,7 @@ export default {
 
       this.resultLayer = L.geoJSON().addTo(this.map);
 
-      L.control.layers(basemaps).addTo(this.map);
+      this.layerControl = L.control.layers(basemaps).addTo(this.map);
 
       L.control
         .zoom({
@@ -104,19 +124,21 @@ export default {
       this.map.on("geosearch/showlocation", (event) => {
         const marker = event.marker;
         marker.on("move", () => {
-          marker.off()  // remove address popup when marker is moved
+          marker.off(); // remove address popup when marker is moved
         });
         marker.addTo(this.drawLayer);
       });
 
-      L.control.locate({
-        position: "topright",
-        initialZoomLevel: 16,
-        showPopup: false,
-        strings: {
-          title: "Show your location"
-        }
-      }).addTo(this.map);
+      L.control
+        .locate({
+          position: "topleft",
+          initialZoomLevel: 16,
+          showPopup: false,
+          strings: {
+            title: "Show your location",
+          },
+        })
+        .addTo(this.map);
 
       this.map.addLayer(this.drawLayer);
       const drawControl = new L.Control.Draw({
@@ -152,6 +174,56 @@ export default {
     getMapZoom: function () {
       return this.map.getZoom();
     },
+    loadBusStations: function (geojsonString) {
+      const busIcon = L.icon({
+        iconUrl: busMarker,
+        iconSize: [15, 15],
+      });
+      if (geojsonString != undefined) {
+        this.busGeojsonParsed = JSON.parse(JSON.stringify(geojsonString));
+        this.busLayer = L.geoJSON(this.busGeojsonParsed, {
+          pointToLayer: function (_feature, latlng) {
+            return L.marker(latlng, { icon: busIcon });
+          },
+        });
+        this.busLayerMarkerCluster = L.markerClusterGroup({
+          polygonOptions: {
+            fillColor: "#245fb3", // polygon color
+            color: "#245fb3", // line color
+            opacity: 1, // opacity of line
+            weight: 3, // line thickness
+            fillOpacity: 0.2, // opacity inside polygon
+          },
+        }).addLayer(this.busLayer);
+        this.layerControl.addOverlay(
+          this.busLayerMarkerCluster,
+          "Bus stations"
+        );
+        this.map.on("overlayadd", this.sendBusSignalToMenu); //(this.busLayerAdded = true));
+        this.map.on("overlayremove", this.sendBusSignalToMenu); //(this.busLayerRemoved = true));
+      } else {
+        //pass
+      }
+    },
+    async sendBusSignalToMenu() {
+      this.$emit("busControlOnMapView", null);
+    },
+    showBusStations: async function () {
+      if (this.showBussesMapFromMap == true) {
+        if (this.busLayerMarkerCluster != null) {
+          this.busLayerMarkerCluster.addTo(this.map);
+        } else {
+          await this.loadBusStations();
+          this.busLayerMarkerCluster.addTo(this.map); // PROBLEM
+        }
+      } else {
+        try {
+          this.map.removeLayer(this.busLayerMarkerCluster);
+        } catch (error) {
+          //pass
+        }
+      }
+    },
     updateOnResize: function (pixelOffset = [0, 0]) {
       // Move the map so that it stays in the same place on the screen
       this.map.panBy(pixelOffset, { animate: false });
@@ -163,8 +235,16 @@ export default {
     resultGeoJson: function (newGeoJson) {
       this.updateResultLayer(newGeoJson);
     },
+    busGeojsonMap: function (newBusGeojson) {
+      this.loadBusStations(newBusGeojson);
+    },
+    showBussesMapFromMap: function () {
+      this.showBusStations();
+    },
   },
   mounted() {
+    this.loadBusStations(this.busGeojson);
+
     this.initMap();
     if (this.resultGeoJson) {
       this.updateResultLayer(this.resultGeoJson);

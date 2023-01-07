@@ -20,7 +20,11 @@
             @newRequest="processNewRequest"
             @isMinOfSliderHasChanged="changeSlidersIsMinState"
             @clearMap="processNewRequest"
+            @busSliderSignalToMain="
+              showBussesMainFromMap = !showBussesMainFromMap
+            "
             :sliders="sliders"
+            :switchSignalFromMapToMenu="switchSignalFromMap"
           />
         </div>
       </v-col>
@@ -42,11 +46,24 @@
             <v-icon v-show="showMenu">mdi-menu-left</v-icon>
             <v-icon v-show="!showMenu">mdi-menu-right</v-icon>
           </button>
+          <div
+            data-v-step="6"
+            style="
+              position: absolute;
+              z-index: 9999;
+              right: 0;
+              margin-right: 60px;
+              height: 70px;
+            "
+          ></div>
           <MapView
             ref="map"
             :center="mapCenterPoint"
             :zoom="mapZoom"
+            :busGeojsonMap="busGeojsonMain"
             :result-geo-json="requestResponse"
+            :showBussesMapFromMap="showBussesMainFromMap"
+            @busControlOnMapView="switchSignalFromMap = !switchSignalFromMap"
           />
         </div>
       </v-col>
@@ -102,6 +119,9 @@ export default {
       ],
       mapCenterPoint: [51.96229626341511, 7.6256090207326395],
       mapZoom: 10,
+      busGeojsonMain: null,
+      showBussesMainFromMap: false,
+      switchSignalFromMap: false,
       steps: [
         {
           target: '[data-v-step="0"]', // We're using document.querySelector() under the hood
@@ -145,6 +165,17 @@ export default {
           },
           content:
             "Here you can add a <strong>marker</strong> to the map. <br> E.g. to mark a certain position.",
+          params: {
+            placement: "left-start", // Any valid Popper.js placement. See https://popper.js.org/popper-documentation.html#Popper.placements
+          },
+        },
+        {
+          target: '[data-v-step="6"]',
+          header: {
+            title: "Layer control",
+          },
+          content:
+            "Here it's possible to switch to a <b>colorblind baselayer</b>. You can also switch on an overlay of the towns <b>bus stations</b>.",
           params: {
             placement: "left-start", // Any valid Popper.js placement. See https://popper.js.org/popper-documentation.html#Popper.placements
           },
@@ -229,6 +260,13 @@ export default {
         }, timeout);
       };
     },
+    async doBusRequest() {
+      // the request to the backend to retrieve the areas that meet the current conditions (configured by the user)
+      const busResponse = await fetch(
+        "https://rest.busradar.conterra.de/prod/haltestellen"
+      );
+      this.busGeojsonMain = await busResponse.json();
+    },
   },
   computed: {
     menuHeight() {
@@ -246,7 +284,10 @@ export default {
       }
     },
   },
-  mounted() {
+  async mounted() {
+    await this.doBusRequest();
+    this.$refs.map.loadBusStations();
+
     // Update map size when resizing window
     window.addEventListener("resize", this.debounce(this.onResize, 500), {
       passive: true,
@@ -283,8 +324,8 @@ export default {
   width: 16px;
   height: 80px;
   background-color: white;
-  border-top-right-radius: 5px;
-  border-bottom-right-radius: 5px;
+  border-top-right-radius: 4px;
+  border-bottom-right-radius: 4px;
   border: 2px solid lightgrey;
   border-left: 0;
   z-index: 1200;

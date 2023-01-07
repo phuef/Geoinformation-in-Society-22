@@ -42,7 +42,12 @@
           <div tile class="d-flex paddingTop">
             <v-row>
               <v-col cols="4">
-                <p color="black" class="text-capitalize mb-0" dense>
+                <p
+                  color="black"
+                  class="text-capitalize mb-0 d-flex"
+                  dense
+                  style="align-items: center"
+                >
                   {{ slider.name }}
 
                   <v-tooltip right z-index="1000">
@@ -129,6 +134,46 @@
         </v-card>
       </v-col>
     </v-row>
+    <v-row align="center">
+      <v-col cols="2" class="d-flex justify-center">
+        <v-switch
+          class="mt-0 pt-0"
+          color="primary"
+          v-model="busSwitchModel"
+          hide-details
+          @click="changeBusSwitch"
+        >
+        </v-switch>
+      </v-col>
+      <v-col
+        cols="10"
+        class="pl-0"
+        style="color: #000000de; align-items: center; display: flex"
+        >Add bus stops
+        <v-tooltip right z-index="1201">
+          <template v-slot:activator="{ on, attrs }">
+            <v-btn
+              dense
+              small
+              color="white"
+              elevation="0"
+              v-bind="attrs"
+              v-on="on"
+              class="bNoPadding"
+            >
+              <v-icon small style="color: #000000de"
+                >mdi-information-outline</v-icon
+              >
+            </v-btn>
+          </template>
+          <span
+            v-html="
+              'Here you can add the </br><b>cities bus stations</b></br> to the map'
+            "
+          ></span> </v-tooltip
+      ></v-col>
+    </v-row>
+
     <br />
     <v-divider style="border-color: rgba(127, 127, 127)"></v-divider>
     <br />
@@ -207,12 +252,16 @@ export default {
         },
       ],
       response: "",
+      busSwitchModel: null,
     };
   },
   props: {
     /* eslint-disable */
     sliders: {
       type: Array,
+    },
+    switchSignalFromMapToMenu: {
+      type: Boolean,
     },
   },
   methods: {
@@ -349,6 +398,14 @@ export default {
     },
     async clearMap() {
       this.$emit("clearMap", null);
+    },
+    async changeBusSwitch() {
+      this.$emit("busSliderSignalToMain", null);
+    },
+  },
+  watch: {
+    switchSignalFromMapToMenu: function (value) {
+      this.busSwitchModel = value;
     },
   },
   mounted() {
