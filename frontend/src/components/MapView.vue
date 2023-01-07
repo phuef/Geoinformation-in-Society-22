@@ -47,7 +47,7 @@ export default {
       required: true,
       type: Number,
     },
-    resultGeoJson: {
+    resultAreas: {
       type: Object,
     },
     busStations: {
@@ -215,8 +215,12 @@ export default {
     },
   },
   watch: {
-    resultGeoJson: function (newGeoJson) {
-      this.updateResultLayer(newGeoJson);
+    resultAreas: function (value) {
+      if (value) {
+        this.updateResultLayer(value);
+      } else {
+        this.resultLayer.clearLayers();
+      }
     },
     busStations: function (newBusGeoJson) {
       if (newBusGeoJson) {
@@ -238,8 +242,8 @@ export default {
     this.initMap();
     this.addBusLayer();
 
-    if (this.resultGeoJson) {
-      this.updateResultLayer(this.resultGeoJson);
+    if (this.resultAreas) {
+      this.updateResultLayer(this.resultAreas);
     }
   },
 };

@@ -17,11 +17,15 @@
           <v-btn class="ms-3" @click="startTour()"> Start Demo </v-btn>
           <MenuView
             ref="menu"
-            @newRequest="processNewRequest"
-            @isMinOfSliderHasChanged="changeSlidersIsMinState"
-            @clearMap="processNewRequest"
+            :resultAreasEmpty="resultAreasEmpty"
+            :resultAreasRequestFailed="resultAreasRequestFailed"
             :sliders="sliders"
             :showBusStations="showBusStations"
+            @requestResultAreas="requestResultAreas"
+            @clearResultAreas="clearResultAreas"
+            @setSliderActiveState="setSliderActiveState"
+            @updateSliderValue="updateSliderValue"
+            @updateSliderIsMin="updateSliderIsMin"
             @setBusStationsVisibility="setBusStationsVisibility"
           />
         </div>
@@ -59,7 +63,7 @@
             :center="mapCenterPoint"
             :zoom="mapZoom"
             :busStations="busStations"
-            :result-geo-json="requestResponse"
+            :resultAreas="resultAreas"
             :showBusStations="showBusStations"
             @setBusStationsVisibility="setBusStationsVisibility"
           />
@@ -86,7 +90,13 @@ export default {
   data() {
     return {
       showMenu: true,
-      requestResponse: null,
+      resultAreas: null,
+      resultAreasEmpty: false,
+      resultAreasRequestFailed: false,
+      mapCenterPoint: [51.96229626341511, 7.6256090207326395],
+      mapZoom: 10,
+      busStations: null,
+      showBusStations: false,
       sliders: [
         // All availabe sliders
         // TODO: add new layers to this list, when new layers are added to the backend.
@@ -115,10 +125,6 @@ export default {
           isMin: false,
         },
       ],
-      mapCenterPoint: [51.96229626341511, 7.6256090207326395],
-      mapZoom: 10,
-      busStations: null,
-      showBusStations: false,
       steps: [
         {
           target: '[data-v-step="0"]', // We're using document.querySelector() under the hood
@@ -192,18 +198,58 @@ export default {
     };
   },
   methods: {
-    processNewRequest: function (response) {
-      simplify(response, {
-        tolerance: 0.0002,
-        highQuality: true,
-        mutate: true,
-      });
-      this.requestResponse = polygonSmooth(response, { iterations: 3 });
+    requestResultAreas: async function (requestString) {
+      // Request to the backend to retrieve areas that meet the current conditions
+      // (e.g. http://localhost:5050/request/[(0,250,None),(1,0,1000)])
+      try {
+        const response = await fetch(
+          `http://localhost:5050/request/[${requestString}]`
+        );
+        const result = await response.json();
+        // Smoothing
+        simplify(result, {
+          tolerance: 0.00029,
+          highQuality: true,
+          mutate: true,
+        });
+        this.resultAreas = polygonSmooth(result, { iterations: 3 });
+        // Check if areas are empty
+        this.resultAreasEmpty =
+          Array.isArray(result.features) && result.features.length < 1;
+        // Request successful
+        this.resultAreasRequestFailed = false;
+      } catch {
+        this.resultAreas = null;
+        this.resultAreasEmpty = false;
+        this.resultAreasRequestFailed = true;
+      }
     },
-    changeSlidersIsMinState: function (sliderName) {
-      for (const i in this.sliders) {
-        if (this.sliders[i].name == sliderName) {
-          this.sliders[i].isMin = !this.sliders[i].isMin;
+    clearResultAreas: function () {
+      this.resultAreas = null;
+      this.resultAreasEmpty = true;
+      this.resultAreasRequestFailed = false;
+    },
+    setSliderActiveState: function (name, active) {
+      for (const slider of this.sliders) {
+        if (slider.name === name) {
+          slider.active = active;
+          return;
+        }
+      }
+    },
+    updateSliderValue: function (name, value) {
+      for (const slider of this.sliders) {
+        if (slider.name === name) {
+          slider.value = value;
+          return;
+        }
+      }
+    },
+    updateSliderIsMin: function (name, isMin) {
+      for (const slider of this.sliders) {
+        if (slider.name === name) {
+          slider.isMin = isMin;
+          return;
         }
       }
     },
