@@ -50,7 +50,12 @@
           <div tile class="d-flex paddingTop">
             <v-row>
               <v-col cols="4">
-                <p color="black" class="text-capitalize mb-0" dense>
+                <p
+                  color="black"
+                  class="text-capitalize mb-0 d-flex"
+                  dense
+                  style="align-items: center"
+                >
                   {{ slider.name }}
                   <v-tooltip right z-index="1000">
                     <template v-slot:activator="{ on, attrs }">
@@ -132,6 +137,46 @@
         </v-card>
       </v-col>
     </v-row>
+    <v-row align="center">
+      <v-col cols="2" class="d-flex justify-center">
+        <v-switch
+          class="mt-0 pt-0"
+          color="primary"
+          v-model="state_showBusStations"
+          hide-details
+          @change="$emit('setBusStationsVisibility', !showBusStations)"
+        >
+        </v-switch>
+      </v-col>
+      <v-col
+        cols="10"
+        class="pl-0"
+        style="color: #000000de; align-items: center; display: flex"
+        >Add bus stops
+        <v-tooltip right z-index="1201">
+          <template v-slot:activator="{ on, attrs }">
+            <v-btn
+              dense
+              small
+              color="white"
+              elevation="0"
+              v-bind="attrs"
+              v-on="on"
+              class="bNoPadding"
+            >
+              <v-icon small style="color: #000000de"
+                >mdi-information-outline</v-icon
+              >
+            </v-btn>
+          </template>
+          <span
+            v-html="
+              'Here you can add the </br><b>cities bus stations</b></br> to the map'
+            "
+          ></span> </v-tooltip
+      ></v-col>
+    </v-row>
+
     <br />
     <v-divider style="border-color: rgba(127, 127, 127)"></v-divider>
     <br />
@@ -187,6 +232,7 @@ export default {
     "setSliderActiveState",
     "updateSliderValue",
     "updateSliderIsMin",
+    "setBusStationsVisibility",
   ],
   data() {
     return {
@@ -208,6 +254,7 @@ export default {
           isMin: [false],
         },
       ],
+      state_showBusStations: this.showBusStations,
     };
   },
   props: {
@@ -218,6 +265,10 @@ export default {
       type: Boolean,
     },
     resultAreasRequestFailed: {
+      type: Boolean,
+    },
+    showBusStations: {
+      required: true,
       type: Boolean,
     },
   },
@@ -281,8 +332,8 @@ export default {
     },
   },
   watch: {
-    // Changes to activeSliders update the sliders active state in MainPage
     activeSliders: function (value) {
+      // Changes to activeSliders update the sliders active state in MainPage
       for (const slider of this.sliders) {
         if (value.includes(slider.name)) {
           this.$emit("setSliderActiveState", slider.name, true);
@@ -290,6 +341,10 @@ export default {
           this.$emit("setSliderActiveState", slider.name, false);
         }
       }
+    },
+    showBusStations: function (value) {
+      // Updates the state for the bus stations switch in the menu
+      this.state_showBusStations = value;
     },
   },
   mounted() {
