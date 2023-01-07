@@ -180,7 +180,7 @@ export default {
         const result = await response.json();
         // Smoothing
         simplify(result, {
-          tolerance: 0.0002,
+          tolerance: 0.00029,
           highQuality: true,
           mutate: true,
         });
@@ -199,6 +199,7 @@ export default {
     clearResultAreas: function () {
       this.resultAreas = null;
       this.resultAreasEmpty = true;
+      this.resultAreasRequestFailed = false;
     },
     setSliderActiveState: function (name, active) {
       for (const slider of this.sliders) {

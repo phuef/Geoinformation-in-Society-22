@@ -14,9 +14,7 @@
       data-v-step="0"
     >
     </v-select>
-    <p class="text-capitalize pt-2 mb-0" style="color: #000000de" dense>
-      Distance to ...
-    </p>
+    <p class="pt-2 mb-0" style="color: #000000de" dense>Distance to ...</p>
     <v-alert
       v-if="resultAreasEmpty"
       text
@@ -25,7 +23,7 @@
       type="info"
       class="py-2 px-2 mb-0 mt-3"
     >
-      There is no spot that matches the current query. Adjust the sliders to
+      There is no spot that matches your current query. Adjust the sliders to
       find one.
     </v-alert>
     <v-alert
@@ -197,14 +195,14 @@ export default {
         // The pre-configurations that can be set upfront in the following form:
         {
           index: 1,
-          name: "Find museums with a minimum distance of 1000 m.", // name of the configuration - gets displayed
+          name: "Find places that are at minimum one kilometer away from any museums", // name of the configuration - gets displayed
           activeSliders: ["Museums"], // the name(s) of the slider(s) that should be shown
           values: [1000], // values that the slider(s) should have
           isMin: [true], // isMin properties of the slider(s)
         },
         {
           index: 2,
-          name: "Find theaters with a maximum distance of 500 m.",
+          name: "Find places within 500 meters of a theater",
           activeSliders: ["Theaters"],
           values: [500],
           isMin: [false],
