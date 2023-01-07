@@ -10,7 +10,7 @@
       label="Selected layers:"
       multiple
       dense
-      @input="changeActiveState()"
+      @input="doResultAreasRequest()"
       data-v-step="0"
     >
     </v-select>
@@ -54,7 +54,6 @@
               <v-col cols="4">
                 <p color="black" class="text-capitalize mb-0" dense>
                   {{ slider.name }}
-
                   <v-tooltip right z-index="1000">
                     <template v-slot:activator="{ on, attrs }">
                       <v-btn
@@ -82,10 +81,7 @@
                   dense
                   small
                   outlined
-                  @click="
-                    $emit('isMinOfSliderHasChanged', slider.name),
-                      doResultAreasRequest()
-                  "
+                  @click="toggleIsMin(slider)"
                   class="text-lowercase bNoPadding"
                 >
                   {{ slider.isMin ? "at least" : "less than" }}
@@ -102,9 +98,7 @@
                         small
                         class="bNoPadding"
                         color="white"
-                        @click="
-                          (slider.active = false), removeLayer(slider.name)
-                        "
+                        @click="deactivateSlider(slider)"
                       >
                         <v-icon
                           style="color: #000000de"
@@ -134,7 +128,7 @@
               :thumb-size="30"
               max="2000"
               dense
-              @end="doResultAreasRequest"
+              @end="updateSliderValue(slider)"
             ></v-slider>
           </div>
         </v-card>
@@ -175,14 +169,7 @@
                 class="white--text text-capitalize"
                 elevation="0"
                 height="50px"
-                @click="
-                  (activeSliders = configuration.activeSliders),
-                    adjustSliders(
-                      configuration.activeSliders,
-                      configuration.values,
-                      configuration.isMin
-                    )
-                "
+                @click="applyConfiguration(configuration)"
                 v-html="'Show this <br/>configuration'"
               ></v-btn>
             </v-col>
@@ -196,31 +183,36 @@
 <script>
 export default {
   name: "MenuView",
-  emits: ["requestResultAreas", "clearResultAreas", "isMinOfSliderHasChanged"],
+  emits: [
+    "requestResultAreas",
+    "clearResultAreas",
+    "setSliderActiveState",
+    "updateSliderValue",
+    "updateSliderIsMin",
+  ],
   data() {
     return {
-      activeSliders: ["Museums", "Theaters"], //The currently active Sliders
+      activeSliders: [],
       configurations: [
         // The pre-configurations that can be set upfront in the following form:
         {
           index: 1,
           name: "Find museums with a minimum distance of 1000 m.", // name of the configuration - gets displayed
           activeSliders: ["Museums"], // the name(s) of the slider(s) that should be shown
-          values: [1000], // the values that the slider(s) should have
-          isMin: true,
+          values: [1000], // values that the slider(s) should have
+          isMin: [true], // isMin properties of the slider(s)
         },
         {
           index: 2,
           name: "Find theaters with a maximum distance of 500 m.",
           activeSliders: ["Theaters"],
           values: [500],
-          isMin: false,
+          isMin: [false],
         },
       ],
     };
   },
   props: {
-    /* eslint-disable */
     sliders: {
       type: Array,
     },
@@ -233,105 +225,81 @@ export default {
   },
   methods: {
     /**
-     * Changes the active state of the sliders according to the currently active sliders
+     * Removes a layer with a given name
      */
-    changeActiveState() {
-      for (var h in this.sliders) {
-        this.sliders[h].active = false;
-      }
-      for (var i in this.sliders) {
-        for (var j in this.activeSliders) {
-          if (this.sliders[i].name == this.activeSliders[j]) {
-            this.sliders[i].active = true;
-          }
-        }
+    deactivateSlider(slider) {
+      const i = this.activeSliders.indexOf(slider.name);
+      if (i !== -1) {
+        this.activeSliders.splice(i, 1);
       }
       this.doResultAreasRequest();
     },
-    /**
-     * Removes a layer with a given name
-     */
-    removeLayer(name) {
-      for (var j in this.activeSliders) {
-        if (this.activeSliders[j] == name) {
-          this.activeSliders.splice(j, 1);
-        }
-      }
-      if (this.activeSliders.length != 0) {
-        this.doResultAreasRequest();
-      } else {
-        this.$emit("clearResultAreas");
-      }
+    updateSliderValue(slider) {
+      this.$emit("updateSliderValue", slider.name, slider.value);
+      this.doResultAreasRequest();
+    },
+    toggleIsMin(slider) {
+      this.$emit("updateSliderIsMin", slider.name, !slider.isMin);
+      this.doResultAreasRequest();
     },
     /**
      * Adjusts the shown layers according to a given configuration
      */
-    adjustSliders(activeSliders, values, isMin) {
-      for (var h in this.sliders) {
-        this.sliders[h].active = false;
+    applyConfiguration(configuration) {
+      const { activeSliders, values, isMin } = configuration;
+      this.activeSliders = activeSliders;
+      for (let i = 0; i < activeSliders.length; i++) {
+        this.$emit("updateSliderValue", activeSliders[i], values[i]);
+        this.$emit("updateSliderIsMin", activeSliders[i], isMin[i]);
       }
-      for (var i in activeSliders) {
-        for (var j in this.sliders) {
-          if (this.sliders[j].name == activeSliders[i]) {
-            this.sliders[j].active = true;
-            this.sliders[j].value = values[i];
-            console.log(this.sliders[i].isMin);
-            this.sliders[i].isMin = isMin;
-          }
-        }
-      }
-      this.removeNotActiveLayers();
       this.doResultAreasRequest();
     },
     /**
-     * Removes all layers that are currently not active
+     * Sends the query string for a request to the backend (e.g. (0,250,None),(1,0,1000))
+     * @emits requestString to the parent component (MainPage)
      */
-    removeNotActiveLayers() {
-      for (var i in this.activeSliders) {
-        for (var j in this.sliders)
-          if (
-            this.activeSliders[i] == this.sliders[j].name &&
-            this.sliders[j].active == false
-          ) {
-            this.activeSliders.splice(i, 1);
-          }
+    doResultAreasRequest() {
+      if (this.activeSliders.length < 1) {
+        this.$emit("clearResultAreas");
+      } else {
+        const requestString = this.sliders
+          .filter((slider) => this.activeSliders.includes(slider.name))
+          .map((slider) =>
+            this.getSliderTuple(slider.band, slider.value, slider.isMin)
+          )
+          .join();
+        this.$emit("requestResultAreas", requestString);
       }
     },
     /**
      * @returns String
      */
     getSliderTuple(band, value, isMin) {
-      let tupel = "(" + band + ",";
       if (isMin) {
-        tupel += value + ",None)";
+        return `(${band},${value},None)`;
       } else {
-        tupel += "0," + value + ")";
+        return `(${band},0,${value})`;
       }
-      return tupel;
     },
-    /**
-     * Sends the query string for a request to the backend (e.g. [(0,250,None),(1,0,1000)])
-     * @emits requestString to the parent component (MainPage)
-     */
-    doResultAreasRequest() {
-      const requestTuples = [];
+  },
+  watch: {
+    // Changes to activeSliders update the sliders active state in MainPage
+    activeSliders: function (value) {
       for (const slider of this.sliders) {
-        if (slider.active) {
-          requestTuples.push(
-            this.getSliderTuple(slider.band, slider.value, slider.isMin)
-          );
+        if (value.includes(slider.name)) {
+          this.$emit("setSliderActiveState", slider.name, true);
+        } else {
+          this.$emit("setSliderActiveState", slider.name, false);
         }
       }
-      if (requestTuples.length < 1) {
-        this.$emit("clearResultAreas");
-        return;
-      }
-      const requestString = "[" + requestTuples.join() + "]";
-      this.$emit("requestResultAreas", requestString);
     },
   },
   mounted() {
-    // do request at mount with the initial configuration
+    // Set activeSliders according to the sliders active state in MainPage
+    this.activeSliders = this.sliders
+      .filter((slider) => slider.active)
+      .map((slider) => slider.name);
+    // Request with intitial configuration
     this.doResultAreasRequest();
   },
 };

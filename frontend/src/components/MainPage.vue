@@ -22,7 +22,9 @@
             :sliders="sliders"
             @requestResultAreas="requestResultAreas"
             @clearResultAreas="clearResultAreas"
-            @isMinOfSliderHasChanged="changeSlidersIsMinState"
+            @setSliderActiveState="setSliderActiveState"
+            @updateSliderValue="updateSliderValue"
+            @updateSliderIsMin="updateSliderIsMin"
           />
         </div>
       </v-col>
@@ -173,7 +175,7 @@ export default {
       // (e.g. http://localhost:5050/request/[(0,250,None),(1,0,1000)])
       try {
         const response = await fetch(
-          "http://localhost:5050/request/" + requestString
+          `http://localhost:5050/request/[${requestString}]`
         );
         const result = await response.json();
         // Smoothing
@@ -198,10 +200,27 @@ export default {
       this.resultAreas = null;
       this.resultAreasEmpty = true;
     },
-    changeSlidersIsMinState: function (sliderName) {
-      for (const i in this.sliders) {
-        if (this.sliders[i].name == sliderName) {
-          this.sliders[i].isMin = !this.sliders[i].isMin;
+    setSliderActiveState: function (name, active) {
+      for (const slider of this.sliders) {
+        if (slider.name === name) {
+          slider.active = active;
+          return;
+        }
+      }
+    },
+    updateSliderValue: function (name, value) {
+      for (const slider of this.sliders) {
+        if (slider.name === name) {
+          slider.value = value;
+          return;
+        }
+      }
+    },
+    updateSliderIsMin: function (name, isMin) {
+      for (const slider of this.sliders) {
+        if (slider.name === name) {
+          slider.isMin = isMin;
+          return;
         }
       }
     },
