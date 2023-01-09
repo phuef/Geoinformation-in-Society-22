@@ -197,6 +197,9 @@ export default {
                 "</h1><p>Direction (german): " +
                 _feature.properties.richtung +
                 "</br></br>Next departures:</p>";
+              if (this.busStationInfo.length == 0) {
+                popup += "There are <b>no departures</b> the next time.";
+              }
               for (var i = 0; i < this.busStationInfo.length; i++) {
                 const plannedDeparture = new Date(
                   this.busStationInfo[i].ankunftszeit * 1000
