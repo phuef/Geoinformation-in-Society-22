@@ -194,25 +194,40 @@ export default {
               var popup =
                 "<h1>" +
                 _feature.properties.lbez +
-                "</h1><p>Direction (german): " +
+                "</h1><p><h4>Direction (german): </h4>" +
                 _feature.properties.richtung +
-                "</br></br>Next departures:</p>";
+                "</br></br><h4>Next departures:</h4>";
               if (this.busStationInfo.length == 0) {
-                popup += "There are <b>no departures</b> the next time.";
+                popup += "There are <b>no departures</b> the next time.</p>";
+              } else {
+                popup += "<br>";
               }
               for (var i = 0; i < this.busStationInfo.length; i++) {
                 const plannedDeparture = new Date(
                   this.busStationInfo[i].ankunftszeit * 1000
                 );
+                var plannedAM_PM;
+                if (plannedDeparture.getHours() > 12) {
+                  plannedAM_PM = "pm";
+                } else {
+                  plannedAM_PM = "am";
+                }
                 var plannedDepartureMinute;
                 if (plannedDeparture.getMinutes() < 10) {
                   plannedDepartureMinute = "0" + plannedDeparture.getMinutes();
                 } else {
                   plannedDepartureMinute = plannedDeparture.getMinutes();
                 }
+
                 const actualDeparture = new Date(
                   this.busStationInfo[i].tatsaechliche_ankunftszeit * 1000
                 );
+                var actualAM_PM;
+                if (actualDeparture.getHours() > 12) {
+                  actualAM_PM = "pm";
+                } else {
+                  actualAM_PM = "am";
+                }
                 var actualDepartureMinute;
                 if (actualDeparture.getMinutes() < 10) {
                   actualDepartureMinute = "0" + actualDeparture.getMinutes();
@@ -228,12 +243,16 @@ export default {
                   plannedDeparture.getHours() +
                   ":" +
                   plannedDepartureMinute +
-                  "</b>  Actually: " +
+                  " " +
+                  plannedAM_PM +
+                  "</b> | Actually: " +
                   "<b>" +
                   actualDeparture.getHours() +
                   ":" +
                   actualDepartureMinute +
-                  "</b></li></br>";
+                  " " +
+                  actualAM_PM +
+                  "</b></li></p>";
               }
               this.bindPopup(popup);
             }
