@@ -173,6 +173,15 @@ export default {
         pointToLayer: function (_feature, latlng) {
           return L.marker(latlng, { icon: busIcon });
         },
+        onEachFeature: function (_feature, layer) {
+          layer.bindPopup(
+            "<h1>" +
+              _feature.properties.lbez +
+              "</h1><p>Direction (german): " +
+              _feature.properties.richtung +
+              "</p>"
+          );
+        },
       });
       this.busLayerMarkerCluster = L.markerClusterGroup({
         polygonOptions: {
@@ -196,6 +205,7 @@ export default {
     updateBusLayer: function (newGeoJson) {
       // Refresh bus layer
       newGeoJson = JSON.parse(JSON.stringify(newGeoJson));
+      console.log(newGeoJson);
       this.busLayer.clearLayers();
       this.busLayer.addData(newGeoJson);
       // Refresh marker cluster layer
