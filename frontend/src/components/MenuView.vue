@@ -93,7 +93,7 @@
                     </template>
                     <span
                       v-html="
-                        'Click here to <b>visualize <br>the features</b> from this layer.'
+                        `Click here to <b>visualize</b> </br>the features from </br>the <b>${slider.name}</b> layer.`
                       "
                     ></span>
                   </v-tooltip>
