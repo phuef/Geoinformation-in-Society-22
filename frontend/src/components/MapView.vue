@@ -165,13 +165,6 @@ export default {
         console.warn(error);
       }
     },
-    async doBusStationRequest(nr) {
-      // the request to the backend to retrieve the areas that meet the current conditions (configured by the user)
-      const stationResponse = await fetch(
-        "https://rest.busradar.conterra.de/prod/haltestellen/" + nr
-      );
-      this.busStationInfo = await stationResponse.json();
-    },
     addBusLayer: function () {
       const busIcon = L.icon({
         iconUrl: busMarker,
