@@ -22,7 +22,7 @@ L.Icon.Default.mergeOptions({
   iconUrl: require("leaflet/dist/images/marker-icon.png"),
   shadowUrl: require("leaflet/dist/images/marker-shadow.png"),
 });
-import busMarker from "@/assets/alpha-b-circle-outline-dark-grey.png";
+import busMarker from "@/assets/haltestellen_icon.png";
 
 export default {
   name: "MapView",
@@ -171,12 +171,11 @@ export default {
         "https://rest.busradar.conterra.de/prod/haltestellen/" + nr
       );
       this.busStationInfo = await stationResponse.json();
-      console.log(this.busStationInfo);
     },
     addBusLayer: function () {
       const busIcon = L.icon({
         iconUrl: busMarker,
-        iconSize: [15, 15],
+        iconSize: [20, 20],
       });
       this.busLayer = L.geoJSON(undefined, {
         pointToLayer: function (_feature, latlng) {
@@ -189,8 +188,6 @@ export default {
                   "/abfahrten"
               );
               this.busStationInfo = await stationResponse.json();
-              //this.doBusStationRequest("0000");
-              console.log(this.busStationInfo);
               var popup =
                 "<h1>" +
                 _feature.properties.lbez +
@@ -284,7 +281,6 @@ export default {
     updateBusLayer: function (newGeoJson) {
       // Refresh bus layer
       newGeoJson = JSON.parse(JSON.stringify(newGeoJson));
-      console.log(newGeoJson);
       this.busLayer.clearLayers();
       this.busLayer.addData(newGeoJson);
       // Refresh marker cluster layer
