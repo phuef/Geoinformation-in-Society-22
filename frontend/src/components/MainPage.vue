@@ -94,7 +94,7 @@ export default {
       resultAreasEmpty: false,
       resultAreasRequestFailed: false,
       mapCenterPoint: [51.96229626341511, 7.6256090207326395],
-      mapZoom: 10,
+      mapZoom: 13,
       busStations: null,
       showBusStations: false,
       sliders: [
