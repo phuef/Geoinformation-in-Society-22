@@ -336,7 +336,6 @@ export default {
         return `(${band},0,${value})`;
       }
     },
-
     startTour() {
       this.$tours["myTour"].start();
     },
