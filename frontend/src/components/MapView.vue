@@ -11,6 +11,9 @@ import { GeoSearchControl, OpenStreetMapProvider } from "leaflet-geosearch";
 import "leaflet-geosearch/dist/geosearch.css";
 import "leaflet.locatecontrol";
 import "leaflet.locatecontrol/dist/L.Control.Locate.min.css";
+import "leaflet.markercluster/dist/leaflet.markercluster.js";
+import "leaflet.markercluster/dist/MarkerCluster.css";
+import "leaflet.markercluster/dist/MarkerCluster.Default.css";
 
 // Make marker icons available (icon itself and shadow)
 delete L.Icon.Default.prototype._getIconUrl;
@@ -19,15 +22,21 @@ L.Icon.Default.mergeOptions({
   iconUrl: require("leaflet/dist/images/marker-icon.png"),
   shadowUrl: require("leaflet/dist/images/marker-shadow.png"),
 });
+import busMarker from "@/assets/alpha-b-circle-outline-dark-grey.png";
 
 export default {
   name: "MapView",
+  emits: ["setBusStationsVisibility"],
   data() {
     return {
       map: null,
       tileLayer: null,
       colorblindLayer: null,
+      busLayer: null,
+      busLayerMarkerCluster: null,
+      resultLayer: null,
       drawLayer: new L.FeatureGroup(),
+      layerControl: null,
     };
   },
   props: {
@@ -39,8 +48,15 @@ export default {
       required: true,
       type: Number,
     },
-    resultGeoJson: {
+    resultAreas: {
       type: Object,
+    },
+    busStations: {
+      type: Object,
+    },
+    showBusStations: {
+      required: true,
+      type: Boolean,
     },
   },
   methods: {
@@ -85,7 +101,7 @@ export default {
 
       this.resultLayer = L.geoJSON().addTo(this.map);
 
-      L.control.layers(basemaps).addTo(this.map);
+      this.layerControl = L.control.layers(basemaps).addTo(this.map);
 
       L.control
         .zoom({
@@ -111,7 +127,7 @@ export default {
 
       L.control
         .locate({
-          position: "topright",
+          position: "topleft",
           initialZoomLevel: 16,
           showPopup: false,
           strings: {
@@ -148,11 +164,43 @@ export default {
         console.warn(error);
       }
     },
-    getMapBounds: function () {
-      return this.map.getBounds();
+    addBusLayer: function () {
+      const busIcon = L.icon({
+        iconUrl: busMarker,
+        iconSize: [15, 15],
+      });
+      this.busLayer = L.geoJSON(undefined, {
+        pointToLayer: function (_feature, latlng) {
+          return L.marker(latlng, { icon: busIcon });
+        },
+      });
+      this.busLayerMarkerCluster = L.markerClusterGroup({
+        polygonOptions: {
+          fillColor: "#245fb3", // polygon color
+          color: "#245fb3", // line color
+          opacity: 1, // opacity of line
+          weight: 3, // line thickness
+          fillOpacity: 0.2, // opacity inside polygon
+        },
+      }).addLayer(this.busLayer);
+      this.layerControl.addOverlay(this.busLayerMarkerCluster, "Bus stations");
+      this.map.on("overlayadd", (event) => {
+        if (event.name === "Bus stations")
+          this.$emit("setBusStationsVisibility", true);
+      });
+      this.map.on("overlayremove", (event) => {
+        if (event.name === "Bus stations")
+          this.$emit("setBusStationsVisibility", false);
+      });
     },
-    getMapZoom: function () {
-      return this.map.getZoom();
+    updateBusLayer: function (newGeoJson) {
+      // Refresh bus layer
+      newGeoJson = JSON.parse(JSON.stringify(newGeoJson));
+      this.busLayer.clearLayers();
+      this.busLayer.addData(newGeoJson);
+      // Refresh marker cluster layer
+      this.busLayerMarkerCluster.clearLayers();
+      this.busLayerMarkerCluster.addLayer(this.busLayer);
     },
     updateOnResize: function (pixelOffset = [0, 0]) {
       // Move the map so that it stays in the same place on the screen
@@ -162,14 +210,35 @@ export default {
     },
   },
   watch: {
-    resultGeoJson: function (newGeoJson) {
-      this.updateResultLayer(newGeoJson);
+    resultAreas: function (value) {
+      if (value) {
+        this.updateResultLayer(value);
+      } else {
+        this.resultLayer.clearLayers();
+      }
+    },
+    busStations: function (newBusGeoJson) {
+      if (newBusGeoJson) {
+        this.updateBusLayer(newBusGeoJson);
+      }
+    },
+    showBusStations: function (value) {
+      if (value) {
+        if (!this.map.hasLayer(this.busLayerMarkerCluster))
+          this.map.addLayer(this.busLayerMarkerCluster);
+      } else {
+        if (this.map.hasLayer(this.busLayerMarkerCluster))
+          this.map.removeLayer(this.busLayerMarkerCluster);
+      }
     },
   },
   mounted() {
+    // Initialization
     this.initMap();
-    if (this.resultGeoJson) {
-      this.updateResultLayer(this.resultGeoJson);
+    this.addBusLayer();
+
+    if (this.resultAreas) {
+      this.updateResultLayer(this.resultAreas);
     }
   },
 };

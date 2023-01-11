@@ -34,7 +34,7 @@
       label="Selected layers:"
       multiple
       dense
-      @input="changeActiveState()"
+      @input="doResultAreasRequest()"
       data-v-step="0"
     >
     </v-select>
@@ -56,9 +56,13 @@
           <div tile class="d-flex paddingTop">
             <v-row>
               <v-col cols="4">
-                <p color="black" class="text-capitalize mb-0" dense>
+                <p
+                  color="black"
+                  class="text-capitalize mb-0 d-flex"
+                  dense
+                  style="align-items: center"
+                >
                   {{ slider.name }}
-
                   <v-tooltip right z-index="1000">
                     <template v-slot:activator="{ on, attrs }">
                       <v-btn
@@ -86,9 +90,7 @@
                   dense
                   small
                   outlined
-                  @click="
-                    $emit('isMinOfSliderHasChanged', slider.name), doRequest()
-                  "
+                  @click="toggleIsMin(slider)"
                   class="text-lowercase bNoPadding"
                 >
                   {{ slider.isMin ? "at least" : "less than" }}
@@ -105,9 +107,7 @@
                         small
                         class="bNoPadding"
                         color="white"
-                        @click="
-                          (slider.active = false), removeLayer(slider.name)
-                        "
+                        @click="deactivateSlider(slider)"
                       >
                         <v-icon
                           style="color: #000000de"
@@ -137,12 +137,52 @@
               :thumb-size="30"
               max="2000"
               dense
-              @end="doRequest"
+              @end="updateSliderValue(slider)"
             ></v-slider>
           </div>
         </v-card>
       </v-col>
     </v-row>
+    <v-row align="center">
+      <v-col cols="2" class="d-flex justify-center">
+        <v-switch
+          class="mt-0 pt-0"
+          color="primary"
+          v-model="state_showBusStations"
+          hide-details
+          @change="$emit('setBusStationsVisibility', !showBusStations)"
+        >
+        </v-switch>
+      </v-col>
+      <v-col
+        cols="10"
+        class="pl-0"
+        style="color: #000000de; align-items: center; display: flex"
+        >Add bus stops
+        <v-tooltip right z-index="1201">
+          <template v-slot:activator="{ on, attrs }">
+            <v-btn
+              dense
+              small
+              color="white"
+              elevation="0"
+              v-bind="attrs"
+              v-on="on"
+              class="bNoPadding"
+            >
+              <v-icon small style="color: #000000de"
+                >mdi-information-outline</v-icon
+              >
+            </v-btn>
+          </template>
+          <span
+            v-html="
+              'Here you can add the </br><b>cities bus stations</b></br> to the map'
+            "
+          ></span> </v-tooltip
+      ></v-col>
+    </v-row>
+
     <br />
     <v-divider style="border-color: rgba(127, 127, 127)"></v-divider>
     <br />
@@ -178,14 +218,7 @@
                 class="white--text text-capitalize"
                 elevation="0"
                 height="50px"
-                @click="
-                  (activeSliders = configuration.activeSliders),
-                    adjustSliders(
-                      configuration.activeSliders,
-                      configuration.values,
-                      configuration.isMin
-                    )
-                "
+                @click="applyConfiguration(configuration)"
                 v-html="'Show this <br/>configuration'"
               ></v-btn>
             </v-col>
@@ -199,170 +232,125 @@
 <script>
 export default {
   name: "MenuView",
-  emits: ["newRequest", "isMinOfSliderHasChanged"],
+  emits: [
+    "requestResultAreas",
+    "clearResultAreas",
+    "setSliderActiveState",
+    "updateSliderValue",
+    "updateSliderIsMin",
+    "setBusStationsVisibility",
+  ],
   data() {
     return {
-      activeSliders: ["Museums", "Theaters"], //The currently active Sliders
+      activeSliders: [],
       configurations: [
         // The pre-configurations that can be set upfront in the following form:
         {
           index: 1,
-          name: "Find museums with a minimum distance of 1000 m.", // name of the configuration - gets displayed
+          name: "Find places that are at minimum one kilometer away from any museums", // name of the configuration - gets displayed
           activeSliders: ["Museums"], // the name(s) of the slider(s) that should be shown
-          values: [1000], // the values that the slider(s) should have
-          isMin: true,
+          values: [1000], // values that the slider(s) should have
+          isMin: [true], // isMin properties of the slider(s)
         },
         {
           index: 2,
-          name: "Find theaters with a maximum distance of 500 m.",
+          name: "Find places within 500 meters of a theater",
           activeSliders: ["Theaters"],
           values: [500],
-          isMin: false,
+          isMin: [false],
         },
       ],
-      response: "",
+      state_showBusStations: this.showBusStations,
     };
   },
   props: {
-    /* eslint-disable */
     sliders: {
       type: Array,
+    },
+    resultAreasEmpty: {
+      type: Boolean,
+    },
+    resultAreasRequestFailed: {
+      type: Boolean,
+    },
+    showBusStations: {
+      required: true,
+      type: Boolean,
     },
   },
   methods: {
     /**
-     * Changes the active state of the sliders according to the currently active sliders
-     */
-    changeActiveState() {
-      for (var h in this.sliders) {
-        this.sliders[h].active = false;
-      }
-      for (var i in this.sliders) {
-        for (var j in this.activeSliders) {
-          if (this.sliders[i].name == this.activeSliders[j]) {
-            this.sliders[i].active = true;
-          }
-        }
-      }
-      this.doRequest();
-    },
-    /**
      * Removes a layer with a given name
      */
-    removeLayer(name) {
-      for (var j in this.activeSliders) {
-        if (this.activeSliders[j] == name) {
-          this.activeSliders.splice(j, 1);
-        }
+    deactivateSlider(slider) {
+      const i = this.activeSliders.indexOf(slider.name);
+      if (i !== -1) {
+        this.activeSliders.splice(i, 1);
       }
-      if (this.activeSliders.length != 0) {
-        this.doRequest();
-      } else {
-        this.clearMap();
-      }
+      this.doResultAreasRequest();
     },
-    // returns a string in the following form:
-    // "(bandId, sliderValue)"
-
-    /**
-     * @returns String
-     */
-    getTupelForRequest(band, value, isMin) {
-      var tupel = "(" + band + ",";
-      if (isMin) {
-        tupel += value + ",None)";
-      } else {
-        tupel += "0," + value + ")";
-      }
-      return tupel;
+    updateSliderValue(slider) {
+      this.$emit("updateSliderValue", slider.name, slider.value);
+      this.doResultAreasRequest();
     },
-    /**
-     * @returns String in the following form:"[(bandId, sliderValue), (bandId, sliderValue)]"
-     * this String can be put together with <serverUrl>/request/<this string> to make the request to the backend
-     */
-    requestString() {
-      // outcome should look like this: [(0, 1000),(1,1500)]
-      var a = [];
-      a = this.getBandValueArray(); //returns an array with the bandIds and the corresponding values
-      var b = "[";
-      for (var i in a) {
-        if (i > 0) {
-          b += ",";
-        }
-        b += this.getTupelForRequest(a[i].band, a[i].value, a[i].isMin);
-      }
-      b += "]";
-      return b;
-    },
-    /**
-     * Gathers the bandId and current value for each active layer
-     * @returns Array in the following form: [{band:0,value:50},{band:1,value:100}]
-     */
-    getBandValueArray() {
-      // for each active layer add the bandId and its current value in an array
-      var helpArray = [];
-      for (var i in this.sliders) {
-        if (this.sliders[i].active) {
-          helpArray.push({
-            band: this.sliders[i].band,
-            value: this.sliders[i].value,
-            isMin: this.sliders[i].isMin,
-          });
-        }
-      }
-      return helpArray;
+    toggleIsMin(slider) {
+      this.$emit("updateSliderIsMin", slider.name, !slider.isMin);
+      this.doResultAreasRequest();
     },
     /**
      * Adjusts the shown layers according to a given configuration
      */
-    adjustSliders(activeSliders, values, isMin) {
-      for (var h in this.sliders) {
-        this.sliders[h].active = false;
+    applyConfiguration(configuration) {
+      const { activeSliders, values, isMin } = configuration;
+      this.activeSliders = Array.from(activeSliders);
+      for (let i = 0; i < activeSliders.length; i++) {
+        this.$emit("updateSliderValue", activeSliders[i], values[i]);
+        this.$emit("updateSliderIsMin", activeSliders[i], isMin[i]);
       }
-      for (var i in activeSliders) {
-        for (var j in this.sliders) {
-          if (this.sliders[j].name == activeSliders[i]) {
-            this.sliders[j].active = true;
-            this.sliders[j].value = values[i];
-            console.log(this.sliders[i].isMin);
-            this.sliders[i].isMin = isMin;
-          }
+      this.doResultAreasRequest();
+    },
+    /**
+     * Sends the query string for a request to the backend (e.g. (0,250,None),(1,0,1000))
+     * @emits requestString to the parent component (MainPage)
+     */
+    doResultAreasRequest() {
+      if (this.activeSliders.length < 1) {
+        this.$emit("clearResultAreas");
+      } else {
+        const requestString = this.sliders
+          .filter((slider) => this.activeSliders.includes(slider.name))
+          .map((slider) =>
+            this.getSliderTuple(slider.band, slider.value, slider.isMin)
+          )
+          .join();
+        this.$emit("requestResultAreas", requestString);
+      }
+    },
+    /**
+     * @returns String
+     */
+    getSliderTuple(band, value, isMin) {
+      if (isMin) {
+        return `(${band},${value},None)`;
+      } else {
+        return `(${band},0,${value})`;
+      }
+    },
+  },
+  watch: {
+    activeSliders: function (value) {
+      // Changes to activeSliders update the sliders active state in MainPage
+      for (const slider of this.sliders) {
+        if (value.includes(slider.name)) {
+          this.$emit("setSliderActiveState", slider.name, true);
+        } else {
+          this.$emit("setSliderActiveState", slider.name, false);
         }
       }
-      this.removeNotActiveLayers();
-      this.doRequest();
     },
-    /**
-     * Removes all layers that are currently not active
-     */
-    removeNotActiveLayers() {
-      for (var i in this.activeSliders) {
-        for (var j in this.sliders)
-          if (
-            this.activeSliders[i] == this.sliders[j].name &&
-            this.sliders[j].active == false
-          ) {
-            this.activeSliders.splice(i, 1);
-          }
-      }
-    },
-    /**
-     * sends a request to the backend with the current parameters (e.g. http://localhost:5050/request/[(0,0),(1,50)])
-     * @emits response of the server to the parent component (MainPage), so it can be added to the map component
-     */
-    async doRequest() {
-      // the request to the backend to retrieve the areas that meet the current conditions (configured by the user)
-      const response = await fetch(
-        "http://localhost:5050/request/" + this.requestString()
-      );
-      const geojson = await response.json();
-      this.response = geojson;
-
-      // sends an event, that the parent component (in this case Mainpage) can listen to
-      this.$emit("newRequest", this.response);
-    },
-    async clearMap() {
-      this.$emit("clearMap", null);
+    showBusStations: function (value) {
+      // Updates the state for the bus stations switch in the menu
+      this.state_showBusStations = value;
     },
 
     startTour() {
@@ -373,13 +361,12 @@ export default {
     },
   },
   mounted() {
-    // do request at mount with the initial configuration
-    this.doRequest();
-  },
-  computed: {
-    isResponseEmpty() {
-      return this.response.features == "" ? true : false;
-    },
+    // Set activeSliders according to the sliders active state in MainPage
+    this.activeSliders = this.sliders
+      .filter((slider) => slider.active)
+      .map((slider) => slider.name);
+    // Request with intitial configuration
+    this.doResultAreasRequest();
   },
 };
 </script>

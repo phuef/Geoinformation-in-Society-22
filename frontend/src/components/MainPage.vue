@@ -22,10 +22,16 @@
         >
           <MenuView
             ref="menu"
-            @newRequest="processNewRequest"
-            @isMinOfSliderHasChanged="changeSlidersIsMinState"
-            @clearMap="processNewRequest"
+            :resultAreasEmpty="resultAreasEmpty"
+            :resultAreasRequestFailed="resultAreasRequestFailed"
             :sliders="sliders"
+            :showBusStations="showBusStations"
+            @requestResultAreas="requestResultAreas"
+            @clearResultAreas="clearResultAreas"
+            @setSliderActiveState="setSliderActiveState"
+            @updateSliderValue="updateSliderValue"
+            @updateSliderIsMin="updateSliderIsMin"
+            @setBusStationsVisibility="setBusStationsVisibility"
           />
         </div>
       </v-col>
@@ -47,11 +53,24 @@
             <v-icon v-show="showMenu">mdi-menu-left</v-icon>
             <v-icon v-show="!showMenu">mdi-menu-right</v-icon>
           </button>
+          <div
+            data-v-step="6"
+            style="
+              position: absolute;
+              z-index: 9999;
+              right: 0;
+              margin-right: 60px;
+              height: 70px;
+            "
+          ></div>
           <MapView
             ref="map"
             :center="mapCenterPoint"
             :zoom="mapZoom"
-            :result-geo-json="requestResponse"
+            :busStations="busStations"
+            :resultAreas="resultAreas"
+            :showBusStations="showBusStations"
+            @setBusStationsVisibility="setBusStationsVisibility"
           />
         </div>
       </v-col>
@@ -61,6 +80,9 @@
 </template>
 
 <script>
+import polygonSmooth from "@turf/polygon-smooth";
+import simplify from "@turf/simplify";
+
 import MapView from "./MapView.vue";
 import MenuView from "./MenuView.vue";
 
@@ -73,7 +95,13 @@ export default {
   data() {
     return {
       showMenu: true,
-      requestResponse: null,
+      resultAreas: null,
+      resultAreasEmpty: false,
+      resultAreasRequestFailed: false,
+      mapCenterPoint: [51.96229626341511, 7.6256090207326395],
+      mapZoom: 10,
+      busStations: null,
+      showBusStations: false,
       sliders: [
         // All availabe sliders
         // TODO: add new layers to this list, when new layers are added to the backend.
@@ -102,9 +130,6 @@ export default {
           isMin: false,
         },
       ],
-      mapBounds: null,
-      mapCenterPoint: [51.96229626341511, 7.6256090207326395],
-      mapZoom: 10,
       steps: [
         {
           target: '[data-v-step="0"]', // We're using document.querySelector() under the hood
@@ -161,6 +186,17 @@ export default {
           },
         },
         {
+          target: '[data-v-step="6"]',
+          header: {
+            title: "Layer control",
+          },
+          content:
+            "Here it's possible to switch to a <b>colorblind baselayer</b>. You can also switch on an overlay of the towns <b>bus stations</b>.",
+          params: {
+            placement: "left-start", // Any valid Popper.js placement. See https://popper.js.org/popper-documentation.html#Popper.placements
+          },
+        },
+        {
           target: '[data-v-step="3"]',
           header: {
             title: "Hide and elapse",
@@ -182,15 +218,63 @@ export default {
     };
   },
   methods: {
-    processNewRequest: function (response) {
-      this.requestResponse = response;
+    requestResultAreas: async function (requestString) {
+      // Request to the backend to retrieve areas that meet the current conditions
+      // (e.g. http://localhost:5050/request/[(0,250,None),(1,0,1000)])
+      try {
+        const response = await fetch(
+          `http://localhost:5050/request/[${requestString}]`
+        );
+        const result = await response.json();
+        // Smoothing
+        simplify(result, {
+          tolerance: 0.00029,
+          highQuality: true,
+          mutate: true,
+        });
+        this.resultAreas = polygonSmooth(result, { iterations: 3 });
+        // Check if areas are empty
+        this.resultAreasEmpty =
+          Array.isArray(result.features) && result.features.length < 1;
+        // Request successful
+        this.resultAreasRequestFailed = false;
+      } catch {
+        this.resultAreas = null;
+        this.resultAreasEmpty = false;
+        this.resultAreasRequestFailed = true;
+      }
     },
-    changeSlidersIsMinState: function (sliderName) {
-      for (const i in this.sliders) {
-        if (this.sliders[i].name == sliderName) {
-          this.sliders[i].isMin = !this.sliders[i].isMin;
+    clearResultAreas: function () {
+      this.resultAreas = null;
+      this.resultAreasEmpty = true;
+      this.resultAreasRequestFailed = false;
+    },
+    setSliderActiveState: function (name, active) {
+      for (const slider of this.sliders) {
+        if (slider.name === name) {
+          slider.active = active;
+          return;
         }
       }
+    },
+    updateSliderValue: function (name, value) {
+      for (const slider of this.sliders) {
+        if (slider.name === name) {
+          slider.value = value;
+          return;
+        }
+      }
+    },
+    updateSliderIsMin: function (name, isMin) {
+      for (const slider of this.sliders) {
+        if (slider.name === name) {
+          slider.isMin = isMin;
+          return;
+        }
+      }
+    },
+    setBusStationsVisibility: function (value) {
+      this.showBusStations = value;
     },
     toggleMenu: function () {
       const menuDim = [
@@ -242,6 +326,13 @@ export default {
         }, timeout);
       };
     },
+    async doBusRequest() {
+      // the request to the backend to retrieve the areas that meet the current conditions (configured by the user)
+      const busResponse = await fetch(
+        "https://rest.busradar.conterra.de/prod/haltestellen"
+      );
+      this.busStations = await busResponse.json();
+    },
   },
   computed: {
     menuHeight() {
@@ -259,7 +350,9 @@ export default {
       }
     },
   },
-  mounted() {
+  async mounted() {
+    this.doBusRequest();
+
     // Update map size when resizing window
     window.addEventListener("resize", this.debounce(this.onResize, 500), {
       passive: true,
@@ -296,8 +389,8 @@ export default {
   width: 16px;
   height: 80px;
   background-color: white;
-  border-top-right-radius: 5px;
-  border-bottom-right-radius: 5px;
+  border-top-right-radius: 4px;
+  border-bottom-right-radius: 4px;
   border: 2px solid lightgrey;
   border-left: 0;
   z-index: 1200;
