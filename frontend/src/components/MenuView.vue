@@ -336,6 +336,13 @@ export default {
         return `(${band},0,${value})`;
       }
     },
+
+    startTour() {
+      this.$tours["myTour"].start();
+    },
+    stopTour() {
+      this.$tours["myTour"].stop();
+    },
   },
   watch: {
     activeSliders: function (value) {
@@ -351,13 +358,6 @@ export default {
     showBusStations: function (value) {
       // Updates the state for the bus stations switch in the menu
       this.state_showBusStations = value;
-    },
-
-    startTour() {
-      this.$tours["myTour"].start();
-    },
-    stopTour() {
-      this.$tours["myTour"].stop();
     },
   },
   mounted() {
