@@ -98,7 +98,7 @@ export default {
       busStations: null,
       showBusStations: false,
       sliders: [
-        // All availabe sliders
+        // All available sliders
         // TODO: add new layers to this list, when new layers are added to the backend.
         //       The layers need to have the structure shown and explained below
         {

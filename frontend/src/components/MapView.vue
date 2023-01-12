@@ -22,7 +22,7 @@ L.Icon.Default.mergeOptions({
   iconUrl: require("leaflet/dist/images/marker-icon.png"),
   shadowUrl: require("leaflet/dist/images/marker-shadow.png"),
 });
-import busMarker from "@/assets/alpha-b-circle-outline-dark-grey.png";
+import busMarker from "@/assets/haltestellen_icon.png";
 
 export default {
   name: "MapView",
@@ -37,6 +37,7 @@ export default {
       resultLayer: null,
       drawLayer: new L.FeatureGroup(),
       layerControl: null,
+      busStationInfo: null,
     };
   },
   props: {
@@ -167,11 +168,72 @@ export default {
     addBusLayer: function () {
       const busIcon = L.icon({
         iconUrl: busMarker,
-        iconSize: [15, 15],
+        iconSize: [20, 20],
       });
       this.busLayer = L.geoJSON(undefined, {
         pointToLayer: function (_feature, latlng) {
-          return L.marker(latlng, { icon: busIcon });
+          return L.marker(latlng, { icon: busIcon }).on(
+            "click",
+            async function () {
+              const stationResponse = await fetch(
+                "https://rest.busradar.conterra.de/prod/haltestellen/" +
+                  _feature.properties.nr +
+                  "/abfahrten"
+              );
+              this.busStationInfo = await stationResponse.json();
+              let popup =
+                `<h1>${_feature.properties.lbez}</h1>` +
+                `<p><h4>Direction (german): </h4>${_feature.properties.richtung}` +
+                `</br></br><h4>Next departures:</h4>`;
+
+              if (this.busStationInfo.length == 0) {
+                popup += "There are <b>no departures</b> the next time.</p>";
+              } else {
+                popup += "<br>";
+              }
+              for (let i = 0; i < this.busStationInfo.length; i++) {
+                const plannedDeparture = new Date(
+                  this.busStationInfo[i].ankunftszeit * 1000
+                );
+                let plannedAM_PM;
+                if (plannedDeparture.getHours() > 12) {
+                  plannedAM_PM = "pm";
+                } else {
+                  plannedAM_PM = "am";
+                }
+                let plannedDepartureMinute;
+                if (plannedDeparture.getMinutes() < 10) {
+                  plannedDepartureMinute = "0" + plannedDeparture.getMinutes();
+                } else {
+                  plannedDepartureMinute = plannedDeparture.getMinutes();
+                }
+
+                const actualDeparture = new Date(
+                  this.busStationInfo[i].tatsaechliche_ankunftszeit * 1000
+                );
+                let actualAM_PM;
+                if (actualDeparture.getHours() > 12) {
+                  actualAM_PM = "pm";
+                } else {
+                  actualAM_PM = "am";
+                }
+                let actualDepartureMinute;
+                if (actualDeparture.getMinutes() < 10) {
+                  actualDepartureMinute = "0" + actualDeparture.getMinutes();
+                } else {
+                  actualDepartureMinute = actualDeparture.getMinutes();
+                }
+                popup +=
+                  `<li> ${this.busStationInfo[i].linienid} ${this.busStationInfo[i].richtungstext}:` +
+                  `<br> Planned: <b> ${plannedDeparture.getHours()}:${plannedDepartureMinute} ${plannedAM_PM} </b>` +
+                  `| Actually: <b>${actualDeparture.getHours()}:${actualDepartureMinute} ${actualAM_PM}</b></li>`;
+              }
+              this.bindPopup(popup);
+            }
+          );
+        },
+        onEachFeature: function (_feature, layer) {
+          layer.bindPopup();
         },
       });
       this.busLayerMarkerCluster = L.markerClusterGroup({
