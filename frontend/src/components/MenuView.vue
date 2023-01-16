@@ -41,6 +41,27 @@
     <p class="text pt-2 mb-0" style="color: #000000de; font-size: 14px" dense>
       Distance to ...
     </p>
+    <v-alert
+      v-if="resultAreasEmpty"
+      text
+      color="rgb(25,118,210)"
+      colored-border
+      type="info"
+      class="py-2 px-2 mb-0 mt-3"
+    >
+      There is no spot that matches your current query. Adjust the sliders to
+      find one.
+    </v-alert>
+    <v-alert
+      v-if="resultAreasRequestFailed"
+      text
+      color="rgb(25,118,210)"
+      colored-border
+      type="error"
+      class="py-2 px-2 mb-0 mt-3"
+    >
+      Request to the server failed.
+    </v-alert>
     <br />
     <v-row v-for="slider in sliders" :key="slider.label">
       <v-col class="lessPadding">
