@@ -15,7 +15,6 @@ frontend/.DS_Store
 frontend/node_modules
 frontend/dist
 
-
 # local env files
 frontend/.env.local
 frontend/.env.*.local
@@ -26,12 +25,14 @@ frontend/yarn-debug.log*
 frontend/yarn-error.log*
 frontend/pnpm-debug.log*
 
+# Python
+**/__pycache__
+
 # Editor directories and files
-frontend/.idea
-frontend/.vscode
+**/.idea
+**/.vscode
 frontend/*.suo
 frontend/*.ntvs*
 frontend/*.njsproj
 frontend/*.sln
 frontend/*.sw?
-**/.idea
