@@ -379,7 +379,7 @@ export default {
   text-align: justify;
 }
 .highlight-gray {
-  background-image: linear-gradient(to right, #e9e9e9, #e9e9e9);
+  background-color: #c3c3c393;
   border-radius: 6px;
   padding: 3px 6px;
 }

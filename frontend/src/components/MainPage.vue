@@ -145,15 +145,7 @@ export default {
             title: "Min or Max distance",
           },
           content:
-            "Here you can decide if the choosen distance should be undertood as <b>at least or less than</b>.  ",
-        },
-        {
-          target: '[data-v-step="6"]',
-          content:
-            "Here you can specify the distance you want by moving the slider.",
-          params: {
-            placement: "left-start", // Any valid Popper.js placement. See https://popper.js.org/popper-documentation.html#Popper.placements
-          },
+            "Here you can decide if the choosen distance should be understood as <b>at least or less than</b>.  ",
         },
         {
           target: '[data-v-step="1"]',
@@ -203,13 +195,6 @@ export default {
           },
           content:
             "With this button you can <b>hide the menu</b> or elapse it, if it's hidden.",
-          params: {
-            placement: "right", // Any valid Popper.js placement. See https://popper.js.org/popper-documentation.html#Popper.placements
-          },
-        },
-        {
-          target: '[data-v-step="3"]',
-          content: "Click here to see your current location on the map",
           params: {
             placement: "right", // Any valid Popper.js placement. See https://popper.js.org/popper-documentation.html#Popper.placements
           },
