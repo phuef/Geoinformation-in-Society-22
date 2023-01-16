@@ -9,8 +9,9 @@ from flask import Flask, request, make_response, render_template, jsonify
 from flask_cors import CORS
 from ast import literal_eval
 import json
-from utils_cy import DistanceStack #import "cythonized" utils
-#from utils import DistanceStack
+#from utils_cy import DistanceStack #import "cythonized" utils
+
+from utils import DistanceStack
 import traceback
 
 #configure flask to use HTTP 1.1 only
@@ -67,7 +68,7 @@ def api():
 
 '''
 * Title: raster
-* Description: (band, min, max)
+* Description: route for retrieving rasters
 '''
 @app.route('/request/<requestParams>', methods = ['GET', 'OPTIONS'])
 def raster(requestParams):
@@ -76,11 +77,15 @@ def raster(requestParams):
             stack = DistanceStack() #create stack
             #stack.distanceStackInfo()
             params = literal_eval(requestParams) #parse parameters
+            #define rasters-bands
+            bands = [0, 1, 2, 3, 4, 5]
             for i in params:
                 if(i[1] != None and i[2] != None):
                     if(i[1] > i[2]):
                         return "Bad Request", 400
                 elif(i[1] == None and i[2] == None):
+                    return "Bad Request", 400
+                elif(i[0] not in bands):
                     return "Bad Request", 400
             stack.filterStack(params) #filter stack
             geojson = stack.filterResult() #load and filter results
@@ -113,32 +118,21 @@ def raster(requestParams):
 def features(features):
     try:
         if(request.method == 'GET'): #actual request using GET
-            match features:
-                case "museums":
-                    with open('usr/src/backend/data/mussen.geojson') as f:
-                        geojson = json.load(f)
-                        response = make_response(geojson)
-                        #add headers
-                        response.headers.add("Access-Control-Allow-Origin", "*")
-                        response.headers.add("Access-Control-Allow-Headers", "*")
-                        response.headers.add("Access-Control-Allow-Methods", "*")
-                        response.headers.add("Referrer-Policy", 'no-referrer')
-                    return response, 200
-
-                case "theaters":
-                    with open('usr/src/backend/data/theater.geojson') as f:
-                        geojson = json.load(f)
-                        response = make_response(geojson)
-                        #add headers
-                        response.headers.add("Access-Control-Allow-Origin", "*")
-                        response.headers.add("Access-Control-Allow-Headers", "*")
-                        response.headers.add("Access-Control-Allow-Methods", "*")
-                        response.headers.add("Referrer-Policy", 'no-referrer')
-                    return response, 200
-                case _:
-                    return "Bad Request", 400
+            try:
+                with open('usr/src/backend/data/' + features + '.geojson') as f:
+                    geojson = json.load(f)
+                    response = make_response(geojson)
+                    #add headers
+                    response.headers.add("Access-Control-Allow-Origin", "*")
+                    response.headers.add("Access-Control-Allow-Headers", "*")
+                    response.headers.add("Access-Control-Allow-Methods", "*")
+                    response.headers.add("Referrer-Policy", 'no-referrer')
+                return response, 200
+            except:
+                return "Bad Request", 400
             
             return response, 200 #return results
+        
         elif(request.method == 'OPTIONS'): #preflight request using OPTIONS
             response = make_response() #generate response
             #add headers
