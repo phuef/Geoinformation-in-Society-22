@@ -14,7 +14,6 @@
         }"
       >
         <div id="menuContainer" ref="menuContainer" fill-height fluid>
-          <v-btn class="ms-3" @click="startTour()"> Start Demo </v-btn>
           <MenuView
             ref="menu"
             :resultAreasEmpty="resultAreasEmpty"
@@ -399,6 +398,12 @@ export default {
 
 .v-step[data-v-54f9a632] {
   background-color: #5b7683;
+}
+
+.highlight-gray {
+  background-color: #c3c3c393;
+  border-radius: 6px;
+  padding: 3px 6px;
 }
 
 #menuContainer {
