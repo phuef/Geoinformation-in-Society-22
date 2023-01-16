@@ -1,0 +1,18 @@
+{
+"type": "FeatureCollection",
+"name": "baeder",
+"crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:OGC:1.3:CRS84" } },
+"features": [
+{ "type": "Feature", "properties": { "NAME": "Hallenbad Hiltrup", "LINK1_TXT": "weitere Informationen", "LINK1": "https://www.stadt-muenster.de/sportamt/baeder/hallenbad-hiltrup.html", "RECHTSWERT": 406456, "HOCHWERT": 5750854, "raster": 1 }, "geometry": { "type": "Point", "coordinates": [ 7.640368361790217, 51.900579721168945 ] } },
+{ "type": "Feature", "properties": { "NAME": "Hallenbad Mitte", "LINK1_TXT": "weitere Informationen", "LINK1": "https://www.stadt-muenster.de/sportamt/baeder/hallenbad-mitte.html", "RECHTSWERT": 404910, "HOCHWERT": 5757495, "raster": 1 }, "geometry": { "type": "Point", "coordinates": [ 7.616069512752514, 51.960010283570995 ] } },
+{ "type": "Feature", "properties": { "NAME": "Hallenbad Kinderhaus", "LINK1_TXT": "weitere Informationen", "LINK1": "https://www.stadt-muenster.de/sportamt/baeder/hallenbad-kinderhaus.html", "RECHTSWERT": 404215, "HOCHWERT": 5761497, "raster": 1 }, "geometry": { "type": "Point", "coordinates": [ 7.604840642806854, 51.995862272158476 ] } },
+{ "type": "Feature", "properties": { "NAME": "Hallenbad Ost", "LINK1_TXT": "weitere Informationen", "LINK1": "https://www.stadt-muenster.de/sportamt/baeder/hallenbad-ost.html", "RECHTSWERT": 407901, "HOCHWERT": 5757326, "raster": 1 }, "geometry": { "type": "Point", "coordinates": [ 7.659632460386994, 51.958994706845985 ] } },
+{ "type": "Feature", "properties": { "NAME": "Hallenbad Roxel", "LINK1_TXT": "weitere Informationen", "LINK1": "https://www.stadt-muenster.de/sportamt/baeder/hallenbad-roxel.html", "RECHTSWERT": 398743, "HOCHWERT": 5757013, "raster": 1 }, "geometry": { "type": "Point", "coordinates": [ 7.52648876905359, 51.954589173125377 ] } },
+{ "type": "Feature", "properties": { "NAME": "Hallenbad Wolbeck", "LINK1_TXT": "weitere Informationen", "LINK1": "https://www.stadt-muenster.de/sportamt/baeder/hallenbad-wolbeck.html", "RECHTSWERT": 411546, "HOCHWERT": 5752443, "raster": 1 }, "geometry": { "type": "Point", "coordinates": [ 7.713921193070832, 51.915694280820198 ] } },
+{ "type": "Feature", "properties": { "NAME": "Freibad Hiltrup", "LINK1_TXT": "weitere Informationen", "LINK1": "https://www.stadt-muenster.de/sportamt/baeder/freibad-hiltrup.html", "RECHTSWERT": 407557, "HOCHWERT": 5749568, "raster": 1 }, "geometry": { "type": "Point", "coordinates": [ 7.656711047738075, 51.889204077681768 ] } },
+{ "type": "Feature", "properties": { "NAME": "Freibad Coburg", "LINK1_TXT": "weitere Informationen", "LINK1": "https://www.stadt-muenster.de/sportamt/baeder/freibad-coburg.html", "RECHTSWERT": 404525, "HOCHWERT": 5759604, "raster": 1 }, "geometry": { "type": "Point", "coordinates": [ 7.609881517919044, 51.978900753428633 ] } },
+{ "type": "Feature", "properties": { "NAME": "Sportbad SÃ¼dmÃ¼hle", "LINK1_TXT": null, "LINK1": null, "RECHTSWERT": 410703, "HOCHWERT": 5761848, "raster": 1 }, "geometry": { "type": "Point", "coordinates": [ 7.699223068526778, 52.000098546008523 ] } },
+{ "type": "Feature", "properties": { "NAME": "BÃ¼rgerbad Handorf", "LINK1_TXT": null, "LINK1": null, "RECHTSWERT": 411174, "HOCHWERT": 5760618, "raster": 1 }, "geometry": { "type": "Point", "coordinates": [ 7.706400878809887, 51.989118032646417 ] } },
+{ "type": "Feature", "properties": { "NAME": "Freibad Stapelskotten", "LINK1_TXT": "weitere Informationen", "LINK1": "https://www.stadt-muenster.de/sportamt/baeder/freibad-stapelskotten.html", "RECHTSWERT": 410017, "HOCHWERT": 5756021, "raster": 1 }, "geometry": { "type": "Point", "coordinates": [ 7.690760713471589, 51.947610945979179 ] } }
+]
+}

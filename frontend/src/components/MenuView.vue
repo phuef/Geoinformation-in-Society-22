@@ -42,7 +42,7 @@
       Distance to ...
     </p>
     <br />
-    <v-row v-for="slider in sliders" :key="slider.label" class="py-3 px-3">
+    <v-row v-for="slider in sliders" :key="slider.label">
       <v-col class="lessPadding">
         <v-card
           v-if="slider.active"
@@ -51,6 +51,7 @@
           tile
           dense
           cols="12"
+          class="py-3 px-3"
         >
           <div tile class="d-flex paddingTop">
             <v-row>

@@ -1,0 +1,10 @@
+{
+"type": "FeatureCollection",
+"name": "kinos",
+"crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:OGC:1.3:CRS84" } },
+"features": [
+{ "type": "Feature", "properties": { "NAME": "Cineplex", "STR_NAME": "Albersloher Weg", "HSNR": 14, "HSNR_ZUS": null, "PLZ": 48155, "ORT": "MÃ¼nster", "RECHTSWERT": 406311, "HOCHWERT": 5756398, "HOMEPAGE": "https://www.cineplex.de/programm/muenster/", "raster": 1 }, "geometry": { "type": "Point", "coordinates": [ 7.636752369237026, 51.950387760745116 ] } },
+{ "type": "Feature", "properties": { "NAME": "SchloÃŸtheater", "STR_NAME": "MelchersstraÃŸe", "HSNR": 81, "HSNR_ZUS": null, "PLZ": 48149, "ORT": "MÃ¼nster", "RECHTSWERT": 404799, "HOCHWERT": 5758738, "HOMEPAGE": "https://www.cineplex.de/infos/das-schlosstheater/1161/muenster/", "raster": 1 }, "geometry": { "type": "Point", "coordinates": [ 7.614109926369751, 51.971163844592709 ] } },
+{ "type": "Feature", "properties": { "NAME": "Cinema", "STR_NAME": "Warendorfer StraÃŸe", "HSNR": 45, "HSNR_ZUS": null, "PLZ": 48145, "ORT": "MÃ¼nster", "RECHTSWERT": 406750, "HOCHWERT": 5757686, "HOMEPAGE": "http://cinema-muenster.de/", "raster": 1 }, "geometry": { "type": "Point", "coordinates": [ 7.642788636646725, 51.962038725121765 ] } }
+]
+}
