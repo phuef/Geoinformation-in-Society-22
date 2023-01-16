@@ -30,6 +30,7 @@ export default {
   data() {
     return {
       map: null,
+      mapLegend: null,
       tileLayer: null,
       colorblindLayer: null,
       busLayer: null,
@@ -151,10 +152,20 @@ export default {
           edit: false,
         },
       });
+
       this.map.addControl(drawControl);
       this.map.on(L.Draw.Event.CREATED, (event) => {
         this.drawLayer.addLayer(event.layer);
       });
+
+      this.mapLegend = L.control({ position: "bottomright" });
+      this.mapLegend.onAdd = function () {
+        let div = L.DomUtil.create("div", "legend");
+        div.innerHTML += `<div style="background: rgba(255, 255, 255, 0.8);"><h4>Legend</h4></div>`;
+        div.innerHTML += `<i style="background: white"></i> test123 `;
+        return div;
+      };
+      this.mapLegend.addTo(this.map);
     },
     updateResultLayer: function (newGeoJson) {
       newGeoJson = JSON.parse(JSON.stringify(newGeoJson));
@@ -306,4 +317,8 @@ export default {
 };
 </script>
 
-<style scoped></style>
+<style scoped>
+.legend {
+  background: rgba(255, 255, 255, 0.8);
+}
+</style>
