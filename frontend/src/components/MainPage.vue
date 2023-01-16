@@ -124,6 +124,50 @@ export default {
           icon: "mdi-drama-masks",
           isMin: false,
         },
+        {
+          name: "Playgrounds",
+          label: "Distance to playgrounds",
+          value: 0,
+          band: 2,
+          active: false,
+          infoLabel:
+            "Move the slider to remove all areas <br/>that have a certain <b>distance to playgrounds</b>.",
+          icon: "mdi-drama-masks",
+          isMin: false,
+        },
+        {
+          name: "Sports facilities",
+          label: "Distance to sports facilities",
+          value: 0,
+          band: 3,
+          active: false,
+          infoLabel:
+            "Move the slider to remove all areas <br/>that have a certain <b>distance to sports facilities</b>.",
+          icon: "mdi-drama-masks",
+          isMin: false,
+        },
+        {
+          name: "Baths",
+          label: "Distance to baths",
+          value: 0,
+          band: 4,
+          active: false,
+          infoLabel:
+            "Move the slider to remove all areas <br/>that have a certain <b>distance to baths</b>.",
+          icon: "mdi-drama-masks",
+          isMin: false,
+        },
+        {
+          name: "Cinemas",
+          label: "Distance to cinemas",
+          value: 0,
+          band: 5,
+          active: false,
+          infoLabel:
+            "Move the slider to remove all areas <br/>that have a certain <b>distance to cinemas</b>.",
+          icon: "mdi-drama-masks",
+          isMin: false,
+        },
       ],
       steps: [
         {
