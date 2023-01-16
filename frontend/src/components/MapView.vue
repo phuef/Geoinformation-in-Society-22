@@ -161,15 +161,17 @@ export default {
       this.mapLegend = L.control({ position: "bottomright" });
       this.mapLegend.onAdd = function () {
         let div = L.DomUtil.create("div", "legend");
+
+        let busMarkerRow = `<div><img src="${busMarker}" width="20" height="20"></img> <span> Bus stations </span></div`;
         div.innerHTML += `<div 
           style="
             background: rgba(255, 255, 255);
             width: 200px;
           ">
-            <h4>Legend</h4>
-          `;
-        div.innerHTML += `<div><img src="${busMarker}" width="20" height="20"></img> <p> Bus stations </p></div`;
-        div.innerHTML += `</div>`;
+            <h4 class"title>Legend</h4>
+            ${busMarkerRow}
+          </div>`;
+        console.log(div);
         return div;
       };
       this.mapLegend.addTo(this.map);
