@@ -7,8 +7,7 @@ Created on Wed Nov 23 16:08:13 2022
 from osgeo import ogr, gdal
 import json
 import uuid
-import numpy as np
-from rdp import rdp
+
 '''
 * Title: DistanceStack
 * Description: The class DistanceStack is the main class with which the distance 
@@ -17,7 +16,7 @@ from rdp import rdp
 class DistanceStack:
     #Constructor
     def __init__(self):
-        raster = gdal.Open('usr/src/backend/data/composit10x10.tif', 0) #open composit distance raster file
+        raster = gdal.Open('usr/src/backend/data/composit_10x10_4326_clip.tif', 0) #open composit distance raster file
         self.uuid = str(uuid.uuid4()) #generate unique identifier
         self.raster = raster #store raster
         self.bands = [] #initialize bands
@@ -26,31 +25,8 @@ class DistanceStack:
             self.bands.append(band)
             self.bands[i-1].ComputeStatistics(0) #compute some key values for each band
         
-        
         self.transform = raster.GetGeoTransform() #store transformation
-        #self.projection = raster.GetProjection() #store projection
-        #self.srs = osr.SpatialReference(wkt=self.projection) #store coordinate reference system
         raster = band = None #free variables
-       
-    '''
-    * Title: distanceStackInfo
-    * Description: Outputs some key values of the raster
-    '''
-    #def distanceStackInfo(self):
-    #    print("==> Projection: ", self.raster.GetProjection())  # get projection
-    #    print("==> Columns:", self.raster.RasterXSize)  # number of columns
-    #    print("==> Rows:", self.raster.RasterYSize)  # number of rows
-    #    print("==> Band count:", self.raster.RasterCount)  # number of bands
-        
-    '''
-    * Title: distanceBandInfo
-    * Description: Outputs some key values of a band of the raster
-    * Parameters: A band number of the underlying raster 
-    '''
-    #def distanceBandInfo(self, band):
-    #    print("==> Minimum:", self.bands[band].GetMinimum())
-    #    print("==> Maximum:", self.bands[band].GetMaximum())
-    #    print("==> NoData value:", self.bands[band].GetNoDataValue())
         
     '''
     * Title: filterStack
@@ -67,16 +43,16 @@ class DistanceStack:
         for i in range(0, len(filterValues)): #iterate over filter values
             if(filterValues[i][1] == None):
                 array = self.bands[filterValues[i][0]].ReadAsArray() #read corresponding band from raster
-                filteredArray = array <= filterValues[i][2]/10 #filter band
+                filteredArray = array <= filterValues[i][2] #filter band
                 filteredArrays.append(filteredArray) #add filtered array to list
             elif(filterValues[i][2] == None):
                 array = self.bands[filterValues[i][0]].ReadAsArray() #read corresponding band from raster
-                filteredArray = array >= filterValues[i][1]/10 #filter band
+                filteredArray = array >= filterValues[i][1] #filter band
                 filteredArrays.append(filteredArray) #add filtered array to list                           
             else:
                 array = self.bands[filterValues[i][0]].ReadAsArray() #read corresponding band from raster
-                filteredArrayA = array <= filterValues[i][2]/10
-                filteredArrayB = array >= filterValues[i][1]/10 #filter band
+                filteredArrayA = array <= filterValues[i][2]
+                filteredArrayB = array >= filterValues[i][1] #filter band
                 filteredArrays.append(filteredArrayA) #add filtered array to list
                 filteredArrays.append(filteredArrayB) #add filtered array to list
 
@@ -111,27 +87,8 @@ class DistanceStack:
             data = json.load(f)
         validFeatures = []
         for feature in data['features']:
-            if(feature['properties']['DN'] == 0 or feature['properties']['DN'] == '0'):
+            if(feature['properties']['DN'] == 1 or feature['properties']['DN'] == '1'):
                 feature['geometry']['coordinates'] = feature['geometry']['coordinates'][::-1]
                 validFeatures.append(feature)
-            #feature['geometry']['coordinates'][0] = ccc(rdp(feature['geometry']['coordinates'][0], epsilon=0.00025))
         result = {"type": "FeatureCollection", "crs": "WGS-84 - EPSG: 4326", "features": validFeatures}
         return result
-
-'''
-* Title: ccc - chaikin's corner cutting
-* Description: An implementation of chaikin's corner cutting
-'''    
-def ccc(coords, refinements=2):
-    coords = np.array(coords)
-
-    for _ in range(refinements):
-        L = coords.repeat(2, axis=0)
-        R = np.empty_like(L)
-        R[0] = L[0]
-        R[2::2] = L[1:-1:2]
-        R[1:-1:2] = L[2::2]
-        R[-1] = L[-1]
-        coords = L * 0.75 + R * 0.25
-
-    return coords.tolist()
