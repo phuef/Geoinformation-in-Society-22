@@ -14,6 +14,8 @@ import "leaflet.locatecontrol/dist/L.Control.Locate.min.css";
 import "leaflet.markercluster/dist/leaflet.markercluster.js";
 import "leaflet.markercluster/dist/MarkerCluster.css";
 import "leaflet.markercluster/dist/MarkerCluster.Default.css";
+import "@gnatih/leaflet.legend/src/leaflet.legend.css";
+import "@gnatih/leaflet.legend/src/leaflet.legend.js";
 
 // Make marker icons available (icon itself and shadow)
 delete L.Icon.Default.prototype._getIconUrl;
@@ -23,6 +25,7 @@ L.Icon.Default.mergeOptions({
   shadowUrl: require("leaflet/dist/images/marker-shadow.png"),
 });
 import busMarker from "@/assets/haltestellen_icon.png";
+import locationMarker from "@/assets/marker-icon.png";
 
 export default {
   name: "MapView",
@@ -155,6 +158,36 @@ export default {
       this.map.on(L.Draw.Event.CREATED, (event) => {
         this.drawLayer.addLayer(event.layer);
       });
+
+      L.control
+        .Legend({
+          position: "bottomright",
+          legends: [
+            {
+              label: "Bus stations",
+              type: "image",
+              url: busMarker,
+              weight: 2,
+            },
+            {
+              label: "Location marker",
+              type: "image",
+              url: locationMarker,
+              weight: 2,
+            },
+            {
+              label: "Area matching your desires",
+              type: "rectangle",
+              color: "rgb(51,136,255)",
+              fillColor: "rgb(51,136,255)",
+              fillOpacity: 0.5,
+              weight: 3,
+            },
+          ],
+          symbolWidth: 20,
+          symbolHeight: 20,
+        })
+        .addTo(this.map);
     },
     updateResultLayer: function (newGeoJson) {
       newGeoJson = JSON.parse(JSON.stringify(newGeoJson));
@@ -306,4 +339,16 @@ export default {
 };
 </script>
 
-<style scoped></style>
+<style>
+.leaflet-legend-item i {
+  display: flex;
+  justify-content: center;
+  padding-right: 10px;
+}
+.leaflet-legend-item img {
+  position: unset;
+}
+.leaflet-legend-column {
+  margin-left: 5px;
+}
+</style>
