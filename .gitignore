@@ -13,7 +13,6 @@ data/distanceMuseen10x10.tif
 
 frontend/.DS_Store
 frontend/node_modules
-frontend/dist
 
 
 # local env files
