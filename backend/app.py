@@ -150,5 +150,7 @@ if __name__ == '__main__':
     '''
     * Port: 5050
     '''
-    app.run(port=5050, debug=True, use_reloader=False, host='0.0.0.0') #start app
+    from waitress import serve
+    serve(app, host="0.0.0.0", port=8080)
+   # app.run(port=5050, debug=True, use_reloader=False, host='0.0.0.0') #start app
     #Request localhost:5050/request/[(0,300,None)] / localhost:5050/features/theaters
