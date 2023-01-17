@@ -20,7 +20,8 @@ RUN pip3 install --no-cache-dir -r /usr/src/requirements.txt
 #add backend
 COPY ./backend /usr/src/backend
 
-CMD [ "python3", "usr/src/backend/app.py"]
+#CMD [ "python3", "usr/src/backend/app.py"]
 
-EXPOSE 5050/udp
-EXPOSE 5050/tcp
+CMD [ "waitress-serve", "--port=8080", "--call", "app:create_app" ]
+EXPOSE 8080/udp
+EXPOSE 8080/tcp

@@ -144,13 +144,14 @@ def features(features):
     except Exception:
         print(traceback.format_exc())
         return "Internal Server Error", 500
-
+'''
 #run application
 if __name__ == '__main__':
-    '''
-    * Port: 5050
-    '''
+   
     from waitress import serve
     serve(app, host="0.0.0.0", port=8080)
    # app.run(port=5050, debug=True, use_reloader=False, host='0.0.0.0') #start app
     #Request localhost:5050/request/[(0,300,None)] / localhost:5050/features/theaters
+   ''' 
+def create_app():
+   return app
