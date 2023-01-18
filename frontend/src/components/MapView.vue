@@ -163,8 +163,11 @@ export default {
         this.changeLegend();
       });
       this.map.on(L.Draw.Event.DELETED, () => {
+        console.log(this.drawLayer.getLayers().length);
         if (this.drawLayer.getLayers().length == 0) {
-          delete this.legendElements[this.legendElements.indexOf("marker")];
+          while (this.legendElements.indexOf("marker") != -1) {
+            delete this.legendElements[this.legendElements.indexOf("marker")];
+          }
           this.changeLegend();
         }
       });
