@@ -14,6 +14,8 @@ import "leaflet.locatecontrol/dist/L.Control.Locate.min.css";
 import "leaflet.markercluster/dist/leaflet.markercluster.js";
 import "leaflet.markercluster/dist/MarkerCluster.css";
 import "leaflet.markercluster/dist/MarkerCluster.Default.css";
+import "@gnatih/leaflet.legend/src/leaflet.legend.css";
+import "@gnatih/leaflet.legend/src/leaflet.legend.js";
 
 // Make marker icons available (icon itself and shadow)
 delete L.Icon.Default.prototype._getIconUrl;
@@ -23,6 +25,7 @@ L.Icon.Default.mergeOptions({
   shadowUrl: require("leaflet/dist/images/marker-shadow.png"),
 });
 import busMarker from "@/assets/haltestellen_icon.png";
+import locationMarker from "@/assets/marker-icon.png";
 
 export default {
   name: "MapView",
@@ -31,6 +34,8 @@ export default {
     return {
       map: null,
       tileLayer: null,
+      mapLegend: null,
+      legendElements: [],
       colorblindLayer: null,
       busLayer: null,
       busLayerMarkerCluster: null,
@@ -154,12 +159,27 @@ export default {
       this.map.addControl(drawControl);
       this.map.on(L.Draw.Event.CREATED, (event) => {
         this.drawLayer.addLayer(event.layer);
+        this.legendElements.push("marker");
+        this.changeLegend();
       });
+      this.map.on(L.Draw.Event.DELETED, () => {
+        if (this.drawLayer.getLayers().length == 0) {
+          while (this.legendElements.indexOf("marker") != -1) {
+            delete this.legendElements[this.legendElements.indexOf("marker")];
+          }
+          this.changeLegend();
+        }
+      });
+
       this.map.setMaxBounds([
         [52.060024427, 7.473785644],
         [51.840134598, 7.774359118],
       ]);
       this.map.setMinZoom(12);
+
+      this.legendElements.push("resultArea");
+
+      this.changeLegend();
     },
     updateResultLayer: function (newGeoJson) {
       newGeoJson = JSON.parse(JSON.stringify(newGeoJson));
@@ -275,6 +295,59 @@ export default {
       // Load newly visible tiles
       this.map.invalidateSize({ pan: false });
     },
+    changeLegend: function () {
+      /**
+       * mapElements: Array
+       */
+      const marker = {
+        label: "Location marker",
+        type: "image",
+        url: locationMarker,
+        weight: 2,
+      };
+      const resultArea = {
+        label: "Area matching your desires",
+        type: "rectangle",
+        color: "rgb(51,136,255)",
+        fillColor: "rgb(51,136,255)",
+        fillOpacity: 0.5,
+        weight: 3,
+      };
+      const busStations = {
+        label: "Bus stations",
+        type: "image",
+        url: busMarker,
+        weight: 2,
+      };
+
+      try {
+        this.mapLegend.remove();
+      } catch {
+        //pass
+      }
+
+      let legendList = [];
+
+      if (this.legendElements.includes("marker")) {
+        legendList.push(marker);
+      }
+      if (this.legendElements.includes("resultArea")) {
+        legendList.push(resultArea);
+      }
+      if (this.legendElements.includes("busStations")) {
+        legendList.push(busStations);
+      }
+
+      this.mapLegend = L.control
+        .Legend({
+          position: "bottomright",
+          legends: legendList,
+          symbolWidth: 20,
+          symbolHeight: 20,
+          collapsed: true,
+        })
+        .addTo(this.map);
+    },
   },
   watch: {
     resultAreas: function (value) {
@@ -293,9 +366,13 @@ export default {
       if (value) {
         if (!this.map.hasLayer(this.busLayerMarkerCluster))
           this.map.addLayer(this.busLayerMarkerCluster);
+        this.legendElements.push("busStations");
+        this.changeLegend();
       } else {
         if (this.map.hasLayer(this.busLayerMarkerCluster))
           this.map.removeLayer(this.busLayerMarkerCluster);
+        delete this.legendElements[this.legendElements.indexOf("busStations")];
+        this.changeLegend();
       }
     },
   },
@@ -311,4 +388,16 @@ export default {
 };
 </script>
 
-<style scoped></style>
+<style>
+.leaflet-legend-item i {
+  display: flex;
+  justify-content: center;
+  padding-right: 10px;
+}
+.leaflet-legend-item img {
+  position: unset;
+}
+.leaflet-legend-column {
+  margin-left: 5px;
+}
+</style>
