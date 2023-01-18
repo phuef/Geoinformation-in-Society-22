@@ -1,6 +1,30 @@
 <template>
   <div class="pa-4 pt-8">
+    <div id="intro-text" class="body-1 text-xs-body-2 pb-1">
+      <p
+        style="
+          font-size: 14px;
+          line-height: 150%;
+          font-family: 'Avenir', Helvetica, Arial, sans-serif;
+          color: #000000de;
+          text-align: justify;
+        "
+      >
+        Do you have the desire to
+        <span class="highlight-gray">Find your Spot</span>?<br /><br />
+        With this application you can search for a location that meets your
+        leisure interests.
+        <span class="highlight-gray">Add the layers</span> that you want,
+        <span class="highlight-gray">specify the distance</span> to your target
+        locations, and that`s it, congrats, you just found your Spot.<br /><br />
+        <span class="highlight-gray">Need help?</span> Click
+        <a class="start-demo-link" @click="startTour()">here</a> to find
+        detailed information of the functionalities.
+      </p>
+    </div>
+    <v-divider></v-divider>
     <v-select
+      class="pt-8"
       v-model="activeSliders"
       :items="sliders"
       item-text="name"
@@ -37,7 +61,7 @@
       Request to the server failed.
     </v-alert>
     <br />
-    <v-row v-for="slider in sliders" :key="slider.label" class="py-3 px-3">
+    <v-row v-for="slider in sliders" :key="slider.label">
       <v-col class="lessPadding">
         <v-card
           v-if="slider.active"
@@ -46,6 +70,7 @@
           tile
           dense
           cols="12"
+          class="py-3 px-3"
         >
           <div tile class="d-flex paddingTop">
             <v-row>
@@ -330,6 +355,9 @@ export default {
         return `(${band},0,${value})`;
       }
     },
+    startTour() {
+      this.$tours["myTour"].start();
+    },
   },
   watch: {
     activeSliders: function (value) {
@@ -382,5 +410,15 @@ export default {
 
 .paddingTop {
   padding-top: 2px !important;
+}
+
+.highlight-gray {
+  background-color: #c3c3c393;
+  border-radius: 6px;
+  padding: 3px 6px;
+}
+
+.start-demo-link:hover {
+  text-decoration: underline;
 }
 </style>

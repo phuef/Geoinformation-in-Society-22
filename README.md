@@ -34,8 +34,12 @@ The params-Parameter must conform to the following structure:
 
 There are two layers accessable:
 ```
-0: Distance to Theaters in Münster
-1: Distance to Museums in Münster
+Kanal 0 Theater            
+Kanal 1 Museen		   
+Kanal 2 Spielplätze	   
+Kanal 3 Sportstätten	   
+Kanal 4 Bäder		   
+Kanal 5 Kinos 
 ```
 
 The second value in each tuple represents the minium allowed distance in meters while the third value represents the maximum allowed distance in meters.

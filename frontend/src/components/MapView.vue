@@ -160,6 +160,12 @@ export default {
         this.drawLayer.addLayer(event.layer);
       });
 
+      this.map.setMaxBounds([
+        [52.060024427, 7.473785644],
+        [51.840134598, 7.774359118],
+      ]);
+      this.map.setMinZoom(12);
+
       this.mapLegend = L.control
         .Legend({
           position: "bottomright",
