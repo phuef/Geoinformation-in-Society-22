@@ -359,10 +359,6 @@ export default {
           })
           .addTo(this.map);
       }
-
-      //this.mapLegend.addTo(this.map);
-
-      console.log(this.mapLegend.options.legends);
     },
   },
   watch: {
