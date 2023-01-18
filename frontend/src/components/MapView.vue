@@ -344,6 +344,7 @@ export default {
           legends: legendList,
           symbolWidth: 20,
           symbolHeight: 20,
+          collapsed: true,
         })
         .addTo(this.map);
     },
