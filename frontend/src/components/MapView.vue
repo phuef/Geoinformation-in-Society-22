@@ -35,6 +35,7 @@ export default {
       map: null,
       tileLayer: null,
       mapLegend: null,
+      legendElements: [],
       colorblindLayer: null,
       busLayer: null,
       busLayerMarkerCluster: null,
@@ -158,6 +159,14 @@ export default {
       this.map.addControl(drawControl);
       this.map.on(L.Draw.Event.CREATED, (event) => {
         this.drawLayer.addLayer(event.layer);
+        this.legendElements.push("marker");
+        this.changeLegend();
+      });
+      this.map.on(L.Draw.Event.DELETED, () => {
+        if (this.drawLayer.getLayers().length == 0) {
+          delete this.legendElements[this.legendElements.indexOf("marker")];
+          this.changeLegend();
+        }
       });
 
       this.map.setMaxBounds([
@@ -166,29 +175,9 @@ export default {
       ]);
       this.map.setMinZoom(12);
 
-      this.mapLegend = L.control
-        .Legend({
-          position: "bottomright",
-          legends: [
-            {
-              label: "Location marker",
-              type: "image",
-              url: locationMarker,
-              weight: 2,
-            },
-            {
-              label: "Area matching your desires",
-              type: "rectangle",
-              color: "rgb(51,136,255)",
-              fillColor: "rgb(51,136,255)",
-              fillOpacity: 0.5,
-              weight: 3,
-            },
-          ],
-          symbolWidth: 20,
-          symbolHeight: 20,
-        })
-        .addTo(this.map);
+      this.legendElements.push("resultArea");
+
+      this.changeLegend();
     },
     updateResultLayer: function (newGeoJson) {
       newGeoJson = JSON.parse(JSON.stringify(newGeoJson));
@@ -304,67 +293,57 @@ export default {
       // Load newly visible tiles
       this.map.invalidateSize({ pan: false });
     },
-    changeBusStationsLegend: function (addOrRemove) {
+    changeLegend: function () {
       /**
-       * addOrRemove is a String that can be set to "add" or "remove".
-       * It tells the function wether bus stations should be added or removed to/from the legend.
+       * mapElements: Array
        */
-      this.mapLegend.remove();
-      if (addOrRemove == "add") {
-        this.mapLegend = L.control
-          .Legend({
-            position: "bottomright",
-            legends: [
-              {
-                label: "Location marker",
-                type: "image",
-                url: locationMarker,
-                weight: 2,
-              },
-              {
-                label: "Area matching your desires",
-                type: "rectangle",
-                color: "rgb(51,136,255)",
-                fillColor: "rgb(51,136,255)",
-                fillOpacity: 0.5,
-                weight: 3,
-              },
-              {
-                label: "Bus stations",
-                type: "image",
-                url: busMarker,
-                weight: 2,
-              },
-            ],
-            symbolWidth: 20,
-            symbolHeight: 20,
-          })
-          .addTo(this.map);
-      } else {
-        this.mapLegend = L.control
-          .Legend({
-            position: "bottomright",
-            legends: [
-              {
-                label: "Location marker",
-                type: "image",
-                url: locationMarker,
-                weight: 2,
-              },
-              {
-                label: "Area matching your desires",
-                type: "rectangle",
-                color: "rgb(51,136,255)",
-                fillColor: "rgb(51,136,255)",
-                fillOpacity: 0.5,
-                weight: 3,
-              },
-            ],
-            symbolWidth: 20,
-            symbolHeight: 20,
-          })
-          .addTo(this.map);
+      const marker = {
+        label: "Location marker",
+        type: "image",
+        url: locationMarker,
+        weight: 2,
+      };
+      const resultArea = {
+        label: "Area matching your desires",
+        type: "rectangle",
+        color: "rgb(51,136,255)",
+        fillColor: "rgb(51,136,255)",
+        fillOpacity: 0.5,
+        weight: 3,
+      };
+      const busStations = {
+        label: "Bus stations",
+        type: "image",
+        url: busMarker,
+        weight: 2,
+      };
+
+      try {
+        this.mapLegend.remove();
+      } catch {
+        //pass
       }
+
+      let legendList = [];
+
+      if (this.legendElements.includes("marker")) {
+        legendList.push(marker);
+      }
+      if (this.legendElements.includes("resultArea")) {
+        legendList.push(resultArea);
+      }
+      if (this.legendElements.includes("busStations")) {
+        legendList.push(busStations);
+      }
+
+      this.mapLegend = L.control
+        .Legend({
+          position: "bottomright",
+          legends: legendList,
+          symbolWidth: 20,
+          symbolHeight: 20,
+        })
+        .addTo(this.map);
     },
   },
   watch: {
@@ -384,11 +363,13 @@ export default {
       if (value) {
         if (!this.map.hasLayer(this.busLayerMarkerCluster))
           this.map.addLayer(this.busLayerMarkerCluster);
-        this.changeBusStationsLegend("add");
+        this.legendElements.push("busStations");
+        this.changeLegend();
       } else {
         if (this.map.hasLayer(this.busLayerMarkerCluster))
           this.map.removeLayer(this.busLayerMarkerCluster);
-        this.changeBusStationsLegend("remove");
+        delete this.legendElements[this.legendElements.indexOf("busStations")];
+        this.changeLegend();
       }
     },
   },
