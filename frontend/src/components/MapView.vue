@@ -34,6 +34,7 @@ export default {
     return {
       map: null,
       tileLayer: null,
+      mapLegend: null,
       colorblindLayer: null,
       busLayer: null,
       busLayerMarkerCluster: null,
@@ -159,16 +160,10 @@ export default {
         this.drawLayer.addLayer(event.layer);
       });
 
-      L.control
+      this.mapLegend = L.control
         .Legend({
           position: "bottomright",
           legends: [
-            {
-              label: "Bus stations",
-              type: "image",
-              url: busMarker,
-              weight: 2,
-            },
             {
               label: "Location marker",
               type: "image",
@@ -303,6 +298,72 @@ export default {
       // Load newly visible tiles
       this.map.invalidateSize({ pan: false });
     },
+    changeBusStationsLegend: function (addOrRemove) {
+      /**
+       * addOrRemove is a String that can be set to "add" or "remove".
+       * It tells the function wether bus stations should be added or removed to/from the legend.
+       */
+      this.mapLegend.remove();
+      if (addOrRemove == "add") {
+        this.mapLegend = L.control
+          .Legend({
+            position: "bottomright",
+            legends: [
+              {
+                label: "Location marker",
+                type: "image",
+                url: locationMarker,
+                weight: 2,
+              },
+              {
+                label: "Area matching your desires",
+                type: "rectangle",
+                color: "rgb(51,136,255)",
+                fillColor: "rgb(51,136,255)",
+                fillOpacity: 0.5,
+                weight: 3,
+              },
+              {
+                label: "Bus stations",
+                type: "image",
+                url: busMarker,
+                weight: 2,
+              },
+            ],
+            symbolWidth: 20,
+            symbolHeight: 20,
+          })
+          .addTo(this.map);
+      } else {
+        this.mapLegend = L.control
+          .Legend({
+            position: "bottomright",
+            legends: [
+              {
+                label: "Location marker",
+                type: "image",
+                url: locationMarker,
+                weight: 2,
+              },
+              {
+                label: "Area matching your desires",
+                type: "rectangle",
+                color: "rgb(51,136,255)",
+                fillColor: "rgb(51,136,255)",
+                fillOpacity: 0.5,
+                weight: 3,
+              },
+            ],
+            symbolWidth: 20,
+            symbolHeight: 20,
+          })
+          .addTo(this.map);
+      }
+
+      //this.mapLegend.addTo(this.map);
+
+      console.log(this.mapLegend.options.legends);
+    },
   },
   watch: {
     resultAreas: function (value) {
@@ -321,9 +382,11 @@ export default {
       if (value) {
         if (!this.map.hasLayer(this.busLayerMarkerCluster))
           this.map.addLayer(this.busLayerMarkerCluster);
+        this.changeBusStationsLegend("add");
       } else {
         if (this.map.hasLayer(this.busLayerMarkerCluster))
           this.map.removeLayer(this.busLayerMarkerCluster);
+        this.changeBusStationsLegend("remove");
       }
     },
   },
