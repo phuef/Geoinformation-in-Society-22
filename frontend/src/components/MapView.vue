@@ -23,6 +23,8 @@ L.Icon.Default.mergeOptions({
   shadowUrl: require("leaflet/dist/images/marker-shadow.png"),
 });
 import busMarker from "@/assets/haltestellen_icon.png";
+import trainMarker from "@/assets/train_icon.png";
+import trainJson from "@/data/trains.json";
 
 export default {
   name: "MapView",
@@ -33,7 +35,10 @@ export default {
       tileLayer: null,
       colorblindLayer: null,
       busLayer: null,
+      trainLayer: null,
+      trainJson: null,
       busLayerMarkerCluster: null,
+      trainLayerMarkerCluster: null,
       resultLayer: null,
       drawLayer: new L.FeatureGroup(),
       layerControl: null,
@@ -170,6 +175,26 @@ export default {
         iconUrl: busMarker,
         iconSize: [20, 20],
       });
+      this.trainJson = JSON.parse(JSON.stringify(trainJson));
+      const trainIcon = L.icon({
+        iconUrl: trainMarker,
+        iconSize: [20, 20],
+      });
+      this.trainLayer = L.geoJSON(this.trainJson, {
+        pointToLayer: function (_feature, latlng) {
+          return L.marker(latlng, { icon: trainIcon }).on(
+            "click",
+            async function () {
+              let popup = `<h1>Train station: ${_feature.properties.name}</h1>`;
+              this.bindPopup(popup);
+            }
+          );
+        },
+        onEachFeature: function (_feature, layer) {
+          layer.bindPopup();
+        },
+      });
+
       this.busLayer = L.geoJSON(undefined, {
         pointToLayer: function (_feature, latlng) {
           return L.marker(latlng, { icon: busIcon }).on(
@@ -245,6 +270,16 @@ export default {
           fillOpacity: 0.2, // opacity inside polygon
         },
       }).addLayer(this.busLayer);
+      this.busLayerMarkerCluster = L.markerClusterGroup({
+        polygonOptions: {
+          fillColor: "#245fb3", // polygon color
+          color: "#245fb3", // line color
+          opacity: 1, // opacity of line
+          weight: 3, // line thickness
+          fillOpacity: 0.2, // opacity inside polygon
+        },
+      }).addLayer(this.trainLayer);
+
       this.layerControl.addOverlay(this.busLayerMarkerCluster, "Bus stations");
       this.map.on("overlayadd", (event) => {
         if (event.name === "Bus stations")
