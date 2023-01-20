@@ -25,8 +25,9 @@
         <a href="https://opendata.stadt-muenster.de/" target="_blank"
           >Muenster Open Data</a
         >
-        which is mantained by the Münster city administration was used as the
-        main data source for this application. <br />
+        platform which is mantained by the Münster city administration was used
+        as the main data source for this application. The source for each layer
+        can be found in the following links: <br />
       </p>
 
       <ul>

@@ -90,35 +90,35 @@
                   >
                   <a
                     class="layer-source-link"
-                    v-if="slider.name == 'Cinemas'"
+                    v-else-if="slider.name == 'Cinemas'"
                     href="https://opendata.stadt-muenster.de/dataset/standorte-der-kinos"
                     target="_blank"
                     >{{ slider.name }}</a
                   >
                   <a
                     class="layer-source-link"
-                    v-if="slider.name == 'Museums'"
+                    v-else-if="slider.name == 'Museums'"
                     href="https://opendata.stadt-muenster.de/dataset/standorte-der-museen"
                     target="_blank"
                     >{{ slider.name }}</a
                   >
                   <a
                     class="layer-source-link"
-                    v-if="slider.name == 'Playgrounds'"
+                    v-else-if="slider.name == 'Playgrounds'"
                     href="https://opendata.stadt-muenster.de/dataset/kinderspielpl%C3%A4tze"
                     target="_blank"
                     >{{ slider.name }}</a
                   >
                   <a
                     class="layer-source-link"
-                    v-if="slider.name == 'Sports facilities'"
+                    v-else-if="slider.name == 'Sports facilities'"
                     href="https://opendata.stadt-muenster.de/dataset/sporthallen-und-sportst%C3%A4tten-standorte"
                     target="_blank"
                     >{{ slider.name }}</a
                   >
                   <a
                     class="layer-source-link"
-                    v-if="slider.name == 'Theaters'"
+                    v-else-if="slider.name == 'Theaters'"
                     href="https://opendata.stadt-muenster.de/dataset/theater-m%C3%BCnster"
                     target="_blank"
                     >{{ slider.name }}</a
