@@ -15,6 +15,7 @@
     "leaflet": "^1.9.3",
     "leaflet-draw": "^1.0.4",
     "leaflet-geosearch": "^3.7.0",
+    "leaflet-legend": "^1.0.2",
     "leaflet.locatecontrol": "^0.79.0",
     "vue": "^2.7.14",
     "vue-router": "^3.6.5",
