@@ -25,9 +25,9 @@
         <a href="https://opendata.stadt-muenster.de/" target="_blank"
           >Muenster Open Data</a
         >
-        platform which is mantained by the Münster city administration was used
-        as the main data source for this application. The source for each layer
-        can be found in the following links: <br />
+        platform, which is mantained by the Münster city administration, was
+        used as the main data source for this application. The source for each
+        layer can be found in the following links: <br />
       </p>
 
       <ul>
@@ -63,7 +63,7 @@
           <a
             href="https://opendata.stadt-muenster.de/dataset/sporthallen-und-sportst%C3%A4tten-standorte"
             target="_blank"
-            >Sport Facilities</a
+            >Sports facilities</a
           >
         </li>
         <li>
