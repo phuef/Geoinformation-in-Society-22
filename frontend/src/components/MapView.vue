@@ -291,7 +291,7 @@ export default {
           this.$emit("setBusStationsVisibility", false);
       });
     },
-    updateBusLayer: async function (newGeoJson) {
+    updateBusLayer: function (newGeoJson) {
       // Refresh bus layer
       newGeoJson = JSON.parse(JSON.stringify(newGeoJson));
       this.busLayer.clearLayers();
