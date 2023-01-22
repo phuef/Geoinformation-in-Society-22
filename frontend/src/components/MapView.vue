@@ -91,14 +91,37 @@ export default {
       const colorblindAttr =
         '<a href="https://www.jawg.io" target="_blank">&copy; Jawg</a> - <a href="https://www.openstreetmap.org" target="_blank">&copy; OpenStreetMap</a>&nbsp;contributors';
 
+      // Required to use this in the event listeners:
+      const ref = this;
+
       this.tileLayer = L.tileLayer(osmUrl, {
         attribution: osmAttr,
         pane: "basemap", // Both layers are added to the basemap-pane.
-      }).addTo(this.map);
+      })
+        .on("add", function () {
+          //ref.tileLayer.resetStyle(ref.resultLayer);
+          /*ref.resultLayer.setStyle({
+            fillColor: "blue",
+            color: "blue",
+          });*/
+        })
+        .addTo(this.map);
 
       this.colorblindLayer = L.tileLayer(colorblindUrl, {
         attribution: colorblindAttr,
-      });
+      })
+        .on("add", function () {
+          ref.resultLayer.setStyle({
+            fillColor: "red",
+            color: "red",
+          });
+        })
+        .on("remove", function () {
+          ref.resultLayer.setStyle({
+            fillColor: "blue",
+            color: "blue",
+          });
+        });
 
       const basemaps = {
         "Open Street Map": this.tileLayer,
@@ -347,6 +370,13 @@ export default {
           collapsed: true,
         })
         .addTo(this.map);
+    },
+    changeToColorblind: function () {
+      this.resultLayer.setStyle({
+        fillColor: "red",
+        color: "red",
+      });
+      console.log("test");
     },
   },
   watch: {
