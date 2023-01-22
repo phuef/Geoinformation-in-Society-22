@@ -264,10 +264,6 @@ export default {
           layer.bindPopup();
         },
       });
-      /*const busAndTrainLayerGroup = L.layerGroup([
-        this.busLayer,
-        this.trainLayer,
-      ]);*/ //.addTo(this.map);
 
       this.busLayerMarkerCluster = L.markerClusterGroup.layerSupport({
         polygonOptions: {
@@ -277,9 +273,10 @@ export default {
           weight: 3, // line thickness
           fillOpacity: 0.2, // opacity inside polygon
         },
-      }); //.addLayers(busAndTrainGroup); //this.busLayer).addLayer(this.trainLayer);
-      //this.busLayerMarkerCluster.checkIn(this.busLayer); //busAndTrainLayerGroup);
-      this.busLayerMarkerCluster.checkIn(this.trainLayer);
+      });
+      this.busLayerMarkerCluster.checkIn([this.busLayer, this.trainLayer]);
+      this.trainLayer.addTo(this.map);
+      this.busLayer.addTo(this.map);
 
       this.layerControl.addOverlay(
         this.busLayerMarkerCluster,
@@ -294,15 +291,13 @@ export default {
           this.$emit("setBusStationsVisibility", false);
       });
     },
-    updateBusLayer: function (newGeoJson) {
+    updateBusLayer: async function (newGeoJson) {
       // Refresh bus layer
       newGeoJson = JSON.parse(JSON.stringify(newGeoJson));
       this.busLayer.clearLayers();
       this.busLayer.addData(newGeoJson);
       // Refresh marker cluster layer
-      //this.busLayerMarkerCluster.checkOut(this.busLayer);
-      //this.busLayerMarkerCluster.clearLayers();
-      //this.busLayerMarkerCluster.checkIn(this.busLayer);
+      this.busLayerMarkerCluster.checkIn([this.busLayer, this.trainLayer]);
     },
     updateOnResize: function (pixelOffset = [0, 0]) {
       // Move the map so that it stays in the same place on the screen
