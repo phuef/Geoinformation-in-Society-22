@@ -112,14 +112,14 @@ export default {
       })
         .on("add", function () {
           ref.resultLayer.setStyle({
-            fillColor: "red",
-            color: "red",
+            fillColor: "blue",
+            color: "blue",
           });
         })
         .on("remove", function () {
           ref.resultLayer.setStyle({
-            fillColor: "blue",
-            color: "blue",
+            fillColor: "rgb(51,136,255)",
+            color: "rgb(51,136,255)",
           });
         });
 
@@ -370,13 +370,6 @@ export default {
           collapsed: true,
         })
         .addTo(this.map);
-    },
-    changeToColorblind: function () {
-      this.resultLayer.setStyle({
-        fillColor: "red",
-        color: "red",
-      });
-      console.log("test");
     },
   },
   watch: {
