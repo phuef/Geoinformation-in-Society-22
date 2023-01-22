@@ -178,7 +178,7 @@ export default {
       this.trainJson = JSON.parse(JSON.stringify(trainJson));
       const trainIcon = L.icon({
         iconUrl: trainMarker,
-        iconSize: [20, 20],
+        iconSize: [30, 30],
       });
       this.trainLayer = L.geoJSON(this.trainJson, {
         pointToLayer: function (_feature, latlng) {
@@ -261,26 +261,37 @@ export default {
           layer.bindPopup();
         },
       });
-      this.busLayerMarkerCluster = L.markerClusterGroup({
-        polygonOptions: {
-          fillColor: "#245fb3", // polygon color
-          color: "#245fb3", // line color
-          opacity: 1, // opacity of line
-          weight: 3, // line thickness
-          fillOpacity: 0.2, // opacity inside polygon
-        },
-      }).addLayer(this.busLayer);
-      this.busLayerMarkerCluster = L.markerClusterGroup({
-        polygonOptions: {
-          fillColor: "#245fb3", // polygon color
-          color: "#245fb3", // line color
-          opacity: 1, // opacity of line
-          weight: 3, // line thickness
-          fillOpacity: 0.2, // opacity inside polygon
-        },
-      }).addLayer(this.trainLayer);
+      const busAndTrainGroup = L.layerGroup([this.busLayer, this.trainLayer]); //.addTo(this.map);
 
-      this.layerControl.addOverlay(this.busLayerMarkerCluster, "Bus stations");
+      this.busLayerMarkerCluster = L.markerClusterGroup({
+        polygonOptions: {
+          fillColor: "#245fb3", // polygon color
+          color: "#245fb3", // line color
+          opacity: 1, // opacity of line
+          weight: 3, // line thickness
+          fillOpacity: 0.2, // opacity inside polygon
+        },
+      }).addLayers(busAndTrainGroup); //this.busLayer).addLayer(this.trainLayer);
+      /*this.busLayerMarkerCluster = L.markerClusterGroup({
+        polygonOptions: {
+          fillColor: "#245fb3", // polygon color
+          color: "#245fb3", // line color
+          opacity: 1, // opacity of line
+          weight: 3, // line thickness
+          fillOpacity: 0.2, // opacity inside polygon
+        },
+      }).addLayer(this.trainLayer);*/
+
+      /*this.layerControl.addOverlay(this.busLayerMarkerCluster, "Bus stations");
+      this.map.on("overlayadd", (event) => {
+        if (event.name === "Bus stations")
+          this.$emit("setBusStationsVisibility", true);
+      });
+      this.map.on("overlayremove", (event) => {
+        if (event.name === "Bus stations")
+          this.$emit("setBusStationsVisibility", false);
+      });*/
+      this.layerControl.addOverlay(busAndTrainGroup, "Bus stations");
       this.map.on("overlayadd", (event) => {
         if (event.name === "Bus stations")
           this.$emit("setBusStationsVisibility", true);
