@@ -11,9 +11,12 @@ import { GeoSearchControl, OpenStreetMapProvider } from "leaflet-geosearch";
 import "leaflet-geosearch/dist/geosearch.css";
 import "leaflet.locatecontrol";
 import "leaflet.locatecontrol/dist/L.Control.Locate.min.css";
+// For the marker clustering
 import "leaflet.markercluster/dist/leaflet.markercluster.js";
 import "leaflet.markercluster/dist/MarkerCluster.css";
 import "leaflet.markercluster/dist/MarkerCluster.Default.css";
+// Extension to support multiple layers
+import "leaflet.markercluster.layersupport"; ///leaflet.markercluster.layersupport-src.js";
 
 // Make marker icons available (icon itself and shadow)
 delete L.Icon.Default.prototype._getIconUrl;
@@ -261,9 +264,12 @@ export default {
           layer.bindPopup();
         },
       });
-      const busAndTrainGroup = L.layerGroup([this.busLayer, this.trainLayer]); //.addTo(this.map);
+      /*const busAndTrainLayerGroup = L.layerGroup([
+        this.busLayer,
+        this.trainLayer,
+      ]);*/ //.addTo(this.map);
 
-      this.busLayerMarkerCluster = L.markerClusterGroup({
+      this.busLayerMarkerCluster = L.markerClusterGroup.layerSupport({
         polygonOptions: {
           fillColor: "#245fb3", // polygon color
           color: "#245fb3", // line color
@@ -271,33 +277,20 @@ export default {
           weight: 3, // line thickness
           fillOpacity: 0.2, // opacity inside polygon
         },
-      }).addLayers(busAndTrainGroup); //this.busLayer).addLayer(this.trainLayer);
-      /*this.busLayerMarkerCluster = L.markerClusterGroup({
-        polygonOptions: {
-          fillColor: "#245fb3", // polygon color
-          color: "#245fb3", // line color
-          opacity: 1, // opacity of line
-          weight: 3, // line thickness
-          fillOpacity: 0.2, // opacity inside polygon
-        },
-      }).addLayer(this.trainLayer);*/
+      }); //.addLayers(busAndTrainGroup); //this.busLayer).addLayer(this.trainLayer);
+      //this.busLayerMarkerCluster.checkIn(this.busLayer); //busAndTrainLayerGroup);
+      this.busLayerMarkerCluster.checkIn(this.trainLayer);
 
-      /*this.layerControl.addOverlay(this.busLayerMarkerCluster, "Bus stations");
+      this.layerControl.addOverlay(
+        this.busLayerMarkerCluster,
+        "Public transport"
+      );
       this.map.on("overlayadd", (event) => {
-        if (event.name === "Bus stations")
+        if (event.name === "Public transport")
           this.$emit("setBusStationsVisibility", true);
       });
       this.map.on("overlayremove", (event) => {
-        if (event.name === "Bus stations")
-          this.$emit("setBusStationsVisibility", false);
-      });*/
-      this.layerControl.addOverlay(busAndTrainGroup, "Bus stations");
-      this.map.on("overlayadd", (event) => {
-        if (event.name === "Bus stations")
-          this.$emit("setBusStationsVisibility", true);
-      });
-      this.map.on("overlayremove", (event) => {
-        if (event.name === "Bus stations")
+        if (event.name === "Public transport")
           this.$emit("setBusStationsVisibility", false);
       });
     },
@@ -307,8 +300,9 @@ export default {
       this.busLayer.clearLayers();
       this.busLayer.addData(newGeoJson);
       // Refresh marker cluster layer
-      this.busLayerMarkerCluster.clearLayers();
-      this.busLayerMarkerCluster.addLayer(this.busLayer);
+      //this.busLayerMarkerCluster.checkOut(this.busLayer);
+      //this.busLayerMarkerCluster.clearLayers();
+      //this.busLayerMarkerCluster.checkIn(this.busLayer);
     },
     updateOnResize: function (pixelOffset = [0, 0]) {
       // Move the map so that it stays in the same place on the screen

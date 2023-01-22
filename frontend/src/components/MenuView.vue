@@ -177,7 +177,7 @@
         cols="10"
         class="pl-0"
         style="color: #000000de; align-items: center; display: flex"
-        >Add bus stops
+        >Add public transport
         <v-tooltip right z-index="1201">
           <template v-slot:activator="{ on, attrs }">
             <v-btn
@@ -196,7 +196,7 @@
           </template>
           <span
             v-html="
-              'Here you can add the </br><b>cities bus stations</b></br> to the map'
+              'Here you can add the </br>cities <b>bus and train stations</b></br> to the map'
             "
           ></span> </v-tooltip
       ></v-col>
