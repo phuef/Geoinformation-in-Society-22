@@ -2,6 +2,7 @@
 data/composit10x10.tif
 data/distanceMuseen10x10.tif
 *.json
+!frontend/src/data/*.json
 *.tif
 *.xml
 *.shp
@@ -14,7 +15,6 @@ data/distanceMuseen10x10.tif
 frontend/.DS_Store
 frontend/node_modules
 frontend/dist
-
 
 # local env files
 frontend/.env.local
