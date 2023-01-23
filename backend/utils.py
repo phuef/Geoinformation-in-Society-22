@@ -31,8 +31,7 @@ class DistanceStack:
     '''
     * Title: filterStack
     * Description: Filters the composit distance raster based on given parameters
-    * Parameters: The function expects an array with tuples of the form (band, distance in meters)
-    * Example parameters: [(0,1000),(1,2000)]
+    * Parameters: The function expects an array with tuples of the form (band, minValue, maxValue)
     * Output: The function outputs a GEOJSON containing polygons where the DN value denotes which ares correspond to the
     * parameters and which do not
     '''
