@@ -266,17 +266,17 @@ export default {
         // The pre-configurations that can be set upfront in the following form:
         {
           index: 1,
-          name: "Find places that are at minimum one kilometer away from any museums", // name of the configuration - gets displayed
+          name: "Areas close to museums", // name of the configuration - gets displayed
           activeSliders: ["Museums"], // the name(s) of the slider(s) that should be shown
           values: [1000], // values that the slider(s) should have
-          isMin: [true], // isMin properties of the slider(s)
+          isMin: [false], // isMin properties of the slider(s)
         },
         {
           index: 2,
-          name: "Find places within 500 meters of a theater",
-          activeSliders: ["Theaters"],
-          values: [500],
-          isMin: [false],
+          name: "Playgrounds in less crowded ares",
+          activeSliders: ["Playgrounds", "Museums", "Theaters", "Cinemas"],
+          values: [20, 1000, 1000, 1000],
+          isMin: [false, true, true, true],
         },
       ],
       state_showBusStations: this.showBusStations,
