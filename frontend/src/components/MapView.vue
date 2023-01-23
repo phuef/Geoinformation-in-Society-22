@@ -11,9 +11,12 @@ import { GeoSearchControl, OpenStreetMapProvider } from "leaflet-geosearch";
 import "leaflet-geosearch/dist/geosearch.css";
 import "leaflet.locatecontrol";
 import "leaflet.locatecontrol/dist/L.Control.Locate.min.css";
+// For the marker clustering
 import "leaflet.markercluster/dist/leaflet.markercluster.js";
 import "leaflet.markercluster/dist/MarkerCluster.css";
 import "leaflet.markercluster/dist/MarkerCluster.Default.css";
+// Extension to support multiple layers
+import "leaflet.markercluster.layersupport"; ///leaflet.markercluster.layersupport-src.js";
 import "@gnatih/leaflet.legend/src/leaflet.legend.css";
 import "@gnatih/leaflet.legend/src/leaflet.legend.js";
 
@@ -25,6 +28,8 @@ L.Icon.Default.mergeOptions({
   shadowUrl: require("leaflet/dist/images/marker-shadow.png"),
 });
 import busMarker from "@/assets/haltestellen_icon.png";
+import trainMarker from "@/assets/train_icon.png";
+import trainJson from "@/data/trains.json";
 import locationMarker from "@/assets/marker-icon.png";
 
 export default {
@@ -38,7 +43,10 @@ export default {
       legendElements: [],
       colorblindLayer: null,
       busLayer: null,
+      trainLayer: null,
+      trainJson: null,
       busLayerMarkerCluster: null,
+      trainLayerMarkerCluster: null,
       resultLayer: null,
       drawLayer: new L.FeatureGroup(),
       layerControl: null,
@@ -218,6 +226,26 @@ export default {
         iconUrl: busMarker,
         iconSize: [20, 20],
       });
+      this.trainJson = JSON.parse(JSON.stringify(trainJson));
+      const trainIcon = L.icon({
+        iconUrl: trainMarker,
+        iconSize: [30, 30],
+      });
+      this.trainLayer = L.geoJSON(this.trainJson, {
+        pointToLayer: function (_feature, latlng) {
+          return L.marker(latlng, { icon: trainIcon }).on(
+            "click",
+            async function () {
+              let popup = `<h1>Train station: ${_feature.properties.name}</h1>`;
+              this.bindPopup(popup);
+            }
+          );
+        },
+        onEachFeature: function (_feature, layer) {
+          layer.bindPopup();
+        },
+      });
+
       this.busLayer = L.geoJSON(undefined, {
         pointToLayer: function (_feature, latlng) {
           return L.marker(latlng, { icon: busIcon }).on(
@@ -284,7 +312,8 @@ export default {
           layer.bindPopup();
         },
       });
-      this.busLayerMarkerCluster = L.markerClusterGroup({
+
+      this.busLayerMarkerCluster = L.markerClusterGroup.layerSupport({
         polygonOptions: {
           fillColor: "#245fb3", // polygon color
           color: "#245fb3", // line color
@@ -292,14 +321,21 @@ export default {
           weight: 3, // line thickness
           fillOpacity: 0.2, // opacity inside polygon
         },
-      }).addLayer(this.busLayer);
-      this.layerControl.addOverlay(this.busLayerMarkerCluster, "Bus stations");
+      });
+      this.busLayerMarkerCluster.checkIn([this.busLayer, this.trainLayer]);
+      this.trainLayer.addTo(this.map);
+      this.busLayer.addTo(this.map);
+
+      this.layerControl.addOverlay(
+        this.busLayerMarkerCluster,
+        "Public transport"
+      );
       this.map.on("overlayadd", (event) => {
-        if (event.name === "Bus stations")
+        if (event.name === "Public transport")
           this.$emit("setBusStationsVisibility", true);
       });
       this.map.on("overlayremove", (event) => {
-        if (event.name === "Bus stations")
+        if (event.name === "Public transport")
           this.$emit("setBusStationsVisibility", false);
       });
     },
@@ -309,8 +345,7 @@ export default {
       this.busLayer.clearLayers();
       this.busLayer.addData(newGeoJson);
       // Refresh marker cluster layer
-      this.busLayerMarkerCluster.clearLayers();
-      this.busLayerMarkerCluster.addLayer(this.busLayer);
+      this.busLayerMarkerCluster.checkIn([this.busLayer, this.trainLayer]);
     },
     updateOnResize: function (pixelOffset = [0, 0]) {
       // Move the map so that it stays in the same place on the screen
