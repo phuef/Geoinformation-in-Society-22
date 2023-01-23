@@ -43,6 +43,7 @@ export default {
       drawLayer: new L.FeatureGroup(),
       layerControl: null,
       busStationInfo: null,
+      colorblindMode: false,
     };
   },
   props: {
@@ -98,13 +99,7 @@ export default {
         attribution: osmAttr,
         pane: "basemap", // Both layers are added to the basemap-pane.
       })
-        .on("add", function () {
-          //ref.tileLayer.resetStyle(ref.resultLayer);
-          /*ref.resultLayer.setStyle({
-            fillColor: "blue",
-            color: "blue",
-          });*/
-        })
+        .on("add", function () {})
         .addTo(this.map);
 
       this.colorblindLayer = L.tileLayer(colorblindUrl, {
@@ -115,12 +110,14 @@ export default {
             fillColor: "red",
             color: "red",
           });
+          ref.colorblindMode = true;
         })
         .on("remove", function () {
           ref.resultLayer.setStyle({
             fillColor: "rgb(51,136,255)",
             color: "rgb(51,136,255)",
           });
+          ref.colorblindMode = false;
         });
 
       const basemaps = {
@@ -209,6 +206,17 @@ export default {
       this.resultLayer.clearLayers();
       try {
         this.resultLayer.addData(newGeoJson);
+        if (this.colorblindMode) {
+          this.resultLayer.setStyle({
+            fillColor: "red",
+            color: "red",
+          });
+        } else {
+          this.resultLayer.setStyle({
+            fillColor: "rgb(51,136,255)",
+            color: "rgb(51,136,255)",
+          });
+        }
       } catch (error) {
         console.warn(error);
       }
