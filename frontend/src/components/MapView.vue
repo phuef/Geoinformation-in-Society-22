@@ -112,8 +112,8 @@ export default {
       })
         .on("add", function () {
           ref.resultLayer.setStyle({
-            fillColor: "blue",
-            color: "blue",
+            fillColor: "red",
+            color: "red",
           });
         })
         .on("remove", function () {
