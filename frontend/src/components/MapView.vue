@@ -242,7 +242,18 @@ export default {
       const deletedKeys = previousKeys.filter((key) => !newKeys.includes(key));  // Deleted keys
       // Add layers for new keys and geoJSON features
       for (const key of addedKeys) {
-        const featureLayer = L.geoJSON(this.sliderFeatures.get(key));
+        const featureLayer = L.geoJSON(this.sliderFeatures.get(key), {
+          pointToLayer: function (geoJsonPoint, latlng) {
+            return L.marker(latlng, {
+              icon: L.icon({
+                iconUrl: "/favicon-16x16.png",
+                iconSize: [16, 16],
+              }),
+              title: key,
+              alt: key,
+            });
+          }
+        },);
         this.sliderFeaturesLayers.set(key, featureLayer);
         this.map.addLayer(featureLayer);
       }
