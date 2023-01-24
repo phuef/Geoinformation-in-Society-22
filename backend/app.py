@@ -9,9 +9,8 @@ from flask import Flask, request, make_response, render_template, jsonify
 from flask_cors import CORS
 from ast import literal_eval
 import json
-#from utils_cy import DistanceStack #import "cythonized" utils
-
-from utils import DistanceStack
+from utils_cy import DistanceStack #import "cythonized" utils
+#from utils import DistanceStack
 import traceback
 
 #configure flask to use HTTP 1.1 only
