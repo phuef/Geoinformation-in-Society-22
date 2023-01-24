@@ -232,7 +232,7 @@ export default {
             title: "Colorblind mode",
           },
           content:
-            "When turning on the <b>colorblind mode</b>, the basemap changes and the result layer polygon color. This mode is specified for <b>blue-blindness / Tritanopia</b>.",
+            "When turning on the <b>colorblind mode</b>, the basemap changes and the result layer polygon color. This mode is modified for <b>blue-blindness / Tritanopia</b>.",
           params: {
             placement: "left-start", // Any valid Popper.js placement. See https://popper.js.org/popper-documentation.html#Popper.placements
           },
