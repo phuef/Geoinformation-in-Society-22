@@ -53,7 +53,7 @@
               position: absolute;
               z-index: 9999;
               right: 0;
-              margin-right: 60px;
+              margin-right: 150px;
               height: 70px;
             "
           ></div>
@@ -218,10 +218,21 @@ export default {
         {
           target: '[data-v-step="6"]',
           header: {
-            title: "Layer control",
+            title: "Layer control & Zoom",
           },
           content:
-            "Here it's possible to switch to a <b>colorblind baselayer</b>. You can also switch on an overlay of the towns <b>bus stations</b>.",
+            "Here it's possible to switch to a <b>colorblind baselayer</b>. You can also switch on an overlay of the towns <b>bus and train stations</b>. It is also possible to <b>zoom</b> in or out.",
+          params: {
+            placement: "left-start", // Any valid Popper.js placement. See https://popper.js.org/popper-documentation.html#Popper.placements
+          },
+        },
+        {
+          target: '[data-v-step="6"]',
+          header: {
+            title: "Colorblind mode",
+          },
+          content:
+            "When turning on the <b>colorblind mode</b>, the basemap changes and the result layer polygon color. This mode is specified for <b>blue-blindness / Tritanopia</b>.",
           params: {
             placement: "left-start", // Any valid Popper.js placement. See https://popper.js.org/popper-documentation.html#Popper.placements
           },
