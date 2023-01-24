@@ -25,6 +25,7 @@
             @setSliderActiveState="setSliderActiveState"
             @updateSliderValue="updateSliderValue"
             @updateSliderIsMin="updateSliderIsMin"
+            @setSliderDisplay="setSliderDisplay"
             @setBusStationsVisibility="setBusStationsVisibility"
           />
         </div>
@@ -68,6 +69,7 @@
             :zoom="mapZoom"
             :busStations="busStations"
             :resultAreas="resultAreas"
+            :sliderFeatures="sliderFeatures"
             :showBusStations="showBusStations"
             @setBusStationsVisibility="setBusStationsVisibility"
           />
@@ -99,6 +101,7 @@ export default {
       resultAreasRequestFailed: false,
       mapCenterPoint: [51.96229626341511, 7.6256090207326395],
       mapZoom: 13,
+      sliderFeatures: new Map(),
       busStations: null,
       showBusStations: false,
       sliders: [
@@ -116,6 +119,7 @@ export default {
             "Move the slider to remove all areas <br/>that have a certain <b>distance to museums</b>.",
           icon: "mdi-bank",
           isMin: true,
+          displayFeatures: false,
         },
         {
           name: "Theaters",
@@ -127,6 +131,7 @@ export default {
             "Move the slider to remove all areas <br/>that have a certain <b>distance to theaters</b>.",
           icon: "mdi-drama-masks",
           isMin: false,
+          displayFeatures: false,
         },
         {
           name: "Playgrounds",
@@ -138,6 +143,7 @@ export default {
             "Move the slider to remove all areas <br/>that have a certain <b>distance to playgrounds</b>.",
           icon: "mdi-drama-masks",
           isMin: false,
+          displayFeatures: false,
         },
         {
           name: "Sports facilities",
@@ -149,6 +155,7 @@ export default {
             "Move the slider to remove all areas <br/>that have a certain <b>distance to sports facilities</b>.",
           icon: "mdi-drama-masks",
           isMin: false,
+          displayFeatures: false,
         },
         {
           name: "Baths",
@@ -160,6 +167,7 @@ export default {
             "Move the slider to remove all areas <br/>that have a certain <b>distance to baths</b>.",
           icon: "mdi-drama-masks",
           isMin: false,
+          displayFeatures: false,
         },
         {
           name: "Cinemas",
@@ -171,6 +179,7 @@ export default {
             "Move the slider to remove all areas <br/>that have a certain <b>distance to cinemas</b>.",
           icon: "mdi-drama-masks",
           isMin: false,
+          displayFeatures: false,
         },
       ],
       steps: [
@@ -322,6 +331,31 @@ export default {
           return;
         }
       }
+    },
+    setSliderDisplay: function (name, value) {
+      for (const slider of this.sliders) {
+        if (slider.name === name) {
+          slider.displayFeatures = value;
+          if (value)
+            this.addSliderFeatures(slider);
+          else
+            this.removeSliderFeatures(slider);
+          return;
+        }
+      }
+    },
+    async addSliderFeatures(slider) {
+      try {
+        // Feature needs to be in lower case for the request
+        // The proper way to do this would be adding a field id to sliders
+        const response = await fetch(`http://localhost:5050/features/${slider.name.toLowerCase()}`);
+        this.sliderFeatures.set(slider.name, await response.json());
+      } catch (error) {
+        console.log("Fetching features failed: ", error);
+      }
+    },
+    removeSliderFeatures(slider) {
+      this.sliderFeatures.delete(slider.name);
     },
     setBusStationsVisibility: function (value) {
       this.showBusStations = value;

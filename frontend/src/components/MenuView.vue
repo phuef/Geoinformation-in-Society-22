@@ -208,6 +208,44 @@
         <v-switch
           class="mt-0 pt-0"
           color="primary"
+          v-model="showSliderFeatures"
+          hide-details
+        >
+        </v-switch>
+      </v-col>
+      <v-col
+        cols="10"
+        class="pl-0"
+        style="color: #000000de; align-items: center; display: flex"
+        >Show underlying features
+        <v-tooltip right z-index="1201">
+          <template v-slot:activator="{ on, attrs }">
+            <v-btn
+              dense
+              small
+              color="white"
+              elevation="0"
+              v-bind="attrs"
+              v-on="on"
+              class="bNoPadding"
+            >
+              <v-icon small style="color: #000000de"
+                >mdi-information-outline</v-icon
+              >
+            </v-btn>
+          </template>
+          <span
+            v-html="
+              'Show all features on the map included in </br>the calculation of areas of interest'
+            "
+          ></span> </v-tooltip
+      ></v-col>
+    </v-row>
+    <v-row align="center">
+      <v-col cols="2" class="d-flex justify-center">
+        <v-switch
+          class="mt-0 pt-0"
+          color="primary"
           v-model="state_showBusStations"
           hide-details
           @change="$emit('setBusStationsVisibility', !showBusStations)"
@@ -298,6 +336,7 @@ export default {
     "setSliderActiveState",
     "updateSliderValue",
     "updateSliderIsMin",
+    "setSliderDisplay",
     "setBusStationsVisibility",
   ],
   data() {
@@ -320,6 +359,7 @@ export default {
           isMin: [false, true, true, true],
         },
       ],
+      showSliderFeatures: false,
       state_showBusStations: this.showBusStations,
     };
   },
@@ -406,9 +446,19 @@ export default {
       for (const slider of this.sliders) {
         if (value.includes(slider.name)) {
           this.$emit("setSliderActiveState", slider.name, true);
+          // Show features of slider when enabled
+          if (this.showSliderFeatures && !slider.displayFeatures)
+            this.$emit("setSliderDisplay", slider.name, true);
         } else {
           this.$emit("setSliderActiveState", slider.name, false);
+          if (slider.displayFeatures)
+            this.$emit("setSliderDisplay", slider.name, false);
         }
+      }
+    },
+    showSliderFeatures: function (value) {
+      for (const slider of this.activeSliders) {
+        this.$emit("setSliderDisplay", slider, value);
       }
     },
     showBusStations: function (value) {

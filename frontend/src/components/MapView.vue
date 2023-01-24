@@ -66,6 +66,9 @@ export default {
     resultAreas: {
       type: Object,
     },
+    sliderFeatures: {
+      type: Map,
+    },
     busStations: {
       type: Object,
     },
