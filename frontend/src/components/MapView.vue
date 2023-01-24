@@ -42,6 +42,7 @@ export default {
       mapLegend: null,
       legendElements: [],
       colorblindLayer: null,
+      sliderFeaturesLayers: new Map(),
       busLayer: null,
       trainLayer: null,
       trainJson: null,
@@ -230,6 +231,25 @@ export default {
         }
       } catch (error) {
         console.warn(error);
+      }
+    },
+    updateSliderFeatures: function () {
+      // Because there is no easy way to watch changes of Map data structures with Vue 2
+      // this function needs to be called manually
+      const newKeys = Array.from(this.sliderFeatures.keys())
+      const previousKeys = Array.from(this.sliderFeaturesLayers.keys())
+      const addedKeys = newKeys.filter((key) => !previousKeys.includes(key));  // Newly added keys
+      const deletedKeys = previousKeys.filter((key) => !newKeys.includes(key));  // Deleted keys
+      // Add layers for new keys and geoJSON features
+      for (const key of addedKeys) {
+        const featureLayer = L.geoJSON(this.sliderFeatures.get(key));
+        this.sliderFeaturesLayers.set(key, featureLayer);
+        this.map.addLayer(featureLayer);
+      }
+      // Remove layers for deleted keys
+      for (const key of deletedKeys) {
+        this.map.removeLayer(this.sliderFeaturesLayers.get(key));
+        this.sliderFeaturesLayers.delete(key);
       }
     },
     addBusLayer: function () {

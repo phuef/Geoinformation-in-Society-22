@@ -350,12 +350,14 @@ export default {
         // The proper way to do this would be adding a field id to sliders
         const response = await fetch(`http://localhost:5050/features/${slider.name.toLowerCase()}`);
         this.sliderFeatures.set(slider.name, await response.json());
+        this.$refs.map.updateSliderFeatures();
       } catch (error) {
         console.log("Fetching features failed: ", error);
       }
     },
     removeSliderFeatures(slider) {
       this.sliderFeatures.delete(slider.name);
+      this.$refs.map.updateSliderFeatures();
     },
     setBusStationsVisibility: function (value) {
       this.showBusStations = value;
