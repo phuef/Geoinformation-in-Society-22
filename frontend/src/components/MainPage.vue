@@ -109,6 +109,7 @@ export default {
         // TODO: add new layers to this list, when new layers are added to the backend.
         //       The layers need to have the structure shown and explained below
         {
+          id: "museums",
           name: "Museums", // the layer name that gets displayed at the layer selection
           label: "Distance to museums", // the label that gets shown at the slider
           value: 250, // the value the slider has
@@ -122,6 +123,7 @@ export default {
           displayFeatures: false,
         },
         {
+          id: "theaters",
           name: "Theaters",
           label: "Distance to theaters",
           value: 1000,
@@ -134,6 +136,7 @@ export default {
           displayFeatures: false,
         },
         {
+          id: "playgrounds",
           name: "Playgrounds",
           label: "Distance to playgrounds",
           value: 0,
@@ -146,6 +149,7 @@ export default {
           displayFeatures: false,
         },
         {
+          id: "sportsplaces",
           name: "Sports facilities",
           label: "Distance to sports facilities",
           value: 0,
@@ -158,6 +162,7 @@ export default {
           displayFeatures: false,
         },
         {
+          id: "baths",
           name: "Baths",
           label: "Distance to baths",
           value: 0,
@@ -170,6 +175,7 @@ export default {
           displayFeatures: false,
         },
         {
+          id: "cinemas",
           name: "Cinemas",
           label: "Distance to cinemas",
           value: 0,
@@ -308,33 +314,33 @@ export default {
       this.resultAreasEmpty = true;
       this.resultAreasRequestFailed = false;
     },
-    setSliderActiveState: function (name, active) {
+    setSliderActiveState: function (id, active) {
       for (const slider of this.sliders) {
-        if (slider.name === name) {
+        if (slider.id === id) {
           slider.active = active;
           return;
         }
       }
     },
-    updateSliderValue: function (name, value) {
+    updateSliderValue: function (id, value) {
       for (const slider of this.sliders) {
-        if (slider.name === name) {
+        if (slider.id === id) {
           slider.value = value;
           return;
         }
       }
     },
-    updateSliderIsMin: function (name, isMin) {
+    updateSliderIsMin: function (id, isMin) {
       for (const slider of this.sliders) {
-        if (slider.name === name) {
+        if (slider.id === id) {
           slider.isMin = isMin;
           return;
         }
       }
     },
-    setSliderDisplay: function (name, value) {
+    setSliderDisplay: function (id, value) {
       for (const slider of this.sliders) {
-        if (slider.name === name) {
+        if (slider.id === id) {
           slider.displayFeatures = value;
           if (value)
             this.addSliderFeatures(slider);
@@ -346,17 +352,15 @@ export default {
     },
     async addSliderFeatures(slider) {
       try {
-        // Feature needs to be in lower case for the request
-        // The proper way to do this would be adding a field id to sliders
-        const response = await fetch(`http://localhost:5050/features/${slider.name.toLowerCase()}`);
-        this.sliderFeatures.set(slider.name, await response.json());
+        const response = await fetch(`http://localhost:5050/features/${slider.id}`);
+        this.sliderFeatures.set(slider.id, await response.json());
         this.$refs.map.updateSliderFeatures();
       } catch (error) {
         console.log("Fetching features failed: ", error);
       }
     },
     removeSliderFeatures(slider) {
-      this.sliderFeatures.delete(slider.name);
+      this.sliderFeatures.delete(slider.id);
       this.$refs.map.updateSliderFeatures();
     },
     setBusStationsVisibility: function (value) {

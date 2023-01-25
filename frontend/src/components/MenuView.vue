@@ -390,11 +390,11 @@ export default {
       this.doResultAreasRequest();
     },
     updateSliderValue(slider) {
-      this.$emit("updateSliderValue", slider.name, slider.value);
+      this.$emit("updateSliderValue", slider.id, slider.value);
       this.doResultAreasRequest();
     },
     toggleIsMin(slider) {
-      this.$emit("updateSliderIsMin", slider.name, !slider.isMin);
+      this.$emit("updateSliderIsMin", slider.id, !slider.isMin);
       this.doResultAreasRequest();
     },
     /**
@@ -445,20 +445,23 @@ export default {
       // Changes to activeSliders update the sliders active state in MainPage
       for (const slider of this.sliders) {
         if (value.includes(slider.name)) {
-          this.$emit("setSliderActiveState", slider.name, true);
+          this.$emit("setSliderActiveState", slider.id, true);
           // Show features of slider when enabled
           if (this.showSliderFeatures && !slider.displayFeatures)
-            this.$emit("setSliderDisplay", slider.name, true);
+            this.$emit("setSliderDisplay", slider.id, true);
         } else {
-          this.$emit("setSliderActiveState", slider.name, false);
+          this.$emit("setSliderActiveState", slider.id, false);
           if (slider.displayFeatures)
-            this.$emit("setSliderDisplay", slider.name, false);
+            this.$emit("setSliderDisplay", slider.id, false);
         }
       }
     },
     showSliderFeatures: function (value) {
-      for (const slider of this.activeSliders) {
-        this.$emit("setSliderDisplay", slider, value);
+      for (const sliderName of this.activeSliders) {
+        const sliderId = this.sliders
+          .filter((slider) => slider.name === sliderName)
+          .map((slider) => slider.id)[0]
+        this.$emit("setSliderDisplay", sliderId, value);
       }
     },
     showBusStations: function (value) {
