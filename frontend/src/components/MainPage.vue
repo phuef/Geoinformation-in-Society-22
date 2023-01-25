@@ -246,7 +246,7 @@ export default {
       // (e.g. http://localhost:5050/request/[(0,250,None),(1,0,1000)])
       try {
         const response = await fetch(
-          `http://134.122.80.48/request/[${requestString}]`
+          `http://localhost:5050/request/[${requestString}]`
         );
         const result = await response.json();
         // Smoothing
