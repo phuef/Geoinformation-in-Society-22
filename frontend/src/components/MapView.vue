@@ -322,6 +322,7 @@ export default {
       });
 
       this.busLayerMarkerCluster = L.markerClusterGroup.layerSupport({
+        showCoverageOnHover: false,
         polygonOptions: {
           fillColor: "#245fb3", // polygon color
           color: "#245fb3", // line color
