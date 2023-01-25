@@ -49,12 +49,17 @@
           </button>
           <div
             data-v-step="6"
+            style="position: absolute; z-index: 9999; right: 60px; height: 70px"
+          ></div>
+          <div
+            data-v-step="7"
             style="
               position: absolute;
-              z-index: 9999;
               right: 0;
-              margin-right: 60px;
-              height: 70px;
+              bottom: 0;
+              margin: 20px;
+              z-index: 9999;
+              height: 130px;
             "
           ></div>
           <MapView
@@ -224,6 +229,17 @@ export default {
             "Here it's possible to switch to a <b>colorblind baselayer</b>. You can also switch on an overlay of the towns <b>bus stations</b>.",
           params: {
             placement: "left-start", // Any valid Popper.js placement. See https://popper.js.org/popper-documentation.html#Popper.placements
+          },
+        },
+        {
+          target: '[data-v-step="7"]',
+          header: {
+            title: "Legend",
+          },
+          content:
+            "On hover, a legend will expand. It changed dynamically, depending on the visible features on the map.",
+          params: {
+            placement: "top", // Any valid Popper.js placement. See https://popper.js.org/popper-documentation.html#Popper.placements
           },
         },
         {
