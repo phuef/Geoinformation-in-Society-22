@@ -51,6 +51,7 @@ export default {
       drawLayer: new L.FeatureGroup(),
       layerControl: null,
       busStationInfo: null,
+      colorblindMode: false,
     };
   },
   props: {
@@ -99,14 +100,33 @@ export default {
       const colorblindAttr =
         '<a href="https://www.jawg.io" target="_blank">&copy; Jawg</a> - <a href="https://www.openstreetmap.org" target="_blank">&copy; OpenStreetMap</a>&nbsp;contributors';
 
+      // Required to use this in the event listeners:
+      const ref = this;
+
       this.tileLayer = L.tileLayer(osmUrl, {
         attribution: osmAttr,
         pane: "basemap", // Both layers are added to the basemap-pane.
-      }).addTo(this.map);
+      })
+        .on("add", function () {})
+        .addTo(this.map);
 
       this.colorblindLayer = L.tileLayer(colorblindUrl, {
         attribution: colorblindAttr,
-      });
+      })
+        .on("add", function () {
+          ref.resultLayer.setStyle({
+            fillColor: "red",
+            color: "red",
+          });
+          ref.colorblindMode = true;
+        })
+        .on("remove", function () {
+          ref.resultLayer.setStyle({
+            fillColor: "rgb(51,136,255)",
+            color: "rgb(51,136,255)",
+          });
+          ref.colorblindMode = false;
+        });
 
       const basemaps = {
         "Open Street Map": this.tileLayer,
@@ -194,6 +214,17 @@ export default {
       this.resultLayer.clearLayers();
       try {
         this.resultLayer.addData(newGeoJson);
+        if (this.colorblindMode) {
+          this.resultLayer.setStyle({
+            fillColor: "red",
+            color: "red",
+          });
+        } else {
+          this.resultLayer.setStyle({
+            fillColor: "rgb(51,136,255)",
+            color: "rgb(51,136,255)",
+          });
+        }
       } catch (error) {
         console.warn(error);
       }
