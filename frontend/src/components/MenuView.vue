@@ -392,9 +392,12 @@ export default {
     applyConfiguration(configuration) {
       const { activeSliders, values, isMin } = configuration;
       this.activeSliders = Array.from(activeSliders);
-      for (let i = 0; i < activeSliders.length; i++) {
-        this.$emit("updateSliderValue", activeSliders[i], values[i]);
-        this.$emit("updateSliderIsMin", activeSliders[i], isMin[i]);
+      for (const slider of this.sliders) {
+        if (this.activeSliders.includes(slider.name)) {
+          const i = this.activeSliders.indexOf(slider.name);
+          this.$emit("updateSliderValue", slider.id, values[i]);
+          this.$emit("updateSliderIsMin", slider.id, isMin[i]);
+        }
       }
       this.doResultAreasRequest();
     },
