@@ -119,8 +119,8 @@ export default {
           infoLabel:
             "Move the slider to remove all areas <br/>that have a certain <b>distance to museums</b>.",
           icon: "mdi-bank",
-          isMin: true,
-          displayFeatures: false,
+          isMin: false,
+          displayFeatures: true,
         },
         {
           id: "theaters",
@@ -133,13 +133,13 @@ export default {
             "Move the slider to remove all areas <br/>that have a certain <b>distance to theaters</b>.",
           icon: "mdi-drama-masks",
           isMin: false,
-          displayFeatures: false,
+          displayFeatures: true,
         },
         {
           id: "playgrounds",
           name: "Playgrounds",
           label: "Distance to playgrounds",
-          value: 0,
+          value: 1000,
           band: 2,
           active: false,
           infoLabel:
@@ -152,7 +152,7 @@ export default {
           id: "sportsplaces",
           name: "Sports facilities",
           label: "Distance to sports facilities",
-          value: 0,
+          value: 1000,
           band: 3,
           active: false,
           infoLabel:
@@ -165,7 +165,7 @@ export default {
           id: "baths",
           name: "Baths",
           label: "Distance to baths",
-          value: 0,
+          value: 1000,
           band: 4,
           active: false,
           infoLabel:
@@ -178,7 +178,7 @@ export default {
           id: "cinemas",
           name: "Cinemas",
           label: "Distance to cinemas",
-          value: 0,
+          value: 1000,
           band: 5,
           active: false,
           infoLabel:

@@ -122,7 +122,7 @@
                     target="_blank"
                     >{{ slider.name }}</a
                   >
-                  <v-tooltip right z-index="1000">
+                  <v-tooltip right z-index="1201">
                     <template v-slot:activator="{ on, attrs }">
                       <v-btn
                         dense
@@ -144,13 +144,13 @@
               </v-col>
               <v-col cols="3">
                 <v-btn
+                  class="minButton text-lowercase bNoPadding"
                   data-v-step="4"
                   elevation="0"
                   dense
                   small
                   outlined
                   @click="toggleIsMin(slider)"
-                  class="text-lowercase bNoPadding"
                 >
                   {{ slider.isMin ? "at least" : "less than" }}
                 </v-btn>
@@ -158,26 +158,32 @@
               <v-col cols="3"> {{ slider.value }} m </v-col>
               <v-col cols="1">
                 <div class="d-flex center-align justify-center">
-                  <v-tooltip top z-index="1000">
-                    <template v-slot:activator="{ on }">
-                      <v-checkbox
-                        color="primary"
-                        value="slider.displayFeatures"
-                        v-on="on"
-                        @change="$emit('setSliderDisplay', slider.id, !slider.displayFeatures)"
-                      ></v-checkbox>
+                  <v-tooltip left z-index="1201">
+                    <template v-slot:activator="{ on, attrs }">
+                      <div v-on="on" v-bind="attrs">
+                        <v-switch
+                          color="primary"
+                          value="slider.displayFeatures"
+                          @change="
+                            $emit(
+                              'setSliderDisplay',
+                              slider.id,
+                              !slider.displayFeatures
+                            )
+                          "
+                        ></v-switch>
+                      </div>
                     </template>
                     <span
-                      v-html="
-                        `Click here to <b>visualize</b> </br>the features from </br>the <b>${slider.name}</b> layer.`
-                      "
-                    ></span>
+                      >Highlight {{ slider.name.toLowerCase() }}<br />
+                      on the map
+                    </span>
                   </v-tooltip>
                 </div>
               </v-col>
               <v-col cols="1">
                 <div class="d-flex center-align justify-center bNoPadding">
-                  <v-tooltip left z-index="1000">
+                  <v-tooltip left z-index="1201">
                     <template v-slot:activator="{ on, attrs }">
                       <v-btn
                         id="deleteBtn"
@@ -196,8 +202,8 @@
                       </v-btn>
                     </template>
                     <span class="bNoPadding"
-                      >Remove {{ slider.name }} layer</span
-                    >
+                      >Remove {{ slider.name }} layer
+                    </span>
                   </v-tooltip>
                 </div>
               </v-col>
@@ -455,6 +461,10 @@ export default {
 <style scoped>
 .v-expansion-panel-content > .v-expansion-panel-content__wrap {
   padding: 0 !important;
+}
+
+.minButton {
+  width: 68px;
 }
 
 .bNoPadding {

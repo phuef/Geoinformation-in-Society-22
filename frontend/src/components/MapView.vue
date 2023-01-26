@@ -251,8 +251,10 @@ export default {
                 iconSize: [16, 16],
               }),
               alt: `${key} point`,
+              keyboard: false,
             });
-          }
+          },
+          interactive: false,
         },);
         this.sliderFeaturesLayers.set(key, featureLayer);
         this.map.addLayer(featureLayer);
