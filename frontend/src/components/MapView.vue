@@ -323,13 +323,6 @@ export default {
 
       this.busLayerMarkerCluster = L.markerClusterGroup.layerSupport({
         showCoverageOnHover: false,
-        polygonOptions: {
-          fillColor: "#245fb3", // polygon color
-          color: "#245fb3", // line color
-          opacity: 1, // opacity of line
-          weight: 3, // line thickness
-          fillOpacity: 0.2, // opacity inside polygon
-        },
       });
       this.busLayerMarkerCluster.checkIn([this.busLayer, this.trainLayer]);
       this.trainLayer.addTo(this.map);
