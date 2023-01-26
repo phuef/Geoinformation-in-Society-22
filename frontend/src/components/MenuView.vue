@@ -162,6 +162,7 @@
                     <template v-slot:activator="{ on, attrs }">
                       <div v-on="on" v-bind="attrs">
                         <v-switch
+                          class="mt-0"
                           color="primary"
                           dense
                           v-model="
