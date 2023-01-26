@@ -16,7 +16,7 @@ import "leaflet.markercluster/dist/leaflet.markercluster.js";
 import "leaflet.markercluster/dist/MarkerCluster.css";
 import "leaflet.markercluster/dist/MarkerCluster.Default.css";
 // Extension to support multiple layers
-import "leaflet.markercluster.layersupport"; ///leaflet.markercluster.layersupport-src.js";
+import "leaflet.markercluster.layersupport";
 import "@gnatih/leaflet.legend/src/leaflet.legend.css";
 import "@gnatih/leaflet.legend/src/leaflet.legend.js";
 
@@ -323,13 +323,6 @@ export default {
 
       this.busLayerMarkerCluster = L.markerClusterGroup.layerSupport({
         showCoverageOnHover: false,
-        polygonOptions: {
-          fillColor: "#245fb3", // polygon color
-          color: "#245fb3", // line color
-          opacity: 1, // opacity of line
-          weight: 3, // line thickness
-          fillOpacity: 0.2, // opacity inside polygon
-        },
       });
       this.busLayerMarkerCluster.checkIn([this.busLayer, this.trainLayer]);
       this.trainLayer.addTo(this.map);
