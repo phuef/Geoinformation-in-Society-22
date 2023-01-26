@@ -179,7 +179,7 @@
                       </div>
                     </template>
                     <span
-                      >Highlight {{ slider.name.toLowerCase() }}<br />
+                      >Show {{ slider.name.toLowerCase() }} layer<br />
                       on the map
                     </span>
                   </v-tooltip>
