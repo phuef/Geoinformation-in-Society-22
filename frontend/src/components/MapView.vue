@@ -236,10 +236,10 @@ export default {
     updateSliderFeatures: function () {
       // Because there is no easy way to watch changes of Map data structures with Vue 2
       // this function needs to be called manually
-      const newKeys = Array.from(this.sliderFeatures.keys())
-      const previousKeys = Array.from(this.sliderFeaturesLayers.keys())
-      const addedKeys = newKeys.filter((key) => !previousKeys.includes(key));  // Newly added keys
-      const deletedKeys = previousKeys.filter((key) => !newKeys.includes(key));  // Deleted keys
+      const newKeys = Array.from(this.sliderFeatures.keys());
+      const previousKeys = Array.from(this.sliderFeaturesLayers.keys());
+      const addedKeys = newKeys.filter((key) => !previousKeys.includes(key)); // Newly added keys
+      const deletedKeys = previousKeys.filter((key) => !newKeys.includes(key)); // Deleted keys
       // Add layers for new keys and geoJSON features
       for (const key of addedKeys) {
         const iconUrl = `map_icons/${key}_icon.png`;
@@ -255,7 +255,7 @@ export default {
             });
           },
           interactive: false,
-        },);
+        });
         this.sliderFeaturesLayers.set(key, featureLayer);
         this.map.addLayer(featureLayer);
       }
