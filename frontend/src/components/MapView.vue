@@ -16,7 +16,7 @@ import "leaflet.markercluster/dist/leaflet.markercluster.js";
 import "leaflet.markercluster/dist/MarkerCluster.css";
 import "leaflet.markercluster/dist/MarkerCluster.Default.css";
 // Extension to support multiple layers
-import "leaflet.markercluster.layersupport"; ///leaflet.markercluster.layersupport-src.js";
+import "leaflet.markercluster.layersupport";
 import "@gnatih/leaflet.legend/src/leaflet.legend.css";
 import "@gnatih/leaflet.legend/src/leaflet.legend.js";
 
