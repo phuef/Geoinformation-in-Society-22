@@ -318,6 +318,12 @@ export default {
       for (const slider of this.sliders) {
         if (slider.id === id) {
           slider.active = active;
+          if (active) {
+            if (slider.displayFeatures && !this.sliderFeatures.has(slider.id))
+              this.addSliderFeatures(slider);
+          } else {
+            this.sliderFeatures.delete(slider.id);
+          }
           return;
         }
       }
@@ -342,7 +348,7 @@ export default {
       for (const slider of this.sliders) {
         if (slider.id === id) {
           slider.displayFeatures = value;
-          if (value)
+          if (value && slider.active)
             this.addSliderFeatures(slider);
           else
             this.removeSliderFeatures(slider);
@@ -352,7 +358,9 @@ export default {
     },
     async addSliderFeatures(slider) {
       try {
-        const response = await fetch(`http://localhost:5050/features/${slider.id}`);
+        const response = await fetch(
+          `http://localhost:5050/features/${slider.id}`
+        );
         this.sliderFeatures.set(slider.id, await response.json());
         this.$refs.map.updateSliderFeatures();
       } catch (error) {

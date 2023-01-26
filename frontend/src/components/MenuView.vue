@@ -34,7 +34,6 @@
       label="Selected layers:"
       multiple
       dense
-      @input="doResultAreasRequest()"
       data-v-step="0"
     >
     </v-select>
@@ -156,7 +155,26 @@
                   {{ slider.isMin ? "at least" : "less than" }}
                 </v-btn>
               </v-col>
-              <v-col cols="4"> {{ slider.value }} m </v-col>
+              <v-col cols="3"> {{ slider.value }} m </v-col>
+              <v-col cols="1">
+                <div class="d-flex center-align justify-center">
+                  <v-tooltip top z-index="1000">
+                    <template v-slot:activator="{ on }">
+                      <v-checkbox
+                        color="primary"
+                        value="slider.displayFeatures"
+                        v-on="on"
+                        @change="$emit('setSliderDisplay', slider.id, !slider.displayFeatures)"
+                      ></v-checkbox>
+                    </template>
+                    <span
+                      v-html="
+                        `Click here to <b>visualize</b> </br>the features from </br>the <b>${slider.name}</b> layer.`
+                      "
+                    ></span>
+                  </v-tooltip>
+                </div>
+              </v-col>
               <v-col cols="1">
                 <div class="d-flex center-align justify-center bNoPadding">
                   <v-tooltip left z-index="1000">
@@ -202,44 +220,6 @@
           </div>
         </v-card>
       </v-col>
-    </v-row>
-    <v-row align="center">
-      <v-col cols="2" class="d-flex justify-center">
-        <v-switch
-          class="mt-0 pt-0"
-          color="primary"
-          v-model="showSliderFeatures"
-          hide-details
-        >
-        </v-switch>
-      </v-col>
-      <v-col
-        cols="10"
-        class="pl-0"
-        style="color: #000000de; align-items: center; display: flex"
-        >Show underlying features
-        <v-tooltip right z-index="1201">
-          <template v-slot:activator="{ on, attrs }">
-            <v-btn
-              dense
-              small
-              color="white"
-              elevation="0"
-              v-bind="attrs"
-              v-on="on"
-              class="bNoPadding"
-            >
-              <v-icon small style="color: #000000de"
-                >mdi-information-outline</v-icon
-              >
-            </v-btn>
-          </template>
-          <span
-            v-html="
-              'Show all features on the map included in </br>the calculation of areas of interest'
-            "
-          ></span> </v-tooltip
-      ></v-col>
     </v-row>
     <v-row align="center">
       <v-col cols="2" class="d-flex justify-center">
@@ -387,7 +367,6 @@ export default {
       if (i !== -1) {
         this.activeSliders.splice(i, 1);
       }
-      this.doResultAreasRequest();
     },
     updateSliderValue(slider) {
       this.$emit("updateSliderValue", slider.id, slider.value);
@@ -455,14 +434,7 @@ export default {
             this.$emit("setSliderDisplay", slider.id, false);
         }
       }
-    },
-    showSliderFeatures: function (value) {
-      for (const sliderName of this.activeSliders) {
-        const sliderId = this.sliders
-          .filter((slider) => slider.name === sliderName)
-          .map((slider) => slider.id)[0]
-        this.$emit("setSliderDisplay", sliderId, value);
-      }
+      this.doResultAreasRequest();
     },
     showBusStations: function (value) {
       // Updates the state for the bus stations switch in the menu
