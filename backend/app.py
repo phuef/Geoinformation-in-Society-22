@@ -47,23 +47,37 @@ def tea():
 * Description: A route which is accessible
 *              via localhost:5050/apiDescription and returns OpenAPI Documentation of the API.
 '''
-@app.route("/apiDescription", methods = ['GET'])
+@app.route("/apiDescription", methods = ['GET', 'OPTIONS'])
 def api():
     try:
-        if(request.args.get('f')=="text/html" or request.args.get('f') == None): 
-            response = render_template('open_api_doc.html') 
-            return response, 200
-        elif(request.args.get('f')=="application/json"):
-            file = open('usr/src/backend/data/open_api_doc.json',) 
-            payload = json.load(file) 
-            file.close() 
-            response = jsonify(payload) 
-            return response, 200
-        else:
-            return "HTTP status code 406: not acceptable", 406 
-    except(Exception):
+        if(request.method == 'GET'): #actual request using GET
+            try:
+                if(request.args.get('f')=="text/html" or request.args.get('f') == None): 
+                    response = render_template('open_api_doc.html') 
+                    return response, 200
+                elif(request.args.get('f')=="application/json"):
+                    file = open('usr/src/backend/data/open_api_doc.json',) 
+                    payload = json.load(file) 
+                    file.close() 
+                    response = jsonify(payload) 
+                    return response, 200
+                else:
+                    return "HTTP status code 406: not acceptable", 406 
+            except(Exception):
+                print(traceback.format_exc())
+                return "Internal Server Error", 500
+        elif(request.method == 'OPTIONS'): #preflight request using OPTIONS
+                response = make_response() #generate response
+                #add headers
+                response.headers.add("Access-Control-Allow-Origin", "*")
+                response.headers.add("Access-Control-Allow-Headers", "*")
+                response.headers.add("Access-Control-Allow-Methods", "*")
+                response.headers.add("Referrer-Policy", 'no-referrer')
+                return response, 204 #return preflight response
+    except Exception:
         print(traceback.format_exc())
         return "Internal Server Error", 500
+    
 
 '''
 * Title: raster
