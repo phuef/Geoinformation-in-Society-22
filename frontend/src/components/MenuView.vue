@@ -163,12 +163,15 @@
                       <div v-on="on" v-bind="attrs">
                         <v-switch
                           color="primary"
-                          value="slider.displayFeatures"
+                          dense
+                          v-model="
+                            sliderDisplay[activeSliders.indexOf(slider.name)]
+                          "
                           @change="
                             $emit(
                               'setSliderDisplay',
                               slider.id,
-                              !slider.displayFeatures
+                              sliderDisplay[activeSliders.indexOf(slider.name)]
                             )
                           "
                         ></v-switch>
@@ -345,7 +348,7 @@ export default {
           isMin: [false, true, true, true],
         },
       ],
-      showSliderFeatures: false,
+      sliderDisplay: [],
       state_showBusStations: this.showBusStations,
     };
   },
@@ -427,6 +430,12 @@ export default {
   },
   watch: {
     activeSliders: function (value) {
+      // Updates an array with boolean values for the feature switches
+      this.sliderDisplay = this.activeSliders.map(
+        (sliderName) =>
+          this.sliders.filter((slider) => slider.name === sliderName)[0]
+            .displayFeatures
+      );
       // Changes to activeSliders update the sliders active state in MainPage
       for (const slider of this.sliders) {
         if (value.includes(slider.name)) {
