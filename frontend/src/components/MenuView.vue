@@ -514,5 +514,6 @@ export default {
 .layer-source-link {
   color: #000000de;
   text-decoration: none;
+  text-transform: none !important;
 }
 </style>
