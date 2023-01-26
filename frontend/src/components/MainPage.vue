@@ -117,7 +117,7 @@ export default {
           active: true, // wether the layer is currently selected by the user
           // the text that shall be displayed when the user hovers over the info button
           infoLabel:
-            "Move the slider to remove all areas <br/>that have a certain <b>distance to museums</b>.",
+            "Move the slider to include areas inside or outside<br/> a certain <b>distance around museums</b>",
           icon: "mdi-bank",
           isMin: false,
           displayFeatures: true,
@@ -130,7 +130,7 @@ export default {
           band: 0,
           active: true,
           infoLabel:
-            "Move the slider to remove all areas <br/>that have a certain <b>distance to theaters</b>.",
+            "Move the slider to include areas inside or outside<br/> a certain <b>distance around theaters</b>",
           icon: "mdi-drama-masks",
           isMin: false,
           displayFeatures: true,
@@ -143,7 +143,7 @@ export default {
           band: 2,
           active: false,
           infoLabel:
-            "Move the slider to remove all areas <br/>that have a certain <b>distance to playgrounds</b>.",
+            "Move the slider to include areas inside or outside<br/> a certain <b>distance around playgrounds</b>",
           icon: "mdi-drama-masks",
           isMin: false,
           displayFeatures: false,
@@ -156,7 +156,7 @@ export default {
           band: 3,
           active: false,
           infoLabel:
-            "Move the slider to remove all areas <br/>that have a certain <b>distance to sports facilities</b>.",
+            "Move the slider to include areas inside or outside<br/> a certain <b>distance around sports facilities</b>",
           icon: "mdi-drama-masks",
           isMin: false,
           displayFeatures: false,
@@ -169,7 +169,7 @@ export default {
           band: 4,
           active: false,
           infoLabel:
-            "Move the slider to remove all areas <br/>that have a certain <b>distance to baths</b>.",
+            "Move the slider to include areas inside or outside<br/> a certain <b>distance around baths</b>",
           icon: "mdi-drama-masks",
           isMin: false,
           displayFeatures: false,
@@ -182,7 +182,7 @@ export default {
           band: 5,
           active: false,
           infoLabel:
-            "Move the slider to remove all areas <br/>that have a certain <b>distance to cinemas</b>.",
+            "Move the slider to include areas inside or outside<br/> a certain <b>distance around cinemas</b>",
           icon: "mdi-drama-masks",
           isMin: false,
           displayFeatures: false,
