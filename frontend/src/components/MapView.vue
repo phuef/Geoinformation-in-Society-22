@@ -191,15 +191,19 @@ export default {
       this.map.addControl(drawControl);
       this.map.on(L.Draw.Event.CREATED, (event) => {
         this.drawLayer.addLayer(event.layer);
-        this.legendElements.push("marker");
-        this.changeLegend();
+        this.legendElements.push({
+          label: "Location marker",
+          type: "image",
+          url: locationMarker,
+          weight: 2,
+        });
       });
       this.map.on(L.Draw.Event.DELETED, () => {
         if (this.drawLayer.getLayers().length == 0) {
-          while (this.legendElements.indexOf("marker") != -1) {
-            delete this.legendElements[this.legendElements.indexOf("marker")];
-          }
-          this.changeLegend();
+          const i = this.legendElements.findIndex(
+            (legendElement) => legendElement.label === "Location marker"
+          );
+          this.legendElements.splice(i, 1);
         }
       });
 
@@ -209,9 +213,14 @@ export default {
       ]);
       this.map.setMinZoom(12);
 
-      this.legendElements.push("resultArea");
-
-      this.changeLegend();
+      this.legendElements.push({
+        label: "Area matching your desires",
+        type: "rectangle",
+        color: "rgb(51,136,255)",
+        fillColor: "rgb(51,136,255)",
+        fillOpacity: 0.5,
+        weight: 3,
+      });
     },
     updateResultLayer: function (newGeoJson) {
       newGeoJson = JSON.parse(JSON.stringify(newGeoJson));
@@ -397,59 +406,6 @@ export default {
       // Load newly visible tiles
       this.map.invalidateSize({ pan: false });
     },
-    changeLegend: function () {
-      /**
-       * mapElements: Array
-       */
-      const marker = {
-        label: "Location marker",
-        type: "image",
-        url: locationMarker,
-        weight: 2,
-      };
-      const resultArea = {
-        label: "Area matching your desires",
-        type: "rectangle",
-        color: "rgb(51,136,255)",
-        fillColor: "rgb(51,136,255)",
-        fillOpacity: 0.5,
-        weight: 3,
-      };
-      const busStations = {
-        label: "Bus stations",
-        type: "image",
-        url: busMarker,
-        weight: 2,
-      };
-
-      try {
-        this.mapLegend.remove();
-      } catch {
-        //pass
-      }
-
-      let legendList = [];
-
-      if (this.legendElements.includes("marker")) {
-        legendList.push(marker);
-      }
-      if (this.legendElements.includes("resultArea")) {
-        legendList.push(resultArea);
-      }
-      if (this.legendElements.includes("busStations")) {
-        legendList.push(busStations);
-      }
-
-      this.mapLegend = L.control
-        .Legend({
-          position: "bottomright",
-          legends: legendList,
-          symbolWidth: 20,
-          symbolHeight: 20,
-          collapsed: true,
-        })
-        .addTo(this.map);
-    },
   },
   watch: {
     resultAreas: function (value) {
@@ -468,14 +424,36 @@ export default {
       if (value) {
         if (!this.map.hasLayer(this.busLayerMarkerCluster))
           this.map.addLayer(this.busLayerMarkerCluster);
-        this.legendElements.push("busStations");
-        this.changeLegend();
+        this.legendElements.push({
+          label: "Bus stations",
+          type: "image",
+          url: busMarker,
+          weight: 2,
+        });
       } else {
         if (this.map.hasLayer(this.busLayerMarkerCluster))
           this.map.removeLayer(this.busLayerMarkerCluster);
-        delete this.legendElements[this.legendElements.indexOf("busStations")];
-        this.changeLegend();
+        const i = this.legendElements.findIndex(
+          (legendElement) => legendElement.label === "Bus stations"
+        );
+        this.legendElements.splice(i, 1);
       }
+    },
+    legendElements: function (value) {
+      try {
+        this.mapLegend.remove();
+      } catch {
+        //pass
+      }
+      this.mapLegend = L.control
+        .Legend({
+          position: "bottomright",
+          legends: value,
+          symbolWidth: 20,
+          symbolHeight: 20,
+          collapsed: true,
+        })
+        .addTo(this.map);
     },
   },
   mounted() {
