@@ -60,7 +60,7 @@
               bottom: 0;
               margin: 20px;
               z-index: 9999;
-              height: 150px;
+              height: 130px;
             "
           ></div>
           <MapView
@@ -348,8 +348,10 @@ export default {
       for (const slider of this.sliders) {
         if (slider.id === id) {
           slider.displayFeatures = value;
-          if (value && slider.active) this.addSliderFeatures(slider);
-          else this.removeSliderFeatures(slider);
+          if (value && slider.active)
+            this.addSliderFeatures(slider);
+          else
+            this.removeSliderFeatures(slider);
           return;
         }
       }

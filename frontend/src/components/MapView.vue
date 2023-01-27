@@ -430,23 +430,13 @@ export default {
           url: busMarker,
           weight: 2,
         });
-        this.legendElements.push({
-          label: "Train stations",
-          type: "image",
-          url: trainMarker,
-          weight: 2,
-        });
       } else {
         if (this.map.hasLayer(this.busLayerMarkerCluster))
           this.map.removeLayer(this.busLayerMarkerCluster);
-        const busIndex = this.legendElements.findIndex(
+        const i = this.legendElements.findIndex(
           (legendElement) => legendElement.label === "Bus stations"
         );
-        this.legendElements.splice(busIndex, 1);
-        const trainIndex = this.legendElements.findIndex(
-          (legendElement) => legendElement.label === "Train stations"
-        );
-        this.legendElements.splice(trainIndex, 1);
+        this.legendElements.splice(i, 1);
       }
     },
     legendElements: function (value) {
