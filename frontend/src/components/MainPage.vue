@@ -58,9 +58,9 @@
               position: absolute;
               right: 0;
               bottom: 0;
-              margin: 20px;
+              margin: 25px;
               z-index: 9999;
-              height: 150px;
+              height: 40px;
             "
           ></div>
           <MapView
@@ -194,8 +194,7 @@ export default {
           header: {
             title: "Switch Layers",
           },
-          content:
-            "Click here to change the <b>selected layers</b>.",
+          content: "Click here to change the <b>selected layers</b>.",
         },
         {
           target: '[data-v-step="4"]',
@@ -218,8 +217,7 @@ export default {
           header: {
             title: "Map",
           },
-          content:
-            "In the map you can see the <br><b>visualized results</b>.",
+          content: "In the map you can see the <br><b>visualized results</b>.",
           params: {
             placement: "left", // Any valid Popper.js placement. See https://popper.js.org/popper-documentation.html#Popper.placements
           },
