@@ -74,6 +74,7 @@
             <v-row>
               <v-col cols="4">
                 <p
+                  data-v-step="8"
                   color="black"
                   class="text-capitalize mb-0 d-flex"
                   dense
@@ -121,7 +122,7 @@
                     target="_blank"
                     >{{ slider.name }}</a
                   >
-                  <v-tooltip right z-index="1201">
+                  <v-tooltip top z-index="1201">
                     <template v-slot:activator="{ on, attrs }">
                       <v-btn
                         dense
@@ -157,10 +158,11 @@
               <v-col cols="3"> {{ slider.value }} m </v-col>
               <v-col cols="1">
                 <div class="d-flex center-align justify-center">
-                  <v-tooltip left z-index="1201">
+                  <v-tooltip top z-index="1201">
                     <template v-slot:activator="{ on, attrs }">
                       <div v-on="on" v-bind="attrs">
                         <v-switch
+                          data-v-step="9"
                           class="mt-0"
                           color="primary"
                           dense
@@ -186,7 +188,7 @@
               </v-col>
               <v-col cols="1">
                 <div class="d-flex center-align justify-center bNoPadding">
-                  <v-tooltip left z-index="1201">
+                  <v-tooltip top z-index="1201">
                     <template v-slot:activator="{ on, attrs }">
                       <v-btn
                         id="deleteBtn"

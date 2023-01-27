@@ -117,7 +117,7 @@ export default {
           active: true, // wether the layer is currently selected by the user
           // the text that shall be displayed when the user hovers over the info button
           infoLabel:
-            "Move the slider to include areas inside or outside<br/> a certain <b>distance around museums</b>",
+            "Move the slider to include areas inside or outside<br/> a certain <b>distance around museums</b>.",
           icon: "mdi-bank",
           isMin: false,
           displayFeatures: true,
@@ -130,7 +130,7 @@ export default {
           band: 0,
           active: true,
           infoLabel:
-            "Move the slider to include areas inside or outside<br/> a certain <b>distance around theaters</b>",
+            "Move the slider to include areas inside or outside<br/> a certain <b>distance around theaters</b>.",
           icon: "mdi-drama-masks",
           isMin: false,
           displayFeatures: true,
@@ -143,7 +143,7 @@ export default {
           band: 2,
           active: false,
           infoLabel:
-            "Move the slider to include areas inside or outside<br/> a certain <b>distance around playgrounds</b>",
+            "Move the slider to include areas inside or outside<br/> a certain <b>distance around playgrounds</b>.",
           icon: "mdi-drama-masks",
           isMin: false,
           displayFeatures: false,
@@ -156,7 +156,7 @@ export default {
           band: 3,
           active: false,
           infoLabel:
-            "Move the slider to include areas inside or outside<br/> a certain <b>distance around sports facilities</b>",
+            "Move the slider to include areas inside or outside<br/> a certain <b>distance around sports facilities</b>.",
           icon: "mdi-drama-masks",
           isMin: false,
           displayFeatures: false,
@@ -169,7 +169,7 @@ export default {
           band: 4,
           active: false,
           infoLabel:
-            "Move the slider to include areas inside or outside<br/> a certain <b>distance around baths</b>",
+            "Move the slider to include areas inside or outside<br/> a certain <b>distance around baths</b>.",
           icon: "mdi-drama-masks",
           isMin: false,
           displayFeatures: false,
@@ -182,7 +182,7 @@ export default {
           band: 5,
           active: false,
           infoLabel:
-            "Move the slider to include areas inside or outside<br/> a certain <b>distance around cinemas</b>",
+            "Move the slider to include areas inside or outside<br/> a certain <b>distance around cinemas</b>.",
           icon: "mdi-drama-masks",
           isMin: false,
           displayFeatures: false,
@@ -197,12 +197,28 @@ export default {
           content: "Click here to change the <b>selected layers</b>.",
         },
         {
+          target: '[data-v-step="8"]',
+          header: {
+            title: "Dataset",
+          },
+          content:
+            "Click the slider's name to get directed to the data's <b>source</b>.",
+        },
+        {
           target: '[data-v-step="4"]',
           header: {
             title: "Min or max distance",
           },
           content:
             "Here you can decide if the chosen distance should be understood as <b>at least</b> or <b>less than</b>.",
+        },
+        {
+          target: '[data-v-step="9"]',
+          header: {
+            title: "Source features",
+          },
+          content:
+            "Here you can activate the <b>source features</b> on the map.",
         },
         {
           target: '[data-v-step="1"]',
