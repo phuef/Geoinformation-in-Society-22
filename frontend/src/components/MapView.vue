@@ -203,7 +203,7 @@ export default {
           const i = this.legendElements.findIndex(
             (legendElement) => legendElement.label === "Location marker"
           );
-          this.legendElements.splice(i, 1);
+          if (i != -1) this.legendElements.splice(i, 1);
         }
       });
 
@@ -249,6 +249,15 @@ export default {
       const previousKeys = Array.from(this.sliderFeaturesLayers.keys());
       const addedKeys = newKeys.filter((key) => !previousKeys.includes(key)); // Newly added keys
       const deletedKeys = previousKeys.filter((key) => !newKeys.includes(key)); // Deleted keys
+      // Mapping of ids to legend labels
+      const legendLabels = new Map([
+        ["museums", "Museums"],
+        ["theaters", "Theaters"],
+        ["playgrounds", "Playgrounds"],
+        ["sportsplaces", "Sports facilities"],
+        ["baths", "Baths"],
+        ["cinemas", "Cinemas"],
+      ]);
       // Add layers for new keys and geoJSON features
       for (const key of addedKeys) {
         const iconUrl = `map_icons/${key}_icon.png`;
@@ -267,11 +276,21 @@ export default {
         });
         this.sliderFeaturesLayers.set(key, featureLayer);
         this.map.addLayer(featureLayer);
+        this.legendElements.push({
+          label: legendLabels.get(key),
+          type: "image",
+          url: iconUrl,
+          weight: 2,
+        });
       }
       // Remove layers for deleted keys
       for (const key of deletedKeys) {
         this.map.removeLayer(this.sliderFeaturesLayers.get(key));
         this.sliderFeaturesLayers.delete(key);
+        const i = this.legendElements.findIndex(
+          (legendElement) => legendElement.label === legendLabels.get(key)
+        );
+        if (i != -1) this.legendElements.splice(i, 1);
       }
     },
     addBusLayer: function () {
@@ -436,7 +455,7 @@ export default {
         const i = this.legendElements.findIndex(
           (legendElement) => legendElement.label === "Bus stations"
         );
-        this.legendElements.splice(i, 1);
+        if (i != -1) this.legendElements.splice(i, 1);
       }
     },
     legendElements: function (value) {
