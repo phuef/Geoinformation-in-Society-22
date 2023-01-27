@@ -195,7 +195,7 @@ export default {
             title: "Switch Layers",
           },
           content:
-            "Click here to change the <strong>selected layers </strong>.",
+            "Click here to change the <b>selected layers</b>.",
         },
         {
           target: '[data-v-step="4"]',
@@ -203,7 +203,7 @@ export default {
             title: "Min or max distance",
           },
           content:
-            "Here you can decide if the choosen distance should be understood as <b>at least or less than</b>.  ",
+            "Here you can decide if the chosen distance should be understood as <b>at least</b> or <b>less than</b>.",
         },
         {
           target: '[data-v-step="1"]',
@@ -211,7 +211,7 @@ export default {
             title: "Examples",
           },
           content:
-            "Here are some <strong>examples</strong> to get an idea about the results.",
+            "Here are some <b>examples</b> to get an idea about the results.",
         },
         {
           target: '[data-v-step="2"]',
@@ -219,7 +219,7 @@ export default {
             title: "Map",
           },
           content:
-            "In the map you can see the <br><strong>visualised results</strong>.",
+            "In the map you can see the <br><b>visualized results</b>.",
           params: {
             placement: "left", // Any valid Popper.js placement. See https://popper.js.org/popper-documentation.html#Popper.placements
           },
@@ -227,10 +227,10 @@ export default {
         {
           target: '[data-v-step="2"]',
           header: {
-            title: "Add location",
+            title: "Add location markers",
           },
           content:
-            "Here you can add a <strong>marker</strong> to the map. <br> E.g. to mark a certain position.",
+            "Here you can add a <b>marker</b> to the map,<br>e.g. to mark a certain position.",
           params: {
             placement: "left-start", // Any valid Popper.js placement. See https://popper.js.org/popper-documentation.html#Popper.placements
           },
@@ -238,10 +238,10 @@ export default {
         {
           target: '[data-v-step="6"]',
           header: {
-            title: "Layer control & Zoom",
+            title: "Layer control & zoom",
           },
           content:
-            "Here it's possible to switch to a <b>colorblind baselayer</b>. You can also switch on an overlay of the towns <b>bus and train stations</b>. It is also possible to <b>zoom</b> in or out.",
+            "Here it's possible to switch to a <b>colorblind baselayer</b>. You can also activate an overlay of the town's <b>bus and train stations</b>.<br>The buttons below let you <b>zoom</b> in or out.",
           params: {
             placement: "left-start", // Any valid Popper.js placement. See https://popper.js.org/popper-documentation.html#Popper.placements
           },
@@ -252,7 +252,7 @@ export default {
             title: "Colorblind mode",
           },
           content:
-            "When turning on the <b>colorblind mode</b>, the basemap changes and the result layer polygon color. This mode is modified for <b>blue-blindness / Tritanopia</b>.",
+            "When turning on the <b>colorblind mode</b> the basemap and the color of the result layer polygons changes. This mode is modified for <b>blue-blindness/Tritanopia</b>.",
           params: {
             placement: "left-start", // Any valid Popper.js placement. See https://popper.js.org/popper-documentation.html#Popper.placements
           },
@@ -263,7 +263,7 @@ export default {
             title: "Legend",
           },
           content:
-            "On hover, a legend will expand. It changed dynamically, depending on the visible features on the map.",
+            "On hover, a legend will expand. It changes dynamically depending on the features visible on the map.",
           params: {
             placement: "top", // Any valid Popper.js placement. See https://popper.js.org/popper-documentation.html#Popper.placements
           },
@@ -271,10 +271,10 @@ export default {
         {
           target: '[data-v-step="3"]',
           header: {
-            title: "Hide and elapse",
+            title: "Expand and minimize menu",
           },
           content:
-            "With this button you can <b>hide the menu</b> or elapse it, if it's hidden.",
+            "With this button you can <b>hide the menu</b> or expand it, if it's hidden.",
           params: {
             placement: "right", // Any valid Popper.js placement. See https://popper.js.org/popper-documentation.html#Popper.placements
           },

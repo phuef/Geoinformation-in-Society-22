@@ -1,4 +1,4 @@
-# Find your spot
+# Find your Spot
 Repository for the course Geoinformation in Society at ifgi in the winter semester 2022.
 
 ## Idea

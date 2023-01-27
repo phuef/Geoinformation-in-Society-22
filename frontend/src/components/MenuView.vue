@@ -7,7 +7,6 @@
           line-height: 150%;
           font-family: 'Avenir', Helvetica, Arial, sans-serif;
           color: #000000de;
-          text-align: justify;
         "
       >
         Do you have the desire to
@@ -16,10 +15,10 @@
         leisure interests.
         <span class="highlight-gray">Add the layers</span> that you want,
         <span class="highlight-gray">specify the distance</span> to your target
-        locations, and that`s it, congrats, you just found your Spot.<br /><br />
+        locations, and that`s it, congrats, you just found your Spot!<br /><br />
         <span class="highlight-gray">Need help?</span> Click
-        <a class="start-demo-link" @click="startTour()">here</a> to find
-        detailed information of the functionalities.
+        <a class="start-demo-link" @click="startTour()">here</a> for a detailed
+        tour of the functionalities.
       </p>
     </div>
     <v-divider></v-divider>
@@ -307,7 +306,8 @@
                 elevation="0"
                 height="50px"
                 @click="applyConfiguration(configuration)"
-                v-html="'Show this <br/>configuration'"
+                style="text-transform: none !important"
+                v-html="'Show <br/>configuration'"
               ></v-btn>
             </v-col>
           </v-row>
@@ -505,6 +505,7 @@ export default {
   background-color: #c3c3c393;
   border-radius: 6px;
   padding: 3px 6px;
+  white-space: nowrap;
 }
 
 .start-demo-link:hover {
