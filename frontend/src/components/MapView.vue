@@ -443,13 +443,13 @@ export default {
       if (value) {
         if (!this.map.hasLayer(this.busLayerMarkerCluster))
           this.map.addLayer(this.busLayerMarkerCluster);
-        this.legendElements.push({
+        this.legendElements.splice(1, 0, {
           label: "Bus stations",
           type: "image",
           url: busMarker,
           weight: 2,
         });
-        this.legendElements.push({
+        this.legendElements.splice(2, 0, {
           label: "Train stations",
           type: "image",
           url: trainMarker,
