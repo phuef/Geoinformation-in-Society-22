@@ -7,7 +7,6 @@
           line-height: 150%;
           font-family: 'Avenir', Helvetica, Arial, sans-serif;
           color: #000000de;
-          text-align: justify;
         "
       >
         Do you have the desire to
@@ -16,10 +15,10 @@
         leisure interests.
         <span class="highlight-gray">Add the layers</span> that you want,
         <span class="highlight-gray">specify the distance</span> to your target
-        locations, and that`s it, congrats, you just found your Spot.<br /><br />
+        locations, and that`s it, congrats, you just found your Spot!<br /><br />
         <span class="highlight-gray">Need help?</span> Click
-        <a class="start-demo-link" @click="startTour()">here</a> to find
-        detailed information of the functionalities.
+        <a class="start-demo-link" @click="startTour()">here</a> for a detailed
+        tour of the functionalities.
       </p>
     </div>
     <v-divider></v-divider>
@@ -34,7 +33,6 @@
       label="Selected layers:"
       multiple
       dense
-      @input="doResultAreasRequest()"
       data-v-step="0"
     >
     </v-select>
@@ -123,7 +121,7 @@
                     target="_blank"
                     >{{ slider.name }}</a
                   >
-                  <v-tooltip right z-index="1000">
+                  <v-tooltip right z-index="1201">
                     <template v-slot:activator="{ on, attrs }">
                       <v-btn
                         dense
@@ -145,21 +143,50 @@
               </v-col>
               <v-col cols="3">
                 <v-btn
+                  class="minButton text-lowercase bNoPadding"
                   data-v-step="4"
                   elevation="0"
                   dense
                   small
                   outlined
                   @click="toggleIsMin(slider)"
-                  class="text-lowercase bNoPadding"
                 >
                   {{ slider.isMin ? "at least" : "less than" }}
                 </v-btn>
               </v-col>
-              <v-col cols="4"> {{ slider.value }} m </v-col>
+              <v-col cols="3"> {{ slider.value }} m </v-col>
+              <v-col cols="1">
+                <div class="d-flex center-align justify-center">
+                  <v-tooltip left z-index="1201">
+                    <template v-slot:activator="{ on, attrs }">
+                      <div v-on="on" v-bind="attrs">
+                        <v-switch
+                          class="mt-0"
+                          color="primary"
+                          dense
+                          v-model="
+                            sliderDisplay[activeSliders.indexOf(slider.name)]
+                          "
+                          @change="
+                            $emit(
+                              'setSliderDisplay',
+                              slider.id,
+                              sliderDisplay[activeSliders.indexOf(slider.name)]
+                            )
+                          "
+                        ></v-switch>
+                      </div>
+                    </template>
+                    <span
+                      >Mark {{ slider.name.toLowerCase() }}<br />
+                      on the map
+                    </span>
+                  </v-tooltip>
+                </div>
+              </v-col>
               <v-col cols="1">
                 <div class="d-flex center-align justify-center bNoPadding">
-                  <v-tooltip left z-index="1000">
+                  <v-tooltip left z-index="1201">
                     <template v-slot:activator="{ on, attrs }">
                       <v-btn
                         id="deleteBtn"
@@ -178,8 +205,8 @@
                       </v-btn>
                     </template>
                     <span class="bNoPadding"
-                      >Remove {{ slider.name }} layer</span
-                    >
+                      >Remove {{ slider.name }} layer
+                    </span>
                   </v-tooltip>
                 </div>
               </v-col>
@@ -279,7 +306,8 @@
                 elevation="0"
                 height="50px"
                 @click="applyConfiguration(configuration)"
-                v-html="'Show this <br/>configuration'"
+                style="text-transform: none !important"
+                v-html="'Show <br/>configuration'"
               ></v-btn>
             </v-col>
           </v-row>
@@ -298,6 +326,7 @@ export default {
     "setSliderActiveState",
     "updateSliderValue",
     "updateSliderIsMin",
+    "setSliderDisplay",
     "setBusStationsVisibility",
   ],
   data() {
@@ -320,6 +349,7 @@ export default {
           isMin: [false, true, true, true],
         },
       ],
+      sliderDisplay: [],
       state_showBusStations: this.showBusStations,
     };
   },
@@ -347,14 +377,13 @@ export default {
       if (i !== -1) {
         this.activeSliders.splice(i, 1);
       }
-      this.doResultAreasRequest();
     },
     updateSliderValue(slider) {
-      this.$emit("updateSliderValue", slider.name, slider.value);
+      this.$emit("updateSliderValue", slider.id, slider.value);
       this.doResultAreasRequest();
     },
     toggleIsMin(slider) {
-      this.$emit("updateSliderIsMin", slider.name, !slider.isMin);
+      this.$emit("updateSliderIsMin", slider.id, !slider.isMin);
       this.doResultAreasRequest();
     },
     /**
@@ -363,9 +392,12 @@ export default {
     applyConfiguration(configuration) {
       const { activeSliders, values, isMin } = configuration;
       this.activeSliders = Array.from(activeSliders);
-      for (let i = 0; i < activeSliders.length; i++) {
-        this.$emit("updateSliderValue", activeSliders[i], values[i]);
-        this.$emit("updateSliderIsMin", activeSliders[i], isMin[i]);
+      for (const slider of this.sliders) {
+        if (this.activeSliders.includes(slider.name)) {
+          const i = this.activeSliders.indexOf(slider.name);
+          this.$emit("updateSliderValue", slider.id, values[i]);
+          this.$emit("updateSliderIsMin", slider.id, isMin[i]);
+        }
       }
       this.doResultAreasRequest();
     },
@@ -402,14 +434,26 @@ export default {
   },
   watch: {
     activeSliders: function (value) {
+      // Updates an array with boolean values for the feature switches
+      this.sliderDisplay = this.activeSliders.map(
+        (sliderName) =>
+          this.sliders.filter((slider) => slider.name === sliderName)[0]
+            .displayFeatures
+      );
       // Changes to activeSliders update the sliders active state in MainPage
       for (const slider of this.sliders) {
         if (value.includes(slider.name)) {
-          this.$emit("setSliderActiveState", slider.name, true);
+          this.$emit("setSliderActiveState", slider.id, true);
+          // Show features of slider when enabled
+          if (this.showSliderFeatures && !slider.displayFeatures)
+            this.$emit("setSliderDisplay", slider.id, true);
         } else {
-          this.$emit("setSliderActiveState", slider.name, false);
+          this.$emit("setSliderActiveState", slider.id, false);
+          if (slider.displayFeatures)
+            this.$emit("setSliderDisplay", slider.id, false);
         }
       }
+      this.doResultAreasRequest();
     },
     showBusStations: function (value) {
       // Updates the state for the bus stations switch in the menu
@@ -430,6 +474,10 @@ export default {
 <style scoped>
 .v-expansion-panel-content > .v-expansion-panel-content__wrap {
   padding: 0 !important;
+}
+
+.minButton {
+  width: 68px;
 }
 
 .bNoPadding {
@@ -457,6 +505,7 @@ export default {
   background-color: #c3c3c393;
   border-radius: 6px;
   padding: 3px 6px;
+  white-space: nowrap;
 }
 
 .start-demo-link:hover {
@@ -466,5 +515,6 @@ export default {
 .layer-source-link {
   color: #000000de;
   text-decoration: none;
+  text-transform: none !important;
 }
 </style>

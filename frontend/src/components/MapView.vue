@@ -42,6 +42,7 @@ export default {
       mapLegend: null,
       legendElements: [],
       colorblindLayer: null,
+      sliderFeaturesLayers: new Map(),
       busLayer: null,
       trainLayer: null,
       trainJson: null,
@@ -65,6 +66,9 @@ export default {
     },
     resultAreas: {
       type: Object,
+    },
+    sliderFeatures: {
+      type: Map,
     },
     busStations: {
       type: Object,
@@ -187,15 +191,19 @@ export default {
       this.map.addControl(drawControl);
       this.map.on(L.Draw.Event.CREATED, (event) => {
         this.drawLayer.addLayer(event.layer);
-        this.legendElements.push("marker");
-        this.changeLegend();
+        this.legendElements.push({
+          label: "Location marker",
+          type: "image",
+          url: locationMarker,
+          weight: 2,
+        });
       });
       this.map.on(L.Draw.Event.DELETED, () => {
         if (this.drawLayer.getLayers().length == 0) {
-          while (this.legendElements.indexOf("marker") != -1) {
-            delete this.legendElements[this.legendElements.indexOf("marker")];
-          }
-          this.changeLegend();
+          const i = this.legendElements.findIndex(
+            (legendElement) => legendElement.label === "Location marker"
+          );
+          if (i != -1) this.legendElements.splice(i, 1);
         }
       });
 
@@ -205,9 +213,14 @@ export default {
       ]);
       this.map.setMinZoom(12);
 
-      this.legendElements.push("resultArea");
-
-      this.changeLegend();
+      this.legendElements.push({
+        label: "Area matching your desires",
+        type: "rectangle",
+        color: "rgb(51,136,255)",
+        fillColor: "rgb(51,136,255)",
+        fillOpacity: 0.5,
+        weight: 3,
+      });
     },
     updateResultLayer: function (newGeoJson) {
       newGeoJson = JSON.parse(JSON.stringify(newGeoJson));
@@ -227,6 +240,57 @@ export default {
         }
       } catch (error) {
         console.warn(error);
+      }
+    },
+    updateSliderFeatures: function () {
+      // Because there is no easy way to watch changes of Map data structures with Vue 2
+      // this function needs to be called manually
+      const newKeys = Array.from(this.sliderFeatures.keys());
+      const previousKeys = Array.from(this.sliderFeaturesLayers.keys());
+      const addedKeys = newKeys.filter((key) => !previousKeys.includes(key)); // Newly added keys
+      const deletedKeys = previousKeys.filter((key) => !newKeys.includes(key)); // Deleted keys
+      // Mapping of ids to legend labels
+      const legendLabels = new Map([
+        ["museums", "Museums"],
+        ["theaters", "Theaters"],
+        ["playgrounds", "Playgrounds"],
+        ["sportsplaces", "Sports facilities"],
+        ["baths", "Baths"],
+        ["cinemas", "Cinemas"],
+      ]);
+      // Add layers for new keys and geoJSON features
+      for (const key of addedKeys) {
+        const iconUrl = `map_icons/${key}_icon.png`;
+        const featureLayer = L.geoJSON(this.sliderFeatures.get(key), {
+          pointToLayer: function (_geoJsonPoint, latlng) {
+            return L.marker(latlng, {
+              icon: L.icon({
+                iconUrl,
+                iconSize: [16, 16],
+              }),
+              alt: `${key} point`,
+              keyboard: false,
+            });
+          },
+          interactive: false,
+        });
+        this.sliderFeaturesLayers.set(key, featureLayer);
+        this.map.addLayer(featureLayer);
+        this.legendElements.push({
+          label: legendLabels.get(key),
+          type: "image",
+          url: iconUrl,
+          weight: 2,
+        });
+      }
+      // Remove layers for deleted keys
+      for (const key of deletedKeys) {
+        this.map.removeLayer(this.sliderFeaturesLayers.get(key));
+        this.sliderFeaturesLayers.delete(key);
+        const i = this.legendElements.findIndex(
+          (legendElement) => legendElement.label === legendLabels.get(key)
+        );
+        if (i != -1) this.legendElements.splice(i, 1);
       }
     },
     addBusLayer: function () {
@@ -355,59 +419,6 @@ export default {
       // Load newly visible tiles
       this.map.invalidateSize({ pan: false });
     },
-    changeLegend: function () {
-      /**
-       * mapElements: Array
-       */
-      const marker = {
-        label: "Location marker",
-        type: "image",
-        url: locationMarker,
-        weight: 2,
-      };
-      const resultArea = {
-        label: "Area matching your desires",
-        type: "rectangle",
-        color: "rgb(51,136,255)",
-        fillColor: "rgb(51,136,255)",
-        fillOpacity: 0.5,
-        weight: 3,
-      };
-      const busStations = {
-        label: "Bus stations",
-        type: "image",
-        url: busMarker,
-        weight: 2,
-      };
-
-      try {
-        this.mapLegend.remove();
-      } catch {
-        //pass
-      }
-
-      let legendList = [];
-
-      if (this.legendElements.includes("marker")) {
-        legendList.push(marker);
-      }
-      if (this.legendElements.includes("resultArea")) {
-        legendList.push(resultArea);
-      }
-      if (this.legendElements.includes("busStations")) {
-        legendList.push(busStations);
-      }
-
-      this.mapLegend = L.control
-        .Legend({
-          position: "bottomright",
-          legends: legendList,
-          symbolWidth: 20,
-          symbolHeight: 20,
-          collapsed: true,
-        })
-        .addTo(this.map);
-    },
   },
   watch: {
     resultAreas: function (value) {
@@ -426,14 +437,47 @@ export default {
       if (value) {
         if (!this.map.hasLayer(this.busLayerMarkerCluster))
           this.map.addLayer(this.busLayerMarkerCluster);
-        this.legendElements.push("busStations");
-        this.changeLegend();
+        this.legendElements.splice(1, 0, {
+          label: "Bus stations",
+          type: "image",
+          url: busMarker,
+          weight: 2,
+        });
+        this.legendElements.splice(2, 0, {
+          label: "Train stations",
+          type: "image",
+          url: trainMarker,
+          weight: 2,
+        });
       } else {
         if (this.map.hasLayer(this.busLayerMarkerCluster))
           this.map.removeLayer(this.busLayerMarkerCluster);
-        delete this.legendElements[this.legendElements.indexOf("busStations")];
-        this.changeLegend();
+        const busIndex = this.legendElements.findIndex(
+          (legendElement) => legendElement.label === "Bus stations"
+        );
+        if (busIndex != -1) this.legendElements.splice(busIndex, 1);
+        this.legendElements.splice(busIndex, 1);
+        const trainIndex = this.legendElements.findIndex(
+          (legendElement) => legendElement.label === "Train stations"
+        );
+        if (trainIndex != -1) this.legendElements.splice(trainIndex, 1);
       }
+    },
+    legendElements: function (value) {
+      try {
+        this.mapLegend.remove();
+      } catch {
+        //pass
+      }
+      this.mapLegend = L.control
+        .Legend({
+          position: "bottomright",
+          legends: value,
+          symbolWidth: 20,
+          symbolHeight: 20,
+          collapsed: true,
+        })
+        .addTo(this.map);
     },
   },
   mounted() {

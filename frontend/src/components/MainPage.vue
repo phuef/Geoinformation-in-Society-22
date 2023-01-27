@@ -25,6 +25,7 @@
             @setSliderActiveState="setSliderActiveState"
             @updateSliderValue="updateSliderValue"
             @updateSliderIsMin="updateSliderIsMin"
+            @setSliderDisplay="setSliderDisplay"
             @setBusStationsVisibility="setBusStationsVisibility"
           />
         </div>
@@ -59,7 +60,7 @@
               bottom: 0;
               margin: 20px;
               z-index: 9999;
-              height: 130px;
+              height: 150px;
             "
           ></div>
           <MapView
@@ -68,6 +69,7 @@
             :zoom="mapZoom"
             :busStations="busStations"
             :resultAreas="resultAreas"
+            :sliderFeatures="sliderFeatures"
             :showBusStations="showBusStations"
             @setBusStationsVisibility="setBusStationsVisibility"
           />
@@ -99,6 +101,7 @@ export default {
       resultAreasRequestFailed: false,
       mapCenterPoint: [51.96229626341511, 7.6256090207326395],
       mapZoom: 13,
+      sliderFeatures: new Map(),
       busStations: null,
       showBusStations: false,
       sliders: [
@@ -106,71 +109,83 @@ export default {
         // TODO: add new layers to this list, when new layers are added to the backend.
         //       The layers need to have the structure shown and explained below
         {
+          id: "museums",
           name: "Museums", // the layer name that gets displayed at the layer selection
           label: "Distance to museums", // the label that gets shown at the slider
           value: 250, // the value the slider has
-          band: 0, // the corresponding band ID the layer has in the backend
+          band: 1, // the corresponding band ID the layer has in the backend
           active: true, // wether the layer is currently selected by the user
           // the text that shall be displayed when the user hovers over the info button
           infoLabel:
-            "Move the slider to remove all areas <br/>that have a certain <b>distance to museums</b>.",
+            "Move the slider to include areas inside or outside<br/> a certain <b>distance around museums</b>",
           icon: "mdi-bank",
-          isMin: true,
+          isMin: false,
+          displayFeatures: true,
         },
         {
+          id: "theaters",
           name: "Theaters",
           label: "Distance to theaters",
           value: 1000,
-          band: 1,
+          band: 0,
           active: true,
           infoLabel:
-            "Move the slider to remove all areas <br/>that have a certain <b>distance to theaters</b>.",
+            "Move the slider to include areas inside or outside<br/> a certain <b>distance around theaters</b>",
           icon: "mdi-drama-masks",
           isMin: false,
+          displayFeatures: true,
         },
         {
+          id: "playgrounds",
           name: "Playgrounds",
           label: "Distance to playgrounds",
-          value: 0,
+          value: 1000,
           band: 2,
           active: false,
           infoLabel:
-            "Move the slider to remove all areas <br/>that have a certain <b>distance to playgrounds</b>.",
+            "Move the slider to include areas inside or outside<br/> a certain <b>distance around playgrounds</b>",
           icon: "mdi-drama-masks",
           isMin: false,
+          displayFeatures: false,
         },
         {
+          id: "sportsplaces",
           name: "Sports facilities",
           label: "Distance to sports facilities",
-          value: 0,
+          value: 1000,
           band: 3,
           active: false,
           infoLabel:
-            "Move the slider to remove all areas <br/>that have a certain <b>distance to sports facilities</b>.",
+            "Move the slider to include areas inside or outside<br/> a certain <b>distance around sports facilities</b>",
           icon: "mdi-drama-masks",
           isMin: false,
+          displayFeatures: false,
         },
         {
+          id: "baths",
           name: "Baths",
           label: "Distance to baths",
-          value: 0,
+          value: 1000,
           band: 4,
           active: false,
           infoLabel:
-            "Move the slider to remove all areas <br/>that have a certain <b>distance to baths</b>.",
+            "Move the slider to include areas inside or outside<br/> a certain <b>distance around baths</b>",
           icon: "mdi-drama-masks",
           isMin: false,
+          displayFeatures: false,
         },
         {
+          id: "cinemas",
           name: "Cinemas",
           label: "Distance to cinemas",
-          value: 0,
+          value: 1000,
           band: 5,
           active: false,
           infoLabel:
-            "Move the slider to remove all areas <br/>that have a certain <b>distance to cinemas</b>.",
+            "Move the slider to include areas inside or outside<br/> a certain <b>distance around cinemas</b>",
           icon: "mdi-drama-masks",
           isMin: false,
+          displayFeatures: false,
         },
       ],
       steps: [
@@ -180,7 +195,7 @@ export default {
             title: "Switch Layers",
           },
           content:
-            "Click here to change the <strong>selected layers </strong>.",
+            "Click here to change the <b>selected layers</b>.",
         },
         {
           target: '[data-v-step="4"]',
@@ -188,7 +203,7 @@ export default {
             title: "Min or max distance",
           },
           content:
-            "Here you can decide if the choosen distance should be understood as <b>at least or less than</b>.  ",
+            "Here you can decide if the chosen distance should be understood as <b>at least</b> or <b>less than</b>.",
         },
         {
           target: '[data-v-step="1"]',
@@ -196,7 +211,7 @@ export default {
             title: "Examples",
           },
           content:
-            "Here are some <strong>examples</strong> to get an idea about the results.",
+            "Here are some <b>examples</b> to get an idea about the results.",
         },
         {
           target: '[data-v-step="2"]',
@@ -204,7 +219,7 @@ export default {
             title: "Map",
           },
           content:
-            "In the map you can see the <br><strong>visualised results</strong>.",
+            "In the map you can see the <br><b>visualized results</b>.",
           params: {
             placement: "left", // Any valid Popper.js placement. See https://popper.js.org/popper-documentation.html#Popper.placements
           },
@@ -212,10 +227,10 @@ export default {
         {
           target: '[data-v-step="2"]',
           header: {
-            title: "Add location",
+            title: "Add location markers",
           },
           content:
-            "Here you can add a <strong>marker</strong> to the map. <br> E.g. to mark a certain position.",
+            "Here you can add a <b>marker</b> to the map,<br>e.g. to mark a certain position.",
           params: {
             placement: "left-start", // Any valid Popper.js placement. See https://popper.js.org/popper-documentation.html#Popper.placements
           },
@@ -223,10 +238,10 @@ export default {
         {
           target: '[data-v-step="6"]',
           header: {
-            title: "Layer control & Zoom",
+            title: "Layer control & zoom",
           },
           content:
-            "Here it's possible to switch to a <b>colorblind baselayer</b>. You can also switch on an overlay of the towns <b>bus and train stations</b>. It is also possible to <b>zoom</b> in or out.",
+            "Here it's possible to switch to a <b>colorblind baselayer</b>. You can also activate an overlay of the town's <b>bus and train stations</b>.<br>The buttons below let you <b>zoom</b> in or out.",
           params: {
             placement: "left-start", // Any valid Popper.js placement. See https://popper.js.org/popper-documentation.html#Popper.placements
           },
@@ -237,7 +252,7 @@ export default {
             title: "Colorblind mode",
           },
           content:
-            "When turning on the <b>colorblind mode</b>, the basemap changes and the result layer polygon color. This mode is modified for <b>blue-blindness / Tritanopia</b>.",
+            "When turning on the <b>colorblind mode</b> the basemap and the color of the result layer polygons changes. This mode is modified for <b>blue-blindness/Tritanopia</b>.",
           params: {
             placement: "left-start", // Any valid Popper.js placement. See https://popper.js.org/popper-documentation.html#Popper.placements
           },
@@ -248,7 +263,7 @@ export default {
             title: "Legend",
           },
           content:
-            "On hover, a legend will expand. It changed dynamically, depending on the visible features on the map.",
+            "On hover, a legend will expand. It changes dynamically depending on the features visible on the map.",
           params: {
             placement: "top", // Any valid Popper.js placement. See https://popper.js.org/popper-documentation.html#Popper.placements
           },
@@ -256,10 +271,10 @@ export default {
         {
           target: '[data-v-step="3"]',
           header: {
-            title: "Hide and elapse",
+            title: "Expand and minimize menu",
           },
           content:
-            "With this button you can <b>hide the menu</b> or elapse it, if it's hidden.",
+            "With this button you can <b>hide the menu</b> or expand it, if it's hidden.",
           params: {
             placement: "right", // Any valid Popper.js placement. See https://popper.js.org/popper-documentation.html#Popper.placements
           },
@@ -299,29 +314,60 @@ export default {
       this.resultAreasEmpty = true;
       this.resultAreasRequestFailed = false;
     },
-    setSliderActiveState: function (name, active) {
+    setSliderActiveState: function (id, active) {
       for (const slider of this.sliders) {
-        if (slider.name === name) {
+        if (slider.id === id) {
           slider.active = active;
+          if (active) {
+            if (slider.displayFeatures && !this.sliderFeatures.has(slider.id))
+              this.addSliderFeatures(slider);
+          } else {
+            this.sliderFeatures.delete(slider.id);
+          }
           return;
         }
       }
     },
-    updateSliderValue: function (name, value) {
+    updateSliderValue: function (id, value) {
       for (const slider of this.sliders) {
-        if (slider.name === name) {
+        if (slider.id === id) {
           slider.value = value;
           return;
         }
       }
     },
-    updateSliderIsMin: function (name, isMin) {
+    updateSliderIsMin: function (id, isMin) {
       for (const slider of this.sliders) {
-        if (slider.name === name) {
+        if (slider.id === id) {
           slider.isMin = isMin;
           return;
         }
       }
+    },
+    setSliderDisplay: function (id, value) {
+      for (const slider of this.sliders) {
+        if (slider.id === id) {
+          slider.displayFeatures = value;
+          if (value && slider.active) this.addSliderFeatures(slider);
+          else this.removeSliderFeatures(slider);
+          return;
+        }
+      }
+    },
+    async addSliderFeatures(slider) {
+      try {
+        const response = await fetch(
+          `http://localhost:5050/features/${slider.id}`
+        );
+        this.sliderFeatures.set(slider.id, await response.json());
+        this.$refs.map.updateSliderFeatures();
+      } catch (error) {
+        console.log("Fetching features failed: ", error);
+      }
+    },
+    removeSliderFeatures(slider) {
+      this.sliderFeatures.delete(slider.id);
+      this.$refs.map.updateSliderFeatures();
     },
     setBusStationsVisibility: function (value) {
       this.showBusStations = value;
