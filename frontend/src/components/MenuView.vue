@@ -266,7 +266,7 @@
           </template>
           <span
             v-html="
-              'Here you can add the </br>cities <b>bus and train</br> stations </b>to the map'
+              'Here you can add the </br>cities\' <b>bus and train</br> stations </b>to the map'
             "
           ></span> </v-tooltip
       ></v-col>
