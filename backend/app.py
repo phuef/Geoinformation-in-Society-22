@@ -137,17 +137,72 @@ def raster(requestParams):
 def rasterInfo():
     try:
         if(request.method == 'GET'): #actual request using GET
-            info = {"CRS": {
+            info = {
     "$schema": "https://proj.org/schemas/v0.5/projjson.schema.json",
     "type": "GeographicCRS",
-    "name": "CSG67",
-    "datum": {
-        "type": "GeodeticReferenceFrame",
-        "name": "Centre Spatial Guyanais 1967",
+    "name": "WGS 84",
+    "datum_ensemble": {
+        "name": "World Geodetic System 1984 ensemble",
+        "members": [
+            {
+                "name": "World Geodetic System 1984 (Transit)",
+                "id": {
+                    "authority": "EPSG",
+                    "code": 1166
+                }
+            },
+            {
+                "name": "World Geodetic System 1984 (G730)",
+                "id": {
+                    "authority": "EPSG",
+                    "code": 1152
+                }
+            },
+            {
+                "name": "World Geodetic System 1984 (G873)",
+                "id": {
+                    "authority": "EPSG",
+                    "code": 1153
+                }
+            },
+            {
+                "name": "World Geodetic System 1984 (G1150)",
+                "id": {
+                    "authority": "EPSG",
+                    "code": 1154
+                }
+            },
+            {
+                "name": "World Geodetic System 1984 (G1674)",
+                "id": {
+                    "authority": "EPSG",
+                    "code": 1155
+                }
+            },
+            {
+                "name": "World Geodetic System 1984 (G1762)",
+                "id": {
+                    "authority": "EPSG",
+                    "code": 1156
+                }
+            },
+            {
+                "name": "World Geodetic System 1984 (G2139)",
+                "id": {
+                    "authority": "EPSG",
+                    "code": 1309
+                }
+            }
+        ],
         "ellipsoid": {
-            "name": "International 1924",
-            "semi_major_axis": 6378388,
-            "inverse_flattening": 297
+            "name": "WGS 84",
+            "semi_major_axis": 6378137,
+            "inverse_flattening": 298.257223563
+        },
+        "accuracy": "2.0",
+        "id": {
+            "authority": "EPSG",
+            "code": 6326
         }
     },
     "coordinate_system": {
@@ -167,19 +222,18 @@ def rasterInfo():
             }
         ]
     },
-    "scope": "Geodesy.",
-    "area": "French Guiana - coastal area.",
+    "scope": "Horizontal component of 3D system.",
+    "area": "World.",
     "bbox": {
-        "south_latitude": 3.43,
-        "west_longitude": -54.45,
-        "north_latitude": 5.81,
-        "east_longitude": -51.61
+        "south_latitude": -90,
+        "west_longitude": -180,
+        "north_latitude": 90,
+        "east_longitude": 180
     },
     "id": {
         "authority": "EPSG",
-        "code": 4623
-    }
-}, "bands": [{"name": "theater", "number": 0},
+        "code": 4326
+    }, "bands": [{"name": "theater", "number": 0},
              {"name": "museen", "number": 1},
              {"name": "spielplaetze", "number": 2},
              {"name": "sportstaetten", "number": 3},

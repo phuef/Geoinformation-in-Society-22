@@ -8,6 +8,8 @@ from osgeo import ogr, gdal
 import json
 import uuid
 
+raster = gdal.Open('./data/composit_10x10_4326_clip.tif', 0)
+print(raster.GetGeoTransform())
 '''
 * Title: DistanceStack
 * Description: The class DistanceStack is the main class with which the distance 
